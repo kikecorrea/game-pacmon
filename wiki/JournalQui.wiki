@@ -1,1 +1,50 @@
 #labels WeeklyJournal
+= Introduction =
+
+#journal which keeps tracks of activity/process each week.
+Android Development Journal Spring 2012 for Qui Lu
+
+
+= Details =
+
+Links
+
+*[Journal#Week_2/5_-_2/12]
+*[Journal#Week_2/12_-_2/19]
+*[Journal#Week_2/19_-_2/26]
+
+=== Week 2/5 - 2/12 ===
+    Progress:
+       * Created code repository
+       * Started journal
+       * iOS tutorials finished up to 7
+       * Android tutorials finished up to 12
+    Problem:
+       * Cannot run ant Android in Windows cmd
+         + Resolution: run tutorials natively in Eclipse and SDK
+    Learned:
+       * Basic iOS and Android methods and structures
+    Plan for Next Week:
+       * Finish all tutorials
+       * Basic idea for Android term project
+
+=== Week 2/12 - 2/19 ===
+    Progress:
+       * iOS tutorials finished up to 13
+       * Android tutorials finished up to 14
+    Problem:
+       * ActivitySwitch tutorial problem
+       * Map tutorial problem with pin
+    Plan for Next Week:
+       * Finish all tutorials
+       * Basic idea for Android term project
+
+=== Week 2/19 - 2/26 ===
+    Progress:
+       * All xmlvm tutorials finished
+       * Created svn code
+       * Game will be based on Pac-Man with multiplayer feature and 2D graphics
+    Problem:
+       * Finding APIs for multiplayer connectivity
+    Plan for Next Week:
+       * Get started with basic graphics and coding of game
