@@ -9,11 +9,11 @@ Android Development Journal Spring 2012 for Qui Lu
 
 Links
 
-*[Journal#Week_2/5_-_2/12]
+[Journal#Week_2/5_-_2/12]
 
-*[Journal#Week_2/12_-_2/19]
+[Journal#Week_2/12_-_2/19]
 
-*[Journal#Week_2/19_-_2/26]
+[Journal#Week_2/19_-_2/26]
 
 === Week 2/5 - 2/12 ===
     Progress:
