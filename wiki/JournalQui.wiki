@@ -35,7 +35,7 @@ Progress:
    * iOS tutorials finished up to 13
    * Android tutorials finished up to 14
 Problem:
-   * ActivitySwitch tutorial problem
+   * !ActivitySwitch tutorial problem
    * Map tutorial problem with pin
 Plan for Next Week:
    * Finish all tutorials
