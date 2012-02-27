@@ -16,3 +16,5 @@
 http://code.google.com/p/game-pacmon/source/browse/wiki/images/characters.png
 http://code.google.com/p/game-pacmon/source/browse/wiki/images/menu.png
 http://code.google.com/p/game-pacmon/source/browse/wiki/images/ingame.png
+
+http://mytutorblog.org/wp-content/uploads/2011/05/Prepare-for-a-Test-150x150.gif
