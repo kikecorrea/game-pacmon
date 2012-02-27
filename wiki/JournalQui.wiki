@@ -48,5 +48,7 @@ Progress:
    * Game will be based on Pac-Man with multiplayer feature and 2D graphics
 Problem:
    * Finding APIs for multiplayer connectivity
+Learned:
+   * Making icons for application
 Plan for Next Week:
    * Get started with basic graphics and coding of game
