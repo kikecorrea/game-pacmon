@@ -9,6 +9,6 @@
 
 == Pictures ==
 
-http://code.google.com/p/game-pacmon/source/browse/wiki/images/characters.jpg
-http://code.google.com/p/game-pacmon/source/browse/wiki/images/menu.jpg
-http://code.google.com/p/game-pacmon/source/browse/wiki/images/ingame.jpg
+http://code.google.com/p/game-pacmon/source/browse/wiki/images/characters.JPG
+http://code.google.com/p/game-pacmon/source/browse/wiki/images/menu.JPG
+http://code.google.com/p/game-pacmon/source/browse/wiki/images/ingame.JPG
