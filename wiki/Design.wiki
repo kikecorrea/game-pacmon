@@ -9,4 +9,4 @@
 
 == Pictures ==
 
-[http://code.google.com/p/game-pacmon/w/images/menu.JPG]
+[http://code.google.com/p/game-pacmon/source/browse/#svn%2Fwiki%2Fimages/menu.JPG]
