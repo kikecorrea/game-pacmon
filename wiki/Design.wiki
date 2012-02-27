@@ -12,8 +12,7 @@
 = Details =
 
 == Pictures ==
-
-http://code.google.com/p/game-pacmon/source/browse/wiki/images/characters.png
+http://i.imgur.com/kE6h2.jpg
 http://code.google.com/p/game-pacmon/source/browse/wiki/images/menu.png
 http://code.google.com/p/game-pacmon/source/browse/wiki/images/ingame.png
 
