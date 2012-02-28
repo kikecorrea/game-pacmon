@@ -1,0 +1,12 @@
+= Hanzen's Journal =
+
+== Feb 13 - Feb 18 ==
+ * Finished 18 android tutorials and 15 ios tutorials
+
+== Feb 20- Feb 24 ==
+ * finish all xmlvm tutorials
+ * created mockup story board for pac-mon game
+ * spent 1 day trying to fix patch for submission of tutorials
+ * had a meeting with my team mate qui about the architecture and design of our game.
+ * research a little bit about the architecture we will use for our multiplayer feature 
+ * read about [http://www.skiller-games.com/developers.aspx] about developing multiplayer games
