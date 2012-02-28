@@ -1,5 +1,6 @@
 #summary Project Design Documentation
-
+= Team Member =
+ * Qui Lu, Hanzen Lim
 = Application Description =
  * This project will be a modified version of Pac-Man classic game.
  * Player will control Pac-Man and there are single-player and multi-player.
