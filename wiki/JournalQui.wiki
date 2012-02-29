@@ -1,3 +1,4 @@
+#labels WeeklyJournal
 = Introduction =
 
 #journal which keeps tracks of activity/process each week.
@@ -6,7 +7,7 @@ Android Development Journal Spring 2012 for Qui Lu
 
 = Details =
 
-Links
+Links:
 
 [JournalQui#Week_2/5_-_2/12]
 
