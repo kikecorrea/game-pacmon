@@ -14,7 +14,8 @@
 
 
 = Architecture =
- * The architecture of this game will be a simple 2D graphics using canvas. There will be a game server where the players can store their scores and rankings.
+ * Control using accelerometer for pac-man direction change
+ * Simple 2D graphics using canvas. There will be a game server where the players can store their scores and rankings.
  * The multiplayer feature  will aslo use the game server to pass geo data asynchronously so that each player can see the movement of the respective players.
 
 http://i.imgur.com/NFJh9.jpg
