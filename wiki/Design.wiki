@@ -23,8 +23,10 @@
 http://i.imgur.com/WATZ0.jpg
    # Single player will start single player, user will be pac-man and computer will be monsters.
    # Multiplayer allows user to play against people online with another user.
-   # Options allow user to change various settings such as sound, music and sensitivity
-   # About will display information about the app
+   # Options allow user to change various settings such as sound, music, control, sensitivity and how to play.
+   # About will display information about the app.
+   # Exit will exit the application.
+
 
  === In game === 
 http://i.imgur.com/DTci9.jpg
@@ -32,5 +34,8 @@ http://i.imgur.com/DTci9.jpg
    # User is pacman and there are various monsters on the same map.
    # When pac-man touches a coin, it will consume it and gain points.
 
+
  === Characters' set ===
 http://i.imgur.com/9Rair.jpg
+
+   # Various character concepts for the app.
