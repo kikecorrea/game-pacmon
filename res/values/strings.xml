@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="hello">Hello World, GameActivity!</string>
-    <string name="app_name">Pac-Mon1</string>
-
+    <string name="app_name">Pac-Mon</string>
+	<string name="singleplayer">SinglePlayer</string>
+    <string name="multiplayer">MultiPlayer</string>
+    <string name="exit">Exit Game</string>
+    <string name="options">Options</string>
+    <string name="about">About</string>
 </resources>
