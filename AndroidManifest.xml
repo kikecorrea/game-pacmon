@@ -9,10 +9,11 @@
     <application
         android:icon="@drawable/pac_mon_icon"
         android:label="@string/app_name" 
-        android:debuggable="true"  >
+        android:debuggable="true" 
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".MenuActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"  >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,5 +25,6 @@
         	android:name=".GameActivity"    />
         
     </application>
-
+	
+    
 </manifest>
