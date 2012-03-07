@@ -2,6 +2,7 @@ package com.csc780.pacmon;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,13 +24,21 @@ public class MenuActivity extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
+		Typeface tf = Typeface.createFromAsset(getAssets(),
+                "fonts/press_start.ttf");
 		
 		singlePlayButton = (Button) findViewById(R.id.bSingle);
 		multiPlayButton = (Button) findViewById(R.id.bMulti);
 		optionsButton = (Button) findViewById(R.id.bOptions);
 		aboutButton = (Button) findViewById(R.id.bAbout);
 		exitButton = (Button) findViewById(R.id.bExit);
-		
+/*		
+		singlePlayButton.setTypeface(tf);
+		multiPlayButton.setTypeface(tf);
+		optionsButton.setTypeface(tf);
+		aboutButton.setTypeface(tf);
+		exitButton.setTypeface(tf);
+*/	
 		singlePlayButton.setOnClickListener(this);
 		multiPlayButton.setOnClickListener(this);
 		optionsButton.setOnClickListener(this);

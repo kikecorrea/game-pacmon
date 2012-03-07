@@ -24,7 +24,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		//screenWidth = 480;//this.getWidth();
 		//screenHeight = 800;//this.getHeight();
 
-		
 		dx = dy = 0;
 		
 		surfaceHolder = getHolder();
@@ -34,7 +33,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		isRunning = true;
 		setKeepScreenOn(true);
 		
-
 	}
 	
 	//thread to draw 
