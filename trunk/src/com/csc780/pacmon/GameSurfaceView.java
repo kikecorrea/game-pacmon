@@ -14,12 +14,27 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	private float screenWidth, screenHeight;
 	private float dx, dy;
-	private float ballTopX, ballTopY;
 	private SurfaceHolder surfaceHolder;
 	private Thread surfaceThread = null;
 	boolean isRunning = false;
-	private Bitmap ball;
-	private int[][] maze;
+	
+	//pacman data
+	private int pX, pY;
+	private int direction;
+	private int pNormalSpeed;
+	private int newDirection;
+	private int oldDirection;
+
+	private Bitmap ball, wall; // bitmap 
+	
+	//maze info
+	private int[][] mazeArray;
+	private Maze maze;
+	private int mazeRow, mazeColumn;
+	
+	private int blockSize;
+	
+	
 	
 	public GameSurfaceView(Context context) {
 		super(context);
@@ -28,12 +43,22 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		//screenWidth = 480;//this.getWidth();
 		//screenHeight = 800;//this.getHeight();
 
+		
+		blockSize = 32;  // size of block
 		dx = dy = 0;
-		maze = Maze.getMaze();
+		maze = new Maze();
+		mazeArray = maze.getMaze();
+		mazeRow = maze.getMazeRow();
+		mazeColumn = maze.getMazeColumn();
 		surfaceHolder = getHolder();
-		ballTopX = screenWidth/2;
-		ballTopY = screenHeight/2;
+		
+		pX = pY = 1 * blockSize; // init Pacman
+		direction = 0;
+		newDirection = 1;
+		pNormalSpeed = 2;
+		
 		ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		isRunning = true;
 		setKeepScreenOn(true);
 		
@@ -42,7 +67,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	//thread to draw 
 	public void run() {
-		
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		while(isRunning){
 			if(!surfaceHolder.getSurface().isValid())
 				continue;
@@ -51,29 +81,99 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 			screenWidth = canvas.getWidth();
 			screenHeight = canvas.getHeight();
-			canvas.drawRGB(02, 02, 150);
+			canvas.drawRGB(0, 0, 0);
 			
+			// draw maze
 			drawMaze(canvas);
 			
-			if (ballTopX + dx < 0)
-				ballTopX = 0;
-			else if (ballTopX + ball.getWidth() + dx > screenWidth)
-				ballTopX = screenWidth - ball.getWidth();
-			else 
-				ballTopX += dx;
-			
-			if (ballTopY + dy < 0)
-				ballTopY = 0;
-			else if (ballTopY + ball.getHeight() + dy > screenHeight)
-				ballTopY = screenHeight - ball.getHeight();
-			else
-				ballTopY += dy;
+			//draw Pacman
+			drawPacman(canvas, direction);
+
 			
 			//canvas.drawCircle(ballTopX, ballTopY, screenWidth/13, null);
-			canvas.drawBitmap(ball, ballTopX, ballTopY, null);
+
 			
 			surfaceHolder.unlockCanvasAndPost(canvas);
 		}
+	}
+
+	private void drawPacman(Canvas canvas, int direction) {
+		int deltaX, deltaY;
+		int XmodW, YmodH;
+		int boxX, boxY;
+		int oldX, oldY;
+		int x, y;
+		boolean canMove = true;
+		
+		XmodW = pX % blockSize;
+		YmodH = pY % blockSize;
+		
+		
+		newDirection = direction;
+
+		//evaluate at intersection, collision detection
+		if(XmodW == 0 && YmodH == 0){
+			oldDirection = direction;
+			boxX = pX / blockSize;
+			boxY = pY / blockSize;
+		
+			if (newDirection == 4){  // move left
+                if (boxX > 0 ) {
+                    if ( mazeArray[boxY][boxX - 1] == 0){
+                        canMove = false;
+                    }
+                } else 
+                    pX = 0;
+			}
+			
+			if (newDirection == 3){   // move right
+                if (boxX < mazeColumn -1 ) {
+                    if ( mazeArray[boxY][boxX + 1] == 0) {
+                        canMove = false;
+                    }
+                } else 
+                    pX = (mazeColumn - 1) * blockSize;
+			}	
+			
+			if (newDirection == 2){ // move down
+				if (boxY < mazeRow - 1){
+					if (mazeArray[boxY + 1][boxX] == 0){
+						canMove = false;
+					}
+				}
+				else {
+					pY = 0;
+				}
+			}
+			if (newDirection == 1) { // move up
+                if (boxY > 0 ) {
+					if (mazeArray[boxY - 1][boxX] == 0) {
+						canMove = false;
+					}
+				} else
+					pY = (mazeRow - 1) * blockSize;
+			}
+
+		}
+
+		if (canMove) {
+			oldX = pX;
+			oldY = pY;
+
+				if (oldDirection == 1) // up		
+					pY = pY - pNormalSpeed;
+				if (oldDirection == 2) // down
+					pY = pY + pNormalSpeed;
+
+				if (oldDirection == 3) // right
+					pX = pX + pNormalSpeed;
+				if (oldDirection == 4) // left
+					pX = pX - pNormalSpeed;
+			
+		}
+
+		canvas.drawBitmap(ball, pX, pY, null);
+		
 	}
 
 	public void pause() {
@@ -105,31 +205,110 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	public void drawMaze(Canvas canvas){
-		Paint myPaint = new Paint();
-		myPaint.setColor(Color.GRAY);
-		int width = canvas.getWidth();
-		int height = canvas.getHeight();
-		for (int i = 0; i < 13; i++){
-			for (int j = 0; j < 10; j++){
-				if (maze[i][j] > 0){
-					float left = width/13*i;
-					float top = height/10*j;
-					float right = left + width/13;
-					float bottom = top + height/10;
-					canvas.drawRect(left, top, right, bottom, myPaint);
+				
+		for (int i = 0; i < mazeRow; i++){
+			for (int j = 0; j < mazeColumn; j++){
+				if (mazeArray[i][j] == 0){
+					
+					canvas.drawBitmap(wall, j*32, i*32, null);
 				}
 			}
 		}
 	}
 	
 
-	public void setDx(float dx) {
-		this.dx = dx;
-	}
-
-	public void setDy(float dy) {
-		this.dy = dy;
+	public void setDir(int direction){
+		this.direction = direction;
 	}
 	
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+//check direction
+if(XmodW == 0 && YmodH == 0){
+	boxX = pX / blockSize;
+	boxY = pY / blockSize;
+
+	if (direction == 4){  // move left
+        if (boxX > 0 )
+            if ( mazeArray[boxY][boxX - 1] == 0)
+                newDirection = direction;
+	}
+	
+	if (direction == 3){   // move right
+        if (boxX < mazeColumn )
+            if ( mazeArray[boxY][boxX + 1] == 0) 
+                newDirection = direction;
+
+	}	
+	
+	if (direction == 2){ // move down
+		if (boxY < mazeRow)
+			if (mazeArray[boxY + 1][boxX] == 0)
+				newDirection = direction;
+	}
+	if (direction == 1) { // move up
+        if (boxY > 0 )
+            if (mazeArray[boxY - 1][boxX] == 0)
+                newDirection = direction;
+	}
+} else {
+	if (newDirection != direction){
+        if (((direction == 1) || (direction == 2)) && (XmodW!=0) && (YmodH==0)){
+            newDirection = direction;
+        }
+        if (((direction == 3) || (direction == 4)) && (YmodH!=0) && (XmodW==0) ){
+            newDirection = direction;
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+			if (oldDirection == 1 || oldDirection == 2){
+				if (newDirection == 1) // up		
+					pY = pY - pNormalSpeed;
+				if (newDirection == 2) // down
+					pY = pY + pNormalSpeed;
+			} else {
+				if (oldDirection == 1) // up		
+					pY = pY - pNormalSpeed;
+				if (oldDirection == 2) // down
+					pY = pY + pNormalSpeed;
+			}
+			
+			if (oldDirection == 3 || oldDirection == 4){
+				if (newDirection == 3) // right
+					pX = pX + pNormalSpeed;
+				if (newDirection == 4) // left
+					pX = pX - pNormalSpeed;
+			} else {
+				if (oldDirection == 3) // right
+					pX = pX + pNormalSpeed;
+				if (oldDirection == 4) // left
+					pX = pX - pNormalSpeed;
+			}
+*/

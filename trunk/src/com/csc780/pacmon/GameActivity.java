@@ -61,10 +61,15 @@ public class GameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		float z = event.values[2];
 		
-		
-		
-		gameView.setDx(-xAccel);
-		gameView.setDy(yAccel);
+		if(yAccel < -2.5F) // tilt up
+			gameView.setDir(1);
+		if(yAccel > 2.5F)  // tilt down
+			gameView.setDir(2);
+		if(xAccel < -2.5F) // tilt to right
+			gameView.setDir(3); 
+		if(xAccel > 2.5F)  // tilt to left
+			gameView.setDir(4);
+
 		
 		
 	}
