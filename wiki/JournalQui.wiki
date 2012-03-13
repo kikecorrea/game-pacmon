@@ -17,6 +17,8 @@ Links:
 
 [JournalQui#Week_2/26_-_3/4]
 
+[JournalQui#Week_3/4_-_3/11]
+
 === Week 2/5 - 2/12 ===
 Progress:
    * Created code repository
@@ -67,3 +69,16 @@ Learned:
 Plan for next week:
    * Maze with collision detection
    * Better drawing
+
+=== Week 3/4 - 3/11 ===
+Progress: 
+   * Maze working with pacman
+Problem:
+   * Organize classes
+   * Algorithm for movements
+   * Make smooth accelerometer
+Learned:
+   * Making tiles and maze with 2D array
+Plan for next week:
+   * Add ghosts
+   * Add food
