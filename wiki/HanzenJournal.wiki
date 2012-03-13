@@ -15,9 +15,9 @@
 * started working on web server
 
 ==March2 - March 9 ==
-* finish implementing the web server using UDP socket
-* Can pass simple data back and forth from client to server
-* Connect android device to server and pass simple message
+ * finish implementing the web server using UDP socket
+ * Can pass simple data back and forth from client to server
+ * Connect android device to server and pass simple message
 
 ==March 12 - March16 ==
-* Help out implementing the layout for maze
+ * Help out implementing the layout for maze
