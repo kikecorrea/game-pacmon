@@ -2,6 +2,8 @@ package com.csc780.pacmon;
 
 public class Maze {
 
+	private int mazeMaxX, mazeMaxY; //by grids
+	
 	private static int maze1[][] = {
 		{0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0},
 		{0,1,1,1,0,1,1,0,0,0,0,0,0,1,1,0,1,1,1,0},
@@ -42,9 +44,36 @@ public class Maze {
 		{0,0,0,0,1,1,0,0,0,0}
 	};
 	
+	static char maze3[][] = {
+		{"WWWWWWWWWWWWWWW"},
+		{"W....W...W....W"},
+		{"WoWW.WW.WW.WWoW"},
+		{"W.............W"},
+		{"WW.WWWW.WWWW.WW"},
+		{"WW.WWWW.WWWW.WW"},
+		{"WW.....o.....WW"},
+		{"WW.WW.WWW.WW.WW"},
+		{"W..---------..W"},
+		{"W.WW-WWDWW-WW.W"},
+		{"W.WW-WGGGW-WW.W"},
+		{"W.WW-WWDWW-WW.W"},
+		{"W..---------..W"},
+		{"WW.WW.WWW.WW.WW"},
+		{"WW.....o.....WW"},
+		{"WW.WWWW.WWWW.WW"},
+		{"WW.W.......W.WW"},
+		{"W....WW.WW....W"},
+		{"W.WWWWW.WWWWW.W"},
+		{"W.............W"},
+		{"WoWW.WW.WW.WWoW"},
+		{"WWWWWWWWWWWWWWW"}
+	}
+	
+	
 	
 	public Maze() {
-		
+		mazeMaxX = 15;
+		mazeMaxY = 22;
 	}
 
 	public static int[][] getMaze() {
@@ -52,3 +81,32 @@ public class Maze {
 	}
 	
 }
+
+
+
+/*Maze layout
+		{WWWWWWWWWWWWWWW},
+		{W....W...W....W},
+		{WoWW.WW.WW.WWoW},
+		{W.............W},
+		{WW.WWWW.WWWW.WW},
+		{WW.WWWW.WWWW.WW},
+		{WW.....o.....WW},
+		{WW.WW.WWW.WW.WW},
+		{W..---------..W},
+		{W.WW-WWDWW-WW.W},
+		{W.WW-WGGGW-WW.W},
+		{W.WW-WWDWW-WW.W},
+		{W..---------..W},
+		{WW.WW.WWW.WW.WW},
+		{WW.....o.....WW},
+		{WW.WWWW.WWWW.WW},
+		{WW.W.......W.WW},
+		{W....WW.WW....W},
+		{W.WWWWW.WWWWW.W},
+		{W.............W},
+		{WoWW.WW.WW.WWoW},
+		{WWWWWWWWWWWWWWW}
+		
+*/
+
