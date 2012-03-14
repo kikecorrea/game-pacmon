@@ -21,4 +21,4 @@
 
 ==March 12 - March16 ==
  * Help out implementing the layout for maze
-* Implemented simple app for android that sends and receive data to server
+ * Implemented simple app for android that sends and receive data to server 
