@@ -22,4 +22,5 @@
 
 ==March 12 - March16 ==
  * Help out implementing the layout for maze
+ * Researhed on how to port box2d game engine to android. Box2d is written in C, while android is in java so it needs somekind of interface generator
  * Implemented simple app for android that sends and receive data to server 
