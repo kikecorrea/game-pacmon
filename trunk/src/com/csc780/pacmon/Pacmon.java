@@ -5,7 +5,7 @@ package com.csc780.pacmon;
  * 
  * 
  */
-public class Pacman {
+public class Pacmon {
 
 	//position by grid
 	private int pX;
@@ -21,7 +21,7 @@ public class Pacman {
 	private int dir; // direction of movement 0 = not moving
 					 // 1 = left, 2 = right, 3 = up, 4 = down
 	
-	public Pacman (){
+	public Pacmon (){
 		pX = pY = 0;
 		pXOrigin = pYOrigin = 1;
 		pLives = 3;
