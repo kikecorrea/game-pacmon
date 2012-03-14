@@ -1,4 +1,5 @@
 = Hanzen's Journal =
+== Weekly Journal ==
 
 == Feb 13 - Feb 18 ==
  * Finished 18 android tutorials and 15 ios tutorials
