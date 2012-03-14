@@ -12,7 +12,7 @@
  * read about [http://www.skiller-games.com/developers.aspx] about developing multiplayer games
 
 ==Feb27 - March 2 ==
-* started working on web server
+ * started working on web server
 
 ==March2 - March 9 ==
  * finish implementing the web server using UDP socket
