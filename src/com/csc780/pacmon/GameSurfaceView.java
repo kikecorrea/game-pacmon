@@ -28,17 +28,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	boolean canMoveU = true;
 	boolean canMoveD = true;
 	
-
+	//drawing bit map
 	private Bitmap ball, wall, door, ghost; // bitmap 
 	
 	//maze info
 	private int[][] mazeArray;
 	private Maze maze;
 	private int mazeRow, mazeColumn;
-	
 	private int blockSize;
-	
-	
 	
 	public GameSurfaceView(Context context) {
 		super(context);
@@ -63,7 +60,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		isRunning = true;
 		setKeepScreenOn(true);
-		
 		
 	}
 	
@@ -123,7 +119,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 			if (direction == 1) { // move up
 		        if (boxY > 0 )
-		            if (mazeArray[boxY - 1][boxX] != 0)
+		            if (mazeArray[boxY - 1][boxX] != 0 && mazeArray[boxY - 1][boxX] != 3)
 		                newDirection = direction;
 			}
 		} else {
@@ -166,7 +162,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 			if (newDirection == 1) { // move up
                 if (boxY > 0 ) 
-					if (mazeArray[boxY - 1][boxX] == 0) {
+					if (mazeArray[boxY - 1][boxX] == 0 || mazeArray[boxY - 1][boxX] == 3){
 						canMoveU = false;
 					}
 			}
