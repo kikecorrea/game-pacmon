@@ -29,7 +29,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	boolean canMoveD = true;
 	
 
-	private Bitmap ball, wall; // bitmap 
+	private Bitmap ball, wall, door, ghost; // bitmap 
 	
 	//maze info
 	private int[][] mazeArray;
@@ -42,11 +42,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	public GameSurfaceView(Context context) {
 		super(context);
-		// TODO Auto-generated constructor stub
-		
-		//screenWidth = 480;//this.getWidth();
-		//screenHeight = 800;//this.getHeight();
-
 		
 		blockSize = 32;  // size of block
 		dx = dy = 0;
@@ -58,11 +53,14 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		pX = pY = 1 * blockSize; // init Pacman
 		direction = 0;
-		newDirection = 1;
+		newDirection = 0;
 		pNormalSpeed = 2;
 	
+		//images
 		ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
+		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
+		
 		isRunning = true;
 		setKeepScreenOn(true);
 		
@@ -72,7 +70,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	//thread to draw 
 	public void run() {
 		try {
-			Thread.sleep(5);
+			Thread.sleep(10);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -92,10 +90,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			
 			//draw Pacman
 			drawPacman(canvas, direction);
-
-			
-			//canvas.drawCircle(ballTopX, ballTopY, screenWidth/13, null);
-
 			
 			surfaceHolder.unlockCanvasAndPost(canvas);
 		}
@@ -119,12 +113,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 			if (direction == 3){   // move right
 		        if (boxX < mazeColumn )
-		            if ( mazeArray[boxY][boxX + 1] != 0) 
+		            if (mazeArray[boxY][boxX + 1] != 0) 
 		                newDirection = direction;
 			}	
 			if (direction == 2){ // move down
 				if (boxY < mazeRow)
-					if (mazeArray[boxY + 1][boxX] != 0)
+					if (mazeArray[boxY + 1][boxX] != 0 && mazeArray[boxY + 1][boxX] != 3)
 						newDirection = direction;
 			}
 			if (direction == 1) { // move up
@@ -166,7 +160,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			
 			if (newDirection == 2){ // move down
 				if (boxY < mazeRow - 1)
-					if (mazeArray[boxY + 1][boxX] == 0){
+					if (mazeArray[boxY + 1][boxX] == 0 || mazeArray[boxY + 1][boxX] == 3){
 						canMoveD = false;
 				}
 			}
@@ -187,38 +181,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				pX = pX + pNormalSpeed;
 			if (newDirection == 4 && canMoveL) // left
 				pX = pX - pNormalSpeed;
-/*			
-			if (canMoveU == false){
-				if (prevDirection == 3 && canMoveR)
-					pX = pX + pNormalSpeed;
-				if (prevDirection == 4 && canMoveL)
-					pX = pX - pNormalSpeed;
-			}
-			
-			if (canMoveD == false){
-				if (prevDirection == 3 && canMoveR)
-					pX = pX + pNormalSpeed;
-				if (prevDirection == 4 && canMoveL)
-					pX = pX - pNormalSpeed;
-			}
-			
-			if (canMoveR == false){
-				if (prevDirection == 1 && canMoveU)
-					pY = pY - pNormalSpeed;
-				if (prevDirection == 2 && canMoveD)
-					pY = pY + pNormalSpeed;
-			}
-			
-			if (canMoveL == false){
-				if (prevDirection == 1 && canMoveU)
-					pY = pY - pNormalSpeed;
-				if (prevDirection == 2 && canMoveD)
-					pY = pY + pNormalSpeed;
-			}
-			
-			oldBlockX = XmodW;
-			oldblockY = YmodH;
-*/			
 			
 		canvas.drawBitmap(ball, pX, pY, null);
 		
@@ -252,19 +214,19 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	}
 	
+	// draw current maze
 	public void drawMaze(Canvas canvas){
-				
 		for (int i = 0; i < mazeRow; i++){
 			for (int j = 0; j < mazeColumn; j++){
-				if (mazeArray[i][j] == 0){
-					
-					canvas.drawBitmap(wall, j*32, i*32, null);
-				}
+				if (mazeArray[i][j] == 0)
+					canvas.drawBitmap(wall, j*blockSize, i*blockSize, null);
+				if (mazeArray[i][j] == 3)
+					canvas.drawBitmap(door, j*blockSize, i*blockSize, null);
 			}
 		}
 	}
 	
-
+	// using accelerometer to set direction of player
 	public void setDir(int direction){
 		this.direction = direction;
 	}

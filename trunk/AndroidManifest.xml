@@ -13,6 +13,7 @@
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
             android:name=".MenuActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,6 +23,7 @@
         </activity>
         <activity
             android:name=".GameActivity"
+            android:screenOrientation="portrait"
             android:label="GameActivity" >
             <intent-filter>
                 <action android:name="com.csc780.pacmon.GAMEACTIVITY" />

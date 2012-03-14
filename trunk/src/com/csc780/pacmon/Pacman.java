@@ -1,5 +1,10 @@
 package com.csc780.pacmon;
 
+
+/* Pacman class contains information about pacman
+ * 
+ * 
+ */
 public class Pacman {
 
 	//position by grid
@@ -18,9 +23,9 @@ public class Pacman {
 	
 	public Pacman (){
 		pX = pY = 0;
-		pXOrigin = pYOrigin = 0;
+		pXOrigin = pYOrigin = 1;
 		pLives = 3;
-		pNormalSpeed = 3;
+		pNormalSpeed = 2;
 		pPowerSpeed = 4;
 	}
 
