@@ -23,7 +23,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private int direction;
 	private int pNormalSpeed;
 	private int newDirection;
-	private int oldDirection;
+	boolean canMoveL = true;
+	boolean canMoveR = true;
+	boolean canMoveU = true;
+	boolean canMoveD = true;
+	
 
 	private Bitmap ball, wall; // bitmap 
 	
@@ -56,7 +60,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		direction = 0;
 		newDirection = 1;
 		pNormalSpeed = 2;
-		
+	
 		ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		isRunning = true;
@@ -68,7 +72,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	//thread to draw 
 	public void run() {
 		try {
-			Thread.sleep(100);
+			Thread.sleep(5);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,80 +102,124 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 
 	private void drawPacman(Canvas canvas, int direction) {
-		int deltaX, deltaY;
 		int XmodW, YmodH;
 		int boxX, boxY;
-		int oldX, oldY;
-		int x, y;
-		boolean canMove = true;
-		
 		XmodW = pX % blockSize;
 		YmodH = pY % blockSize;
 		
-		
-		newDirection = direction;
+		// check direction and change if it is allowed
+		if(XmodW == 0 && YmodH == 0){
+			boxX = pX / blockSize;
+			boxY = pY / blockSize;
 
+			if (direction == 4){  // move left allowed if can move to left
+		        if (boxX > 0 )
+		            if ( mazeArray[boxY][boxX - 1] != 0)
+		                newDirection = direction;
+			}
+			if (direction == 3){   // move right
+		        if (boxX < mazeColumn )
+		            if ( mazeArray[boxY][boxX + 1] != 0) 
+		                newDirection = direction;
+			}	
+			if (direction == 2){ // move down
+				if (boxY < mazeRow)
+					if (mazeArray[boxY + 1][boxX] != 0)
+						newDirection = direction;
+			}
+			if (direction == 1) { // move up
+		        if (boxY > 0 )
+		            if (mazeArray[boxY - 1][boxX] != 0)
+		                newDirection = direction;
+			}
+		} else {
+			if (newDirection != direction){
+		        if (((direction == 1) || (direction == 2)) && (XmodW==0) && (YmodH!=0)){
+		            newDirection = direction;
+		        }
+		        if (((direction == 3) || (direction == 4)) && (YmodH==0) && (XmodW!=0) ){
+		            newDirection = direction;
+		        }
+		    }
+		}
+		
 		//evaluate at intersection, collision detection
 		if(XmodW == 0 && YmodH == 0){
-			oldDirection = direction;
 			boxX = pX / blockSize;
 			boxY = pY / blockSize;
 		
+			canMoveU = canMoveD = canMoveL = canMoveR = true;
+			
 			if (newDirection == 4){  // move left
-                if (boxX > 0 ) {
+                if (boxX > 0 )
                     if ( mazeArray[boxY][boxX - 1] == 0){
-                        canMove = false;
+                        canMoveL = false;
                     }
-                } else 
-                    pX = 0;
 			}
 			
 			if (newDirection == 3){   // move right
-                if (boxX < mazeColumn -1 ) {
+                if (boxX < mazeColumn -1 ) 
                     if ( mazeArray[boxY][boxX + 1] == 0) {
-                        canMove = false;
+                        canMoveR = false;
                     }
-                } else 
-                    pX = (mazeColumn - 1) * blockSize;
 			}	
 			
 			if (newDirection == 2){ // move down
-				if (boxY < mazeRow - 1){
+				if (boxY < mazeRow - 1)
 					if (mazeArray[boxY + 1][boxX] == 0){
-						canMove = false;
-					}
-				}
-				else {
-					pY = 0;
+						canMoveD = false;
 				}
 			}
 			if (newDirection == 1) { // move up
-                if (boxY > 0 ) {
+                if (boxY > 0 ) 
 					if (mazeArray[boxY - 1][boxX] == 0) {
-						canMove = false;
+						canMoveU = false;
 					}
-				} else
-					pY = (mazeRow - 1) * blockSize;
 			}
 
 		}
-
-		if (canMove) {
-			oldX = pX;
-			oldY = pY;
-
-				if (oldDirection == 1) // up		
-					pY = pY - pNormalSpeed;
-				if (oldDirection == 2) // down
-					pY = pY + pNormalSpeed;
-
-				if (oldDirection == 3) // right
+		
+			if (newDirection == 1 && canMoveU) // up
+				pY = pY - pNormalSpeed;
+			if (newDirection == 2 && canMoveD) // down
+				pY = pY + pNormalSpeed;
+			if (newDirection == 3 && canMoveR) // right
+				pX = pX + pNormalSpeed;
+			if (newDirection == 4 && canMoveL) // left
+				pX = pX - pNormalSpeed;
+/*			
+			if (canMoveU == false){
+				if (prevDirection == 3 && canMoveR)
 					pX = pX + pNormalSpeed;
-				if (oldDirection == 4) // left
+				if (prevDirection == 4 && canMoveL)
 					pX = pX - pNormalSpeed;
+			}
 			
-		}
-
+			if (canMoveD == false){
+				if (prevDirection == 3 && canMoveR)
+					pX = pX + pNormalSpeed;
+				if (prevDirection == 4 && canMoveL)
+					pX = pX - pNormalSpeed;
+			}
+			
+			if (canMoveR == false){
+				if (prevDirection == 1 && canMoveU)
+					pY = pY - pNormalSpeed;
+				if (prevDirection == 2 && canMoveD)
+					pY = pY + pNormalSpeed;
+			}
+			
+			if (canMoveL == false){
+				if (prevDirection == 1 && canMoveU)
+					pY = pY - pNormalSpeed;
+				if (prevDirection == 2 && canMoveD)
+					pY = pY + pNormalSpeed;
+			}
+			
+			oldBlockX = XmodW;
+			oldblockY = YmodH;
+*/			
+			
 		canvas.drawBitmap(ball, pX, pY, null);
 		
 	}
@@ -311,4 +359,74 @@ if(XmodW == 0 && YmodH == 0){
 				if (oldDirection == 4) // left
 					pX = pX - pNormalSpeed;
 			}
+			
+			
+			
+			
+			
+			
+			
+			
+					if(XmodW == 0 && YmodH == 0){
+			oldDirection = direction;
+			boxX = pX / blockSize;
+			boxY = pY / blockSize;
+		
+			if (newDirection == 4){  // move left
+                if (boxX > 0 ) {
+                    if ( mazeArray[boxY][boxX - 1] == 0){
+                        canMove = false;
+                    }
+                } else 
+                    pX = 0;
+			}
+			
+			if (newDirection == 3){   // move right
+                if (boxX < mazeColumn -1 ) {
+                    if ( mazeArray[boxY][boxX + 1] == 0) {
+                        canMove = false;
+                    }
+                } else 
+                    pX = (mazeColumn - 1) * blockSize;
+			}	
+			
+			if (newDirection == 2){ // move down
+				if (boxY < mazeRow - 1){
+					if (mazeArray[boxY + 1][boxX] == 0){
+						canMove = false;
+					}
+				}
+				else {
+					pY = 0;
+				}
+			}
+			if (newDirection == 1) { // move up
+                if (boxY > 0 ) {
+					if (mazeArray[boxY - 1][boxX] == 0) {
+						canMove = false;
+					}
+				} else
+					pY = (mazeRow - 1) * blockSize;
+			}
+
+		}
+
+		if (canMove) {
+			oldX = pX;
+			oldY = pY;
+
+				if (oldDirection == 1) // up		
+					pY = pY - pNormalSpeed;
+				if (oldDirection == 2) // down
+					pY = pY + pNormalSpeed;
+
+				if (oldDirection == 3) // right
+					pX = pX + pNormalSpeed;
+				if (oldDirection == 4) // left
+					pX = pX - pNormalSpeed;
+			
+			
 */
+
+
+
