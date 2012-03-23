@@ -18,7 +18,6 @@ public class MenuActivity extends Activity implements OnClickListener{
 	private Button exitButton;
 	
 	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub

@@ -1,9 +1,13 @@
 package com.csc780.pacmon;
 
-import android.graphics.Canvas;
-
 public class Monster {
 
+	private int x;
+	private int y;
+	
+	
+	
+	
 	public Monster(){
 		
 	}
@@ -14,7 +18,4 @@ public class Monster {
 		
 	}
 	
-	public void drawMonsters(Canvas canvas){
-		
-	}
 }
