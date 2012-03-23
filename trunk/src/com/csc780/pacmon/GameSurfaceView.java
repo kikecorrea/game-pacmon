@@ -66,7 +66,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	//thread to draw 
 	public void run() {
 		try {
-			Thread.sleep(10);
+			Thread.sleep(25);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -81,17 +81,24 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			screenHeight = canvas.getHeight();
 			canvas.drawRGB(0, 0, 0);
 			
-			// draw maze
-			drawMaze(canvas);
+			drawMaze(canvas); // draw updated maze
 			
-			//draw Pacman
-			drawPacman(canvas, direction);
+			drawPacmon(canvas, direction); //draw Pacman
+			
+			drawGhost(canvas); // draw ghosts
 			
 			surfaceHolder.unlockCanvasAndPost(canvas);
 		}
 	}
 
-	private void drawPacman(Canvas canvas, int direction) {
+	// draw current location of ghosts
+	private void drawGhost(Canvas canvas) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	// draw pacmon
+	private void drawPacmon(Canvas canvas, int direction) {
 		int XmodW, YmodH;
 		int boxX, boxY;
 		XmodW = pX % blockSize;
