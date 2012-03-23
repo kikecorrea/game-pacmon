@@ -27,7 +27,7 @@ public class Pacmon {
 					 // 1 = left, 2 = right, 3 = up, 4 = down
 	
 	public Pacmon (){
-		pX = pY = 0;
+		pX = pY = 32;
 		pXOrigin = pYOrigin = 1;
 		pLives = 3;
 		pNormalSpeed = 2;
@@ -66,5 +66,24 @@ public class Pacmon {
 		return dir;
 	}
 	
+	public void setDir(int dir){
+		this.dir = dir;
+	}
+
+	public void setpX(int pX) {
+		this.pX = pX;
+	}
+
+	public void setpY(int pY) {
+		this.pY = pY;
+	}
+
+	public void setpXOrigin(int pXOrigin) {
+		this.pXOrigin = pXOrigin;
+	}
+
+	public void setpYOrigin(int pYOrigin) {
+		this.pYOrigin = pYOrigin;
+	}
 	
 }

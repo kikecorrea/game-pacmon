@@ -18,7 +18,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 	//change in x and y of pac-mon
 	private float xAccel;
 	private float yAccel;
-	private float accelerometerNoise = 1.F; 
+	private GameEngine gameEngine;
 	
     /** Called when the activity is first created. */
     @Override
@@ -29,8 +29,9 @@ public class GameActivity extends Activity implements SensorEventListener{
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        gameView = new GameSurfaceView(this);
-        
+        gameEngine = new GameEngine();
+        gameView = new GameSurfaceView(this, gameEngine.pacmon, gameEngine);
+
         setContentView(gameView);
         
     }
@@ -57,18 +58,35 @@ public class GameActivity extends Activity implements SensorEventListener{
 	//get values of accelerometer
 	public void onSensorChanged(SensorEvent event) {
 		
+		try {
+			Thread.sleep(16);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		xAccel = event.values[0];
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel) // tilt up
+		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+			gameEngine.setInputDir(1);
 			gameView.setDir(1);
-		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel)  // tilt down
+		}
+		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
+			gameEngine.setInputDir(2);
 			gameView.setDir(2);
-		if(xAccel < -1.8F && xAccel*xAccel > yAccel*yAccel) // tilt to right
-			gameView.setDir(3); 
-		if(xAccel > 1.8F && xAccel*xAccel > yAccel*yAccel)  // tilt to left
+		}
+		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
+																	// right
+			gameEngine.setInputDir(3);
+			gameView.setDir(3);
+		}
+		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
+																	// left
+			gameEngine.setInputDir(4);
 			gameView.setDir(4);
+		}
 
 		
 		
