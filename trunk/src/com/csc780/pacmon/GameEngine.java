@@ -1,6 +1,7 @@
 package com.csc780.pacmon;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
@@ -27,6 +28,9 @@ public class GameEngine {
 		pacmon = new Pacmon();  // new pacmon
 		
 		ghosts = new ArrayList<Monster>();
+		
+		ghosts.add(new Monster());
+		ghosts.add(new Monster());
 		
 		// maze stuff
 		Maze maze = new Maze();
@@ -142,7 +146,112 @@ public class GameEngine {
 	
 	//update ghost movements and locations
 	public void updateGhost(){
+		int gNormalSpeed = ghosts.get(0).getNormalSpeed();
+		int XmodW, YmodH;
+		int boxX, boxY;
+		int gX, gY;
 		
+		for (int i = 0; i < ghosts.size(); i++) {
+
+			gX = ghosts.get(i).getX();
+			gY = ghosts.get(i).getY();
+			XmodW = gX % blockSize;
+			YmodH = gY % blockSize;
+			boolean movable = true;
+			Random rand = new Random();
+			// check direction and change if it is allowed
+			if (XmodW == 0 && YmodH == 0) {
+				int inputDirection = rand.nextInt(3) + 1;
+				boxX = gX / blockSize;
+				boxY = gY / blockSize;
+
+				if (inputDirection == 4) { // move left allowed if can move to
+											// left
+					if (boxX > 0)
+						if (mazeArray[boxY][boxX - 1] != 0)
+							newDirection = inputDirection;
+				}
+				if (inputDirection == 3) { // move right
+					if (boxX < mazeColumn)
+						if (mazeArray[boxY][boxX + 1] != 0)
+							newDirection = inputDirection;
+				}
+				if (inputDirection == 2) { // move down
+					if (boxY < mazeRow)
+						if (mazeArray[boxY + 1][boxX] != 0)
+							newDirection = inputDirection;
+				}
+				if (inputDirection == 1) { // move up
+					if (boxY > 0)
+						if (mazeArray[boxY - 1][boxX] != 0)
+							newDirection = inputDirection;
+				}
+			} else {
+				if (newDirection != inputDirection) {
+					if (((inputDirection == 1) || (inputDirection == 2))
+							&& (XmodW == 0) && (YmodH != 0)) {
+						newDirection = inputDirection;
+					}
+					if (((inputDirection == 3) || (inputDirection == 4))
+							&& (YmodH == 0) && (XmodW != 0)) {
+						newDirection = inputDirection;
+					}
+				}
+			}
+
+			ghosts.get(i).setDir(newDirection);
+
+			// evaluate at intersection, collision detection
+			if (XmodW == 0 && YmodH == 0) {
+				boxX = gX / blockSize;
+				boxY = gY / blockSize;
+
+				movable = true;
+
+				if (newDirection == 4) { // move left
+					if (boxX > 0)
+						if (mazeArray[boxY][boxX - 1] == 0) {
+							movable = false;
+						}
+				}
+
+				if (newDirection == 3) { // move right
+					if (boxX < mazeColumn - 1)
+						if (mazeArray[boxY][boxX + 1] == 0) {
+							movable = false;
+						}
+				}
+
+				if (newDirection == 2) { // move down
+					if (boxY < mazeRow - 1)
+						if (mazeArray[boxY + 1][boxX] == 0) {
+							movable = false;
+						}
+				}
+				if (newDirection == 1) { // move up
+					if (boxY > 0)
+						if (mazeArray[boxY - 1][boxX] == 0) {
+							movable = false;
+						}
+				}
+
+			}
+
+			if (movable) {
+				if (newDirection == 1) // up
+					gY = gY - gNormalSpeed;
+				if (newDirection == 2) // down
+					gY = gY + gNormalSpeed;
+				if (newDirection == 3) // right
+					gX = gX + gNormalSpeed;
+				if (newDirection == 4) // left
+					gX = gX - gNormalSpeed;
+			}
+
+			ghosts.get(i).setX(gX);
+			ghosts.get(i).setY(gY);
+
+		}
 	}
 	
 	// using accelerometer to set direction of player

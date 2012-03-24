@@ -1,11 +1,11 @@
 package com.csc780.pacmon;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -26,7 +26,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	boolean isRunning = false;
 	
 	int currentFrame = 0; 	// for drawing sprite
-	
+	int mCurrentFrame = 0;
 	
 	//pacman data
 	//direction 1 = up, 2 = down, 3 = right, 4 = left
@@ -34,9 +34,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private int direction;
 
 	private GameEngine gameEngine;
-	
+	private ArrayList<Monster> ghosts;
 	//drawing bitmap
-	private Bitmap ball, pac_img, wall, door, ghost ; // bitmap 
+	private Bitmap ball, pac_img, wall, door, ghost, bluey_img, redy_img ; // bitmap 
 	private int pacSprite_height, pacSprite_width;
 	
 	//maze info
@@ -57,9 +57,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
 
-		direction = 3;
 		
 		initBitmap();  // init all Bitmap and its components
+
+		ghosts = gameEngine.ghosts;
 		
 		surfaceHolder = getHolder();
 		isRunning = true;
@@ -72,6 +73,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite);
+		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
+		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		
 		pacSprite_width = pac_img.getWidth();
 		pacSprite_height = pac_img.getHeight();
@@ -143,8 +146,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	// draw current location of ghosts
 	private void drawGhost(Canvas canvas) {
-		// TODO Auto-generated method stub
-		
+		mCurrentFrame = ++mCurrentFrame % 2;
+		for (int i = 0; i < gameEngine.ghosts.size(); i++) {
+			int direction = ghosts.get(i).getDir();
+			int srcY = (direction - 1) * blockSize;
+			int srcX = mCurrentFrame * blockSize;
+			int gX = ghosts.get(i).getX();
+			int gY = ghosts.get(i).getY();
+			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
+			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
+			canvas.drawBitmap(bluey_img, src, dst, null);
+		}
 	}
 
 	// draw pacmon 
