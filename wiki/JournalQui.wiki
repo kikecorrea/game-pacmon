@@ -19,6 +19,10 @@ Links:
 
 [JournalQui#Week_3/4_-_3/11]
 
+[JournalQui#Week_3/11_-_3/18]
+
+[JournalQui#Week_3/18_-_3/25]
+
 === Week 2/5 - 2/12 ===
 Progress:
    * Created code repository
@@ -82,3 +86,24 @@ Learned:
 Plan for next week:
    * Add ghosts
    * Add food
+
+=== Week 3/11 - 3/18 ===
+Progress:
+   * Split out data to Model-View-Controller
+Problem:
+   * Game's logic of ghost
+   * Game's organization
+Learned:
+   * Sprite for 2D graphics
+Plan for next week:
+   * Add food to maze
+
+=== Week 3/18 - 3/25 ===
+Progress:
+   * Added food
+Problem:
+   * Problem with threads
+Learned:
+   * Research on ways to do game's logic and render
+Plan for next week:
+   * Make menu and score
