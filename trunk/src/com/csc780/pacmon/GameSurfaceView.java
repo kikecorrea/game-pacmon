@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS = 50;
+	private final static int    MAX_FPS = 40;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -36,7 +36,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private GameEngine gameEngine;
 	private ArrayList<Monster> ghosts;
 	//drawing bitmap
-	private Bitmap ball, pac_img, wall, door, ghost, bluey_img, redy_img ; // bitmap 
+	private Bitmap ball, pac_img, wall, door, ghost, bluey_img, redy_img, food, power ; // bitmap 
 	private int pacSprite_height, pacSprite_width;
 	
 	//maze info
@@ -52,10 +52,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		blockSize = 32;  // size of block
 		dx = dy = 0;
-		maze = new Maze();
-		mazeArray = maze.getMaze();
-		mazeRow = maze.getMazeRow();
-		mazeColumn = maze.getMazeColumn();
+		maze = gameEngine.getMaze();
+		mazeArray = gameEngine.getMazeArray();
+		mazeRow = gameEngine.getMazeRow();
+		mazeColumn = gameEngine.getMazeColumn();
 
 		
 		initBitmap();  // init all Bitmap and its components
@@ -72,6 +72,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
+		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
+		power = BitmapFactory.decodeResource(getResources(), R.drawable.power);
 		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite);
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
@@ -201,7 +203,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	}
 	
-	// draw current maze
+	// draw current maze with food
 	public void drawMaze(Canvas canvas){
 		for (int i = 0; i < mazeRow; i++){
 			for (int j = 0; j < mazeColumn; j++){
@@ -209,6 +211,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					canvas.drawBitmap(wall, j*blockSize, i*blockSize, null);
 				if (mazeArray[i][j] == 3)
 					canvas.drawBitmap(door, j*blockSize, i*blockSize, null);
+				if (mazeArray[i][j] == 1)
+					canvas.drawBitmap(food, j*blockSize, i*blockSize, null);
+				if (mazeArray[i][j] == 2)
+					canvas.drawBitmap(power, j*blockSize, i*blockSize, null);
 			}
 		}
 	}
@@ -218,161 +224,5 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-//check direction
-if(XmodW == 0 && YmodH == 0){
-	boxX = pX / blockSize;
-	boxY = pY / blockSize;
-
-	if (direction == 4){  // move left
-        if (boxX > 0 )
-            if ( mazeArray[boxY][boxX - 1] == 0)
-                newDirection = direction;
-	}
-	
-	if (direction == 3){   // move right
-        if (boxX < mazeColumn )
-            if ( mazeArray[boxY][boxX + 1] == 0) 
-                newDirection = direction;
-
-	}	
-	
-	if (direction == 2){ // move down
-		if (boxY < mazeRow)
-			if (mazeArray[boxY + 1][boxX] == 0)
-				newDirection = direction;
-	}
-	if (direction == 1) { // move up
-        if (boxY > 0 )
-            if (mazeArray[boxY - 1][boxX] == 0)
-                newDirection = direction;
-	}
-} else {
-	if (newDirection != direction){
-        if (((direction == 1) || (direction == 2)) && (XmodW!=0) && (YmodH==0)){
-            newDirection = direction;
-        }
-        if (((direction == 3) || (direction == 4)) && (YmodH!=0) && (XmodW==0) ){
-            newDirection = direction;
-        }
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-			if (oldDirection == 1 || oldDirection == 2){
-				if (newDirection == 1) // up		
-					pY = pY - pNormalSpeed;
-				if (newDirection == 2) // down
-					pY = pY + pNormalSpeed;
-			} else {
-				if (oldDirection == 1) // up		
-					pY = pY - pNormalSpeed;
-				if (oldDirection == 2) // down
-					pY = pY + pNormalSpeed;
-			}
-			
-			if (oldDirection == 3 || oldDirection == 4){
-				if (newDirection == 3) // right
-					pX = pX + pNormalSpeed;
-				if (newDirection == 4) // left
-					pX = pX - pNormalSpeed;
-			} else {
-				if (oldDirection == 3) // right
-					pX = pX + pNormalSpeed;
-				if (oldDirection == 4) // left
-					pX = pX - pNormalSpeed;
-			}
-			
-			
-			
-			
-			
-			
-			
-			
-					if(XmodW == 0 && YmodH == 0){
-			oldDirection = direction;
-			boxX = pX / blockSize;
-			boxY = pY / blockSize;
-		
-			if (newDirection == 4){  // move left
-                if (boxX > 0 ) {
-                    if ( mazeArray[boxY][boxX - 1] == 0){
-                        canMove = false;
-                    }
-                } else 
-                    pX = 0;
-			}
-			
-			if (newDirection == 3){   // move right
-                if (boxX < mazeColumn -1 ) {
-                    if ( mazeArray[boxY][boxX + 1] == 0) {
-                        canMove = false;
-                    }
-                } else 
-                    pX = (mazeColumn - 1) * blockSize;
-			}	
-			
-			if (newDirection == 2){ // move down
-				if (boxY < mazeRow - 1){
-					if (mazeArray[boxY + 1][boxX] == 0){
-						canMove = false;
-					}
-				}
-				else {
-					pY = 0;
-				}
-			}
-			if (newDirection == 1) { // move up
-                if (boxY > 0 ) {
-					if (mazeArray[boxY - 1][boxX] == 0) {
-						canMove = false;
-					}
-				} else
-					pY = (mazeRow - 1) * blockSize;
-			}
-
-		}
-
-		if (canMove) {
-			oldX = pX;
-			oldY = pY;
-
-				if (oldDirection == 1) // up		
-					pY = pY - pNormalSpeed;
-				if (oldDirection == 2) // down
-					pY = pY + pNormalSpeed;
-
-				if (oldDirection == 3) // right
-					pX = pX + pNormalSpeed;
-				if (oldDirection == 4) // left
-					pX = pX - pNormalSpeed;
-			
-			
-*/
 
 
