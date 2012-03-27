@@ -12,7 +12,8 @@ import java.util.Random;
  */
 
 public class GameEngine {
-	static final int UP = 0, DOWN = 1, RIGHT = 3, LEFT = 4;
+	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
+	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
 	private Maze maze;
 	Pacmon pacmon;
@@ -22,6 +23,7 @@ public class GameEngine {
 	int pX, pY;
 	int newDirection;
 	
+	ArrayList<Integer> ghostArray[];
 	int directionMaze[][];
 	int mazeArray[][];
 	int blockSize = 32;
@@ -41,6 +43,7 @@ public class GameEngine {
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
 		directionMaze = maze.getDirectionMaze();
+		ghostArray = maze.getGhostArray();
 	}
 	
 	//update
@@ -64,32 +67,32 @@ public class GameEngine {
 			boxX = pX / blockSize;
 			boxY = pY / blockSize;
 
-			if (inputDirection == 4){  // move left allowed if can move to left
+			if (inputDirection == LEFT){  // move left allowed if can move to left
 		        if (boxX > 0 )
 		            if ( mazeArray[boxY][boxX - 1] != 0)
 		                newDirection = inputDirection;
 			}
-			if (inputDirection == 3){   // move right
+			if (inputDirection == RIGHT){   // move right
 		        if (boxX < mazeColumn )
 		            if (mazeArray[boxY][boxX + 1] != 0) 
 		                newDirection = inputDirection;
 			}	
-			if (inputDirection == 2){ // move down
+			if (inputDirection == DOWN){ // move down
 				if (boxY < mazeRow)
 					if (mazeArray[boxY + 1][boxX] != 0 && mazeArray[boxY + 1][boxX] != 3)
 						newDirection = inputDirection;
 			}
-			if (inputDirection == 1) { // move up
+			if (inputDirection == UP) { // move up
 		        if (boxY > 0 )
 		            if (mazeArray[boxY - 1][boxX] != 0 && mazeArray[boxY - 1][boxX] != 3)
 		                newDirection = inputDirection;
 			}
 		} else {  // change opposite direction
 			if (newDirection != inputDirection){
-		        if (((inputDirection == 1) || (inputDirection == 2)) && (XmodW==0) && (YmodH!=0)){
+		        if (((inputDirection == UP) || (inputDirection == DOWN)) && (XmodW==0) && (YmodH!=0)){
 		            newDirection = inputDirection;
 		        }
-		        if (((inputDirection == 3) || (inputDirection == 4)) && (YmodH==0) && (XmodW!=0) ){
+		        if (((inputDirection == RIGHT) || (inputDirection == LEFT)) && (YmodH==0) && (XmodW!=0) ){
 		            newDirection = inputDirection;
 		        }
 		    }
@@ -106,27 +109,27 @@ public class GameEngine {
 			
 			movable = true;
 			
-			if (newDirection == 4){  // move left
+			if (newDirection == LEFT){  // move left
                 if (boxX > 0 )
                     if ( mazeArray[boxY][boxX - 1] == 0){
                         movable = false;
                     }
 			}
 			
-			if (newDirection == 3){   // move right
+			if (newDirection == RIGHT){   // move right
                 if (boxX < mazeColumn -1 ) 
                     if ( mazeArray[boxY][boxX + 1] == 0) {
                         movable = false;
                     }
 			}	
 			
-			if (newDirection == 2){ // move down
+			if (newDirection == DOWN){ // move down
 				if (boxY < mazeRow - 1)
 					if (mazeArray[boxY + 1][boxX] == 0 || mazeArray[boxY + 1][boxX] == 3){
 						movable = false;
 				}
 			}
-			if (newDirection == 1) { // move up
+			if (newDirection == UP) { // move up
                 if (boxY > 0 ) 
 					if (mazeArray[boxY - 1][boxX] == 0 || mazeArray[boxY - 1][boxX] == 3){
 						movable = false;
@@ -136,13 +139,13 @@ public class GameEngine {
 		}
 		
 		if( movable){
-			if (newDirection == 1) // up
+			if (newDirection == UP) // up
 				pY = pY - pNormalSpeed;
-			if (newDirection == 2) // down
+			if (newDirection == DOWN) // down
 				pY = pY + pNormalSpeed;
-			if (newDirection == 3 ) // right
+			if (newDirection == RIGHT) // right
 				pX = pX + pNormalSpeed;
-			if (newDirection == 4) // left
+			if (newDirection == LEFT) // left
 				pX = pX - pNormalSpeed;
 		}
 		
@@ -167,113 +170,75 @@ public class GameEngine {
 			XmodW = gX % blockSize;
 			YmodH = gY % blockSize;
 			boolean movable = true;
-
-			int ghostNewDir = ghosts.get(i).getDir();
-			int randDirection = ghostNewDir;
+			int crossing;
 			
 			// check direction and change if it is allowed
 			if (XmodW == 0 && YmodH == 0) {
-				randDirection = ((int)Math.random()*4) + 1;
 				boxX = gX / blockSize;
 				boxY = gY / blockSize;
+				
+				//check if at crossing using directional maze
+				crossing = directionMaze[boxY][boxX];
+				if (crossing > 0){
+					if (crossing == 1) moveGhost(RD, ghosts.get(i), i);
+					if (crossing == 2) moveGhost(LD, ghosts.get(i), i);
+					if (crossing == 3) moveGhost(RU, ghosts.get(i), i);
+					if (crossing == 4) moveGhost(LU, ghosts.get(i), i);
+					if (crossing == 5) moveGhost(RDU, ghosts.get(i), i);
+					if (crossing == 6) moveGhost(LDU, ghosts.get(i), i);
+					if (crossing == 7) moveGhost(RLD, ghosts.get(i), i);
+					if (crossing == 8) moveGhost(RLU, ghosts.get(i), i);
+					if (crossing == 9) moveGhost(RLUD, ghosts.get(i), i);
 
-				if (randDirection == 4) { // move left allowed if can move to left
-					if (boxX > 0)
-						if (mazeArray[boxY][boxX - 1] != 0)
-							ghostNewDir = randDirection;
-				}
-				if (randDirection == 3) { // move right
-					if (boxX < mazeColumn)
-						if (mazeArray[boxY][boxX + 1] != 0)
-							ghostNewDir = randDirection;
-				}
-				if (randDirection == 2) { // move down
-					if (boxY < mazeRow)
-						if (mazeArray[boxY + 1][boxX] != 0)
-							ghostNewDir = randDirection;
-				}
-				if (randDirection == 1) { // move up
-					if (boxY > 0)
-						if (mazeArray[boxY - 1][boxX] != 0)
-							ghostNewDir = randDirection;
-				}
-			} else {
-				if (newDirection != randDirection) {
-					if (((randDirection == 1) || (randDirection == 2))
-							&& (XmodW == 0) && (YmodH != 0)) {
-						ghostNewDir = randDirection;
-					}
-					if (((randDirection == 3) || (randDirection == 4))
-							&& (YmodH == 0) && (XmodW != 0)) {
-						ghostNewDir = randDirection;
-					}
-				}
-			}
-
-			ghosts.get(i).setDir(ghostNewDir);
-
-			// evaluate at intersection, collision detection
-			if (XmodW == 0 && YmodH == 0) {
-				boxX = gX / blockSize;
-				boxY = gY / blockSize;
-
-				movable = true;
-
-				if (ghostNewDir == 4) { // move left
-					if (boxX > 0)
-						if (mazeArray[boxY][boxX - 1] == 0) {
-							movable = false;
-						}
-				}
-
-				if (ghostNewDir == 3) { // move right
-					if (boxX < mazeColumn - 1)
-						if (mazeArray[boxY][boxX + 1] == 0) {
-							movable = false;
-						}
-				}
-
-				if (ghostNewDir == 2) { // move down
-					if (boxY < mazeRow - 1)
-						if (mazeArray[boxY + 1][boxX] == 0) {
-							movable = false;
-						}
-				}
-				if (ghostNewDir == 1) { // move up
-					if (boxY > 0)
-						if (mazeArray[boxY - 1][boxX] == 0) {
-							movable = false;
-						}
+	
 				}
 
 			}
 
+			int ghostCurDir = ghosts.get(i).getDir();
+			
+			System.out.println("ghost Cur outside is " + ghostCurDir);
+			
 			if (movable) {
-				if (ghostNewDir == 1) // up
+				if (ghostCurDir == UP) // up
 					gY = gY - gNormalSpeed;
-				if (ghostNewDir == 2) // down
+				if (ghostCurDir == DOWN) // down
 					gY = gY + gNormalSpeed;
-				if (ghostNewDir == 3) // right
+				if (ghostCurDir == RIGHT) // right
 					gX = gX + gNormalSpeed;
-				if (ghostNewDir == 4) // left
+				if (ghostCurDir == LEFT) // left
 					gX = gX - gNormalSpeed;
 			}
-
+			
 			ghosts.get(i).setX(gX);
 			ghosts.get(i).setY(gY);
 
 		}
 	}
 	
+	// move ghost using directional array
+	private void moveGhost(int index, Monster ghost, int ghostIndex){
+		
+		int n = (int)(Math.random() * ghostArray[index].size());
+		System.out.println("random n is " + n);
+		
+		int d = ghostArray[index].get(n);
+		
+		System.out.println("New Ghost Dir is " + d);
+		
+		ghosts.get(ghostIndex).setDir(d);
+	
+	}
+	
+	
 	private void eatFoodPower(int boxX, int boxY) {
 		if (mazeArray[boxY][boxX] == 1){
-			System.out.println(boxX + " boxY is " + boxY);
 			mazeArray[boxY][boxX] = 5;
 			//maze.clearFood(boxX, boxY);
 		}
 		
 		if (mazeArray[boxY][boxX] == 2){
-			mazeArray[boxY][boxX] = 5;
+			mazeArray[boxY][boxX] = 5; // blank
 		}
 	}
 	

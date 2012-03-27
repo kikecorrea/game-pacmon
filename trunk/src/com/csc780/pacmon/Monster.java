@@ -13,7 +13,7 @@ public class Monster {
 	public Monster(){
 		x = 7 * 32;
 		y = 9 * 32;
-		dir = 2;
+		dir = 8;
 		normalSpeed = 2;
 		state = 0;
 	}
@@ -70,7 +70,7 @@ public class Monster {
 
 
 	public void setDir(int newDirection) {
-		// TODO Auto-generated method stub
+		this.dir = newDirection;
 		
 	}
 
