@@ -165,9 +165,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
 			
-			if (i == 1)
+			if (i == 0)
 				canvas.drawBitmap(bluey_img, src, dst, null);
-			else if (i == 2)
+			else if (i == 1)
 				canvas.drawBitmap(redy_img, src, dst, null);
 		}
 	}
