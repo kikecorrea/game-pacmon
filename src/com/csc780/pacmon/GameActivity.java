@@ -9,7 +9,7 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 
 public class GameActivity extends Activity implements SensorEventListener{
-	
+	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
 	private GameSurfaceView gameView;
 	private SensorManager mySensorManager;
@@ -78,21 +78,21 @@ public class GameActivity extends Activity implements SensorEventListener{
 		//float z = event.values[2];
 		
 		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
-			gameEngine.setInputDir(1);
+			gameEngine.setInputDir(UP);
 			//gameView.setDir(1);
 		}
 		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
-			gameEngine.setInputDir(2);
+			gameEngine.setInputDir(DOWN);
 			//gameView.setDir(2);
 		}
 		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// right
-			gameEngine.setInputDir(3);
+			gameEngine.setInputDir(RIGHT);
 			//gameView.setDir(3);
 		}
 		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// left
-			gameEngine.setInputDir(4);
+			gameEngine.setInputDir(LEFT);
 			//gameView.setDir(4);
 		}
 

@@ -7,10 +7,10 @@ package com.csc780.pacmon;
  */
 public class Pacmon {
 
-	public static final int UP = 1;
-	public static final int DOWN = 2;
-	public static final int RIGHT = 3;
-	public static final int LEFT = 4;
+	public static final int UP = 4;
+	public static final int DOWN = 8;
+	public static final int RIGHT = 1;
+	public static final int LEFT = 2;
 	
 	//position by grid
 	private int pX;
@@ -24,7 +24,6 @@ public class Pacmon {
 	private int pPowerSpeed;
 	
 	private int dir; // direction of movement 0 = not moving
-					 // 1 = left, 2 = right, 3 = up, 4 = down
 	
 	public Pacmon (){
 		pX = pY = 32;

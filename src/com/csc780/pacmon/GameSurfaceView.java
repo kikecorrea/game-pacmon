@@ -19,6 +19,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
+	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
 	private float dx, dy;
 	private SurfaceHolder surfaceHolder;
@@ -151,21 +152,38 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		mCurrentFrame = ++mCurrentFrame % 2;
 		for (int i = 0; i < gameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
-			int srcY = (direction - 1) * blockSize;
+			int n;
+			if (direction == UP)	n = 0;
+			else if (direction == DOWN)		n = 1;
+			else if (direction == RIGHT)		n = 2;
+			else 		n = 3;
+			
+			int srcY = n * blockSize;
 			int srcX = mCurrentFrame * blockSize;
 			int gX = ghosts.get(i).getX();
 			int gY = ghosts.get(i).getY();
 			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
-			canvas.drawBitmap(bluey_img, src, dst, null);
+			
+			if (i == 1)
+				canvas.drawBitmap(bluey_img, src, dst, null);
+			else if (i == 2)
+				canvas.drawBitmap(redy_img, src, dst, null);
 		}
 	}
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas, int dir) {
 		currentFrame = ++currentFrame % 3;
+		int n;
 		int direction = pacmon.getDir(); // get current direction of pacmon
-		int srcY = (direction-1) * blockSize;
+		
+		if (direction == UP)	n = 0;
+		else if (direction == DOWN)		n = 1;
+		else if (direction == RIGHT)		n = 2;
+		else 		n = 3;
+		
+		int srcY = n * blockSize;
 		int srcX = currentFrame * blockSize;
 		int pX = pacmon.getpX();
 		int pY = pacmon.getpY();
