@@ -7,11 +7,15 @@ public class Monster {
 	private int dir;
 	private int normalSpeed;
 	
+	private int state;  // 0 = in cage, 1 = door step, 2 outside
+	
 	
 	public Monster(){
 		x = 7 * 32;
 		y = 9 * 32;
 		dir = 2;
+		normalSpeed = 2;
+		state = 0;
 	}
 	
 	
@@ -68,6 +72,18 @@ public class Monster {
 	public void setDir(int newDirection) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public int getState() {
+		return state;
+	}
+
+
+
+	public void setState(int state) {
+		this.state = state;
 	}
 	
 }

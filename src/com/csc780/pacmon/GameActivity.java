@@ -49,6 +49,14 @@ public class GameActivity extends Activity implements SensorEventListener{
 		super.onResume();
 		gameView.resume();
 	}
+	
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		//gameView.pause();
+	}
+
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub
@@ -71,21 +79,21 @@ public class GameActivity extends Activity implements SensorEventListener{
 		
 		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			gameEngine.setInputDir(1);
-			gameView.setDir(1);
+			//gameView.setDir(1);
 		}
 		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
 			gameEngine.setInputDir(2);
-			gameView.setDir(2);
+			//gameView.setDir(2);
 		}
 		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// right
 			gameEngine.setInputDir(3);
-			gameView.setDir(3);
+			//gameView.setDir(3);
 		}
 		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// left
 			gameEngine.setInputDir(4);
-			gameView.setDir(4);
+			//gameView.setDir(4);
 		}
 
 		

@@ -12,14 +12,17 @@ import java.util.Random;
  */
 
 public class GameEngine {
-
-	Maze maze;
+	static final int UP = 0, DOWN = 1, RIGHT = 3, LEFT = 4;
+	
+	private Maze maze;
 	Pacmon pacmon;
 	ArrayList<Monster> ghosts;
 	
 	int inputDirection;
 	int pX, pY;
 	int newDirection;
+	
+	int directionMaze[][];
 	int mazeArray[][];
 	int blockSize = 32;
 	int mazeRow, mazeColumn;
@@ -37,8 +40,10 @@ public class GameEngine {
 		mazeArray = maze.getMaze();
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
+		directionMaze = maze.getDirectionMaze();
 	}
 	
+	//update
 	public void update(){
 		updatePac();
 		updateGhost();
@@ -79,7 +84,7 @@ public class GameEngine {
 		            if (mazeArray[boxY - 1][boxX] != 0 && mazeArray[boxY - 1][boxX] != 3)
 		                newDirection = inputDirection;
 			}
-		} else {
+		} else {  // change opposite direction
 			if (newDirection != inputDirection){
 		        if (((inputDirection == 1) || (inputDirection == 2)) && (XmodW==0) && (YmodH!=0)){
 		            newDirection = inputDirection;
@@ -94,9 +99,11 @@ public class GameEngine {
 		
 		//evaluate at intersection, collision detection
 		if(XmodW == 0 && YmodH == 0){
+			
 			boxX = pX / blockSize;
 			boxY = pY / blockSize;
-		
+			eatFoodPower(boxX, boxY);
+			
 			movable = true;
 			
 			if (newDirection == 4){  // move left
@@ -144,6 +151,8 @@ public class GameEngine {
 		
 	}
 	
+
+
 	//update ghost movements and locations
 	public void updateGhost(){
 		int gNormalSpeed = ghosts.get(0).getNormalSpeed();
@@ -151,55 +160,57 @@ public class GameEngine {
 		int boxX, boxY;
 		int gX, gY;
 		
+		
 		for (int i = 0; i < ghosts.size(); i++) {
-
 			gX = ghosts.get(i).getX();
 			gY = ghosts.get(i).getY();
 			XmodW = gX % blockSize;
 			YmodH = gY % blockSize;
 			boolean movable = true;
-			Random rand = new Random();
+
+			int ghostNewDir = ghosts.get(i).getDir();
+			int randDirection = ghostNewDir;
+			
 			// check direction and change if it is allowed
 			if (XmodW == 0 && YmodH == 0) {
-				int inputDirection = rand.nextInt(3) + 1;
+				randDirection = ((int)Math.random()*4) + 1;
 				boxX = gX / blockSize;
 				boxY = gY / blockSize;
 
-				if (inputDirection == 4) { // move left allowed if can move to
-											// left
+				if (randDirection == 4) { // move left allowed if can move to left
 					if (boxX > 0)
 						if (mazeArray[boxY][boxX - 1] != 0)
-							newDirection = inputDirection;
+							ghostNewDir = randDirection;
 				}
-				if (inputDirection == 3) { // move right
+				if (randDirection == 3) { // move right
 					if (boxX < mazeColumn)
 						if (mazeArray[boxY][boxX + 1] != 0)
-							newDirection = inputDirection;
+							ghostNewDir = randDirection;
 				}
-				if (inputDirection == 2) { // move down
+				if (randDirection == 2) { // move down
 					if (boxY < mazeRow)
 						if (mazeArray[boxY + 1][boxX] != 0)
-							newDirection = inputDirection;
+							ghostNewDir = randDirection;
 				}
-				if (inputDirection == 1) { // move up
+				if (randDirection == 1) { // move up
 					if (boxY > 0)
 						if (mazeArray[boxY - 1][boxX] != 0)
-							newDirection = inputDirection;
+							ghostNewDir = randDirection;
 				}
 			} else {
-				if (newDirection != inputDirection) {
-					if (((inputDirection == 1) || (inputDirection == 2))
+				if (newDirection != randDirection) {
+					if (((randDirection == 1) || (randDirection == 2))
 							&& (XmodW == 0) && (YmodH != 0)) {
-						newDirection = inputDirection;
+						ghostNewDir = randDirection;
 					}
-					if (((inputDirection == 3) || (inputDirection == 4))
+					if (((randDirection == 3) || (randDirection == 4))
 							&& (YmodH == 0) && (XmodW != 0)) {
-						newDirection = inputDirection;
+						ghostNewDir = randDirection;
 					}
 				}
 			}
 
-			ghosts.get(i).setDir(newDirection);
+			ghosts.get(i).setDir(ghostNewDir);
 
 			// evaluate at intersection, collision detection
 			if (XmodW == 0 && YmodH == 0) {
@@ -208,27 +219,27 @@ public class GameEngine {
 
 				movable = true;
 
-				if (newDirection == 4) { // move left
+				if (ghostNewDir == 4) { // move left
 					if (boxX > 0)
 						if (mazeArray[boxY][boxX - 1] == 0) {
 							movable = false;
 						}
 				}
 
-				if (newDirection == 3) { // move right
+				if (ghostNewDir == 3) { // move right
 					if (boxX < mazeColumn - 1)
 						if (mazeArray[boxY][boxX + 1] == 0) {
 							movable = false;
 						}
 				}
 
-				if (newDirection == 2) { // move down
+				if (ghostNewDir == 2) { // move down
 					if (boxY < mazeRow - 1)
 						if (mazeArray[boxY + 1][boxX] == 0) {
 							movable = false;
 						}
 				}
-				if (newDirection == 1) { // move up
+				if (ghostNewDir == 1) { // move up
 					if (boxY > 0)
 						if (mazeArray[boxY - 1][boxX] == 0) {
 							movable = false;
@@ -238,13 +249,13 @@ public class GameEngine {
 			}
 
 			if (movable) {
-				if (newDirection == 1) // up
+				if (ghostNewDir == 1) // up
 					gY = gY - gNormalSpeed;
-				if (newDirection == 2) // down
+				if (ghostNewDir == 2) // down
 					gY = gY + gNormalSpeed;
-				if (newDirection == 3) // right
+				if (ghostNewDir == 3) // right
 					gX = gX + gNormalSpeed;
-				if (newDirection == 4) // left
+				if (ghostNewDir == 4) // left
 					gX = gX - gNormalSpeed;
 			}
 
@@ -254,9 +265,38 @@ public class GameEngine {
 		}
 	}
 	
+	private void eatFoodPower(int boxX, int boxY) {
+		if (mazeArray[boxY][boxX] == 1){
+			System.out.println(boxX + " boxY is " + boxY);
+			mazeArray[boxY][boxX] = 5;
+			//maze.clearFood(boxX, boxY);
+		}
+		
+		if (mazeArray[boxY][boxX] == 2){
+			mazeArray[boxY][boxX] = 5;
+		}
+	}
+	
+	
 	// using accelerometer to set direction of player
 	public void setInputDir(int dir){
 		this.inputDirection = dir;
+	}
+	
+	public Maze getMaze(){
+		return this.maze;
+	}
+	
+	public int[][] getMazeArray(){
+		return this.mazeArray;
+	}
+
+	public int getMazeRow() {
+		return this.mazeRow;
+	}
+
+	public int getMazeColumn() {
+		return this.mazeColumn;
 	}
 	
 }
