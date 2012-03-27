@@ -97,44 +97,49 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			canvas = null;
 			try {
 				canvas = surfaceHolder.lockCanvas();
-				synchronized (surfaceHolder) {
-					beginTime = System.currentTimeMillis();
-					framesSkipped = 0; // resetting the frames skipped
-					
-					int screenWidth = canvas.getWidth();
-					
-					gameEngine.update();
+				if (canvas == null) {
+					surfaceHolder = getHolder();
+				} else {
 
-					canvas.drawRGB(0, 0, 0);
+					synchronized (surfaceHolder) {
+						beginTime = System.currentTimeMillis();
+						framesSkipped = 0; // resetting the frames skipped
 
-					drawMaze(canvas); // draw updated maze
+						int screenWidth = canvas.getWidth();
 
-					drawPacmon(canvas, direction); // draw Pacman
-
-					drawGhost(canvas); // draw ghosts
-
-					// calculate how long did the cycle take
-					timeDiff = System.currentTimeMillis() - beginTime;
-					// calculate sleep time
-					sleepTime = (int) (FRAME_PERIOD - timeDiff);
-
-					if (sleepTime > 0) {
-						// if sleepTime > 0 we're OK
-						try {
-							// send the thread to sleep for a short period
-							// very useful for battery saving
-							Thread.sleep(sleepTime);
-						} catch (InterruptedException e) {
-						}
-					}
-
-					while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
-						// we need to catch up
-						// update without rendering
 						gameEngine.update();
-						// add frame period to check if in next frame
-						sleepTime += FRAME_PERIOD;
-						framesSkipped++;
+
+						canvas.drawRGB(0, 0, 0);
+
+						drawMaze(canvas); // draw updated maze
+
+						drawPacmon(canvas, direction); // draw Pacman
+
+						drawGhost(canvas); // draw ghosts
+
+						// calculate how long did the cycle take
+						timeDiff = System.currentTimeMillis() - beginTime;
+						// calculate sleep time
+						sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+						if (sleepTime > 0) {
+							// if sleepTime > 0 we're OK
+							try {
+								// send the thread to sleep for a short period
+								// very useful for battery saving
+								Thread.sleep(sleepTime);
+							} catch (InterruptedException e) {
+							}
+						}
+
+						while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
+							// we need to catch up
+							// update without rendering
+							gameEngine.update();
+							// add frame period to check if in next frame
+							sleepTime += FRAME_PERIOD;
+							framesSkipped++;
+						}
 					}
 				}
 			} finally {
