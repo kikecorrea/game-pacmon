@@ -12,8 +12,6 @@ import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
@@ -24,7 +22,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
-	private float dx, dy;
 	private SurfaceHolder surfaceHolder;
 	private Thread surfaceThread = null;
 	boolean isRunning = false;
@@ -40,11 +37,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private GameEngine gameEngine;
 	private ArrayList<Monster> ghosts;
 	//drawing bitmap
-	private Bitmap ball, pac_img, wall, door, ghost, bluey_img, redy_img, food, power ; // bitmap 
+	private Bitmap pac_img, wall, door, bluey_img, redy_img, yellowy_img, food, power ; // bitmap 
 	
 	//maze info
 	private int[][] mazeArray;
-	private Maze maze;
 	private int mazeRow, mazeColumn;
 	private int blockSize;
 	
@@ -57,8 +53,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		this.gameEngine = gameEngine;
 		
 		blockSize = 32;  // size of block
-		dx = dy = 0;
-		maze = gameEngine.getMaze();
+		
 		mazeArray = gameEngine.getMazeArray();
 		mazeRow = gameEngine.getMazeRow();
 		mazeColumn = gameEngine.getMazeColumn();
@@ -75,7 +70,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initBitmap(){
-		ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
@@ -83,6 +77,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite);
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
+		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
 		
 		paint = new Paint();
 		paint.setColor(Color.WHITE);
@@ -189,6 +184,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				canvas.drawBitmap(bluey_img, src, dst, null);
 			else if (i == 1)
 				canvas.drawBitmap(redy_img, src, dst, null);
+			else if (i == 2)
+				canvas.drawBitmap(yellowy_img, src, dst, null);
 		}
 	}
 

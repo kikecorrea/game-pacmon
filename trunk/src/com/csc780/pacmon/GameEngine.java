@@ -23,7 +23,6 @@ public class GameEngine {
 	float timer;
 	int lives;
 	
-	
 	int inputDirection;
 	int pX, pY;
 	int newDirection;
@@ -41,6 +40,7 @@ public class GameEngine {
 		
 		ghosts = new ArrayList<Monster>();
 		
+		ghosts.add(new Monster());
 		ghosts.add(new Monster());
 		ghosts.add(new Monster());
 		
@@ -184,27 +184,25 @@ public class GameEngine {
 				boxX = gX / blockSize;
 				boxY = gY / blockSize;
 				
-				//check if at crossing using directional maze
+				//check if at crossing using directional maze and update new direction
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (crossing == 1) moveGhost(RD, ghosts.get(i), i);
-					if (crossing == 2) moveGhost(LD, ghosts.get(i), i);
-					if (crossing == 3) moveGhost(RU, ghosts.get(i), i);
-					if (crossing == 4) moveGhost(LU, ghosts.get(i), i);
-					if (crossing == 5) moveGhost(RDU, ghosts.get(i), i);
-					if (crossing == 6) moveGhost(LDU, ghosts.get(i), i);
-					if (crossing == 7) moveGhost(RLD, ghosts.get(i), i);
-					if (crossing == 8) moveGhost(RLU, ghosts.get(i), i);
-					if (crossing == 9) moveGhost(RLUD, ghosts.get(i), i);
+					if (crossing == 1) moveGhost(RD, ghosts.get(i));
+					if (crossing == 2) moveGhost(LD, ghosts.get(i));
+					if (crossing == 3) moveGhost(RU, ghosts.get(i));
+					if (crossing == 4) moveGhost(LU, ghosts.get(i));
+					if (crossing == 5) moveGhost(RDU, ghosts.get(i));
+					if (crossing == 6) moveGhost(LDU, ghosts.get(i));
+					if (crossing == 7) moveGhost(RLD, ghosts.get(i));
+					if (crossing == 8) moveGhost(RLU, ghosts.get(i));
+					if (crossing == 9) moveGhost(RLUD, ghosts.get(i));
 
-	
 				}
 
 			}
 
+			//get direction after calculate
 			int ghostCurDir = ghosts.get(i).getDir();
-			
-			System.out.println("ghost Cur outside is " + ghostCurDir);
 			
 			if (movable) {
 				if (ghostCurDir == UP) // up
@@ -217,6 +215,7 @@ public class GameEngine {
 					gX = gX - gNormalSpeed;
 			}
 			
+			// set new location of ghost after moving
 			ghosts.get(i).setX(gX);
 			ghosts.get(i).setY(gY);
 
@@ -224,20 +223,14 @@ public class GameEngine {
 	}
 	
 	// move ghost using directional array
-	private void moveGhost(int index, Monster ghost, int ghostIndex){
-		
-		int n = (int)(Math.random() * ghostArray[index].size());
-		System.out.println("random n is " + n);
-		
-		int d = ghostArray[index].get(n);
-		
-		System.out.println("New Ghost Dir is " + d);
-		
-		ghosts.get(ghostIndex).setDir(d);
+	private void moveGhost(int index, Monster ghost){
+		int n = (int)(Math.random() * ghostArray[index].size()); // randomize
+		int d = ghostArray[index].get(n);  //apply random to get direction
+		ghost.setDir(d);
 	
 	}
 	
-	
+	// eat food ==> score and power ==> speed
 	private void eatFoodPower(int boxX, int boxY) {
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
