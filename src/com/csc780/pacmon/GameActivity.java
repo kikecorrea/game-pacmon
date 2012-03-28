@@ -1,7 +1,9 @@
 package com.csc780.pacmon;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -57,6 +59,24 @@ public class GameActivity extends Activity implements SensorEventListener{
 		//gameView.pause();
 	}
 
+
+	@Override
+	public void onBackPressed() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Do you want to quit?").setCancelable(false)
+				.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						GameActivity.this.finish();
+					}
+				})
+				.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+		AlertDialog alert = builder.create();
+		alert.show();
+	}
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
 		// TODO Auto-generated method stub

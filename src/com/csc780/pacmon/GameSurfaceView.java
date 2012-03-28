@@ -6,11 +6,14 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
@@ -38,13 +41,15 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private ArrayList<Monster> ghosts;
 	//drawing bitmap
 	private Bitmap ball, pac_img, wall, door, ghost, bluey_img, redy_img, food, power ; // bitmap 
-	private int pacSprite_height, pacSprite_width;
 	
 	//maze info
 	private int[][] mazeArray;
 	private Maze maze;
 	private int mazeRow, mazeColumn;
 	private int blockSize;
+	
+	
+	private Paint paint;
 	
 	public GameSurfaceView(Context context, Pacmon pacmon, GameEngine gameEngine) {
 		super(context);
@@ -79,8 +84,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		
-		pacSprite_width = pac_img.getWidth();
-		pacSprite_height = pac_img.getHeight();
+		paint = new Paint();
+		paint.setColor(Color.WHITE);
+		paint.setTextSize(24);
+		
 	}
 	
 	//thread to update and draw 
@@ -98,6 +105,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			try {
 				canvas = surfaceHolder.lockCanvas();
 				if (canvas == null) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					surfaceHolder = getHolder();
 				} else {
 
@@ -116,6 +129,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						drawPacmon(canvas, direction); // draw Pacman
 
 						drawGhost(canvas); // draw ghosts
+						
+						drawScore(canvas); // draw score and lives
 
 						// calculate how long did the cycle take
 						timeDiff = System.currentTimeMillis() - beginTime;
@@ -197,6 +212,13 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		canvas.drawBitmap(pac_img, src, dst, null);
 		
 	}
+	
+	// draw score
+	public void drawScore(Canvas canvas){
+		canvas.drawText(gameEngine.getPlayerScore(), 20, 736, paint);
+		canvas.drawText(gameEngine.getLives(), 150, 736, paint);
+	}
+	
 
 	public void pause() {
 		isRunning = false;

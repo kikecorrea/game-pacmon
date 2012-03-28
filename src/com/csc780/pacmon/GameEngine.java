@@ -19,6 +19,11 @@ public class GameEngine {
 	Pacmon pacmon;
 	ArrayList<Monster> ghosts;
 	
+	int playerScore;
+	float timer;
+	int lives;
+	
+	
 	int inputDirection;
 	int pX, pY;
 	int newDirection;
@@ -31,6 +36,8 @@ public class GameEngine {
 	
 	public GameEngine(){
 		pacmon = new Pacmon();  // new pacmon
+		
+		playerScore = 0;
 		
 		ghosts = new ArrayList<Monster>();
 		
@@ -234,6 +241,7 @@ public class GameEngine {
 	private void eatFoodPower(int boxX, int boxY) {
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
+			playerScore++;   // increase score
 			//maze.clearFood(boxX, boxY);
 		}
 		
@@ -263,5 +271,18 @@ public class GameEngine {
 	public int getMazeColumn() {
 		return this.mazeColumn;
 	}
+
+	public float getTimer() {
+		return timer;
+	}
+
+	public String getLives() {
+		return "Life remaining: " + pacmon.getpLives();
+	}
+
+	public String getPlayerScore() {
+		return "Score: " + playerScore;
+	}
+	
 	
 }
