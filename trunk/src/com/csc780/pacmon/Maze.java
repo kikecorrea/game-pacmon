@@ -86,7 +86,10 @@ public class Maze {
 		    t2[15]=[1, 2, 4, 8];;
 	}
 */
+	
 	private ArrayList<Integer> t2[] = new ArrayList[16];
+	private int foodCount = 100;
+	
 	
 	public Maze() {
 		mazeMaxRow = 22;
@@ -104,6 +107,10 @@ public class Maze {
 	
 	public int getMazeColumn(){
 		return mazeMaxColumn;
+	}
+	
+	public int getFoodCount(){
+		return foodCount;
 	}
 	
 	public void clearFood(int x, int y){

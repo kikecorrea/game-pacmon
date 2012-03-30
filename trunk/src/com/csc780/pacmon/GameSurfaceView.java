@@ -113,17 +113,17 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 		while (isRunning) {
 			canvas = null;
-			if (gameState == READY)    updateReady(canvas);
-			if (gameState == RUNNING)  updateRunning(canvas);
-			if (gameState == GAMEOVER) updateGameOver(canvas);
-			if (gameState == WON)	   updateWon(canvas);
+			if (gameEngine.getGameState() == READY)    updateReady(canvas);
+			if (gameEngine.getGameState() == RUNNING)  updateRunning(canvas);
+			if (gameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
+			if (gameEngine.getGameState() == WON)	   updateWon(canvas);
 			
 		}
 	}
 	
 	// when game is in ready mode
 	private void updateReady(Canvas canvas){
-		beginTime = System.currentTimeMillis(); // temporary for testing 1 thread
+		//beginTime = System.currentTimeMillis(); // temporary for testing 1 thread
 		
 		try {
 			canvas = surfaceHolder.lockCanvas();
@@ -141,8 +141,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					canvas.drawRGB(0, 0, 0);
 					drawMaze(canvas); // draw updated maze
 					
-					long time = 5L - timeDiff/1000;
-					canvas.drawText("Getting Ready in " + time, 50, 350, paint2);	
+					//long time = 5L - timeDiff/1000;
+					canvas.drawText("Getting Ready in ", 50, 350, paint2);	
 					
 					try {
 						Thread.sleep(17);
@@ -150,7 +150,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
 
 				}
 			}
@@ -161,11 +160,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
-		
-		// if it is 5 seconds
-		timeDiff += System.currentTimeMillis() - beginTime;
-		if(timeDiff > 5000)
-			gameState = RUNNING;
 		
 	}
 	
@@ -186,7 +180,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
 
-					gameEngine.update();
+					//gameEngine.update();
 						
 					canvas.drawRGB(0, 0, 0);
 
@@ -198,8 +192,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					
 					drawScore(canvas); // draw score and lives
 
-					if (gameEngine.getGameState() == GAMEOVER)  gameState = GAMEOVER;
-					if (gameEngine.getGameState() == WON)		gameState = WON;
+					//if (gameEngine.getGameState() == GAMEOVER)  gameState = GAMEOVER;
+					//if (gameEngine.getGameState() == WON)		gameState = WON;
 					
 					// calculate how long did the cycle take
 					timeDiff = System.currentTimeMillis() - beginTime;
@@ -219,7 +213,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
 						// we need to catch up
 						// update without rendering
-						gameEngine.update();
+						//gameEngine.update();
 						// add frame period to check if in next frame
 						sleepTime += FRAME_PERIOD;
 						framesSkipped++;
@@ -373,11 +367,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	public void setDir(int dir){
 		this.direction = dir;
-	}
-	
-	
-	private void gameOver(Canvas canvas){
-
 	}
 
 }

@@ -20,15 +20,17 @@ public class GameEngine implements Runnable {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3;
+	
 	private Maze maze;
-	private Thread thread;
+	private Thread mThread;
 	Pacmon pacmon;
 	ArrayList<Monster> ghosts;
 	
 	int playerScore;
 	int timer; int timerCount;
 	int lives;
-	int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
+	private int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
 	int inputDirection;
 	int pX, pY;
@@ -40,12 +42,24 @@ public class GameEngine implements Runnable {
 	int blockSize = 32;
 	int mazeRow, mazeColumn;
 	
+	private boolean isRunning;
+	
+	
+	//timer
+	private long beginTime; // the time when the cycle begun
+	private long timeDiff; // the time it took for the cycle to execute
+	private int sleepTime; // ms to sleep (<0 if we're behind)
+	private int framesSkipped; // number of frames being skipped
+	
+	
+	//Constructor create players, ghosts and Maze
 	public GameEngine(){
 		pacmon = new Pacmon();  // new pacmon
 		
 		playerScore = 0;
 		timer = 60;
 		timerCount = 0;
+		gameState = 0;
 		
 		ghosts = new ArrayList<Monster>();
 		
@@ -54,12 +68,16 @@ public class GameEngine implements Runnable {
 		ghosts.add(new Monster());
 		
 		// maze stuff
-		Maze maze = new Maze();
+		maze = new Maze();
 		mazeArray = maze.getMaze();
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
 		directionMaze = maze.getDirectionMaze();
 		ghostArray = maze.getGhostArray();
+		
+		isRunning = true;
+		mThread = new Thread(this);
+		mThread.start();
 	}
 	
 	//update
@@ -245,6 +263,8 @@ public class GameEngine implements Runnable {
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
 			playerScore++;   // increase score
+			if (playerScore == maze.getFoodCount())
+				gameState = WON;
 			//maze.clearFood(boxX, boxY);
 		}
 		
@@ -260,7 +280,7 @@ public class GameEngine implements Runnable {
 			timer--;
 			timerCount = 0;
 		}
-		if (timer == -1)  gameState = 2;  // LOST
+		if (timer == -1)  gameState = GAMEOVER;  // LOST
 		
 	}
 	
@@ -302,9 +322,71 @@ public class GameEngine implements Runnable {
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
+		while (isRunning){
+			if (gameState == READY)    updateReady();
+			if (gameState == RUNNING)  updateRunning();
+			if (gameState == GAMEOVER) updateGameOver();
+			if (gameState == WON)	   updateWon();
+			
+		}
+	}
+	
+	private void updateReady(){
+		beginTime = System.currentTimeMillis();
+
+		long time = 5L - timeDiff/1000;
+
+		if (sleepTime > 0) {
+			// if sleepTime > 0 we're OK
+			try {
+				// send the thread to sleep for a short period
+				// very useful for battery saving
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+			}
+		}
+		
+		timeDiff += System.currentTimeMillis() - beginTime;
+		if(timeDiff > 4999)
+			gameState = RUNNING;
 		
 	}
 	
+	private void updateRunning(){
+		beginTime = System.currentTimeMillis();
+		framesSkipped = 0; // resetting the frames skipped
+		
+		update();
 	
+		// calculate how long did the cycle take
+		timeDiff = System.currentTimeMillis() - beginTime;
+		// calculate sleep time
+		sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+		if (sleepTime > 0) {
+			// if sleepTime > 0 we're OK
+			try {
+				// send the thread to sleep for a short period
+				// very useful for battery saving
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+	
+	private void updateGameOver(){
+		pause();
+	}
+	
+	private void updateWon(){
+		pause();
+	}
+	
+	public void pause() {
+		isRunning = false;
+	}
+	
+	public void resume() {
+		isRunning = true;
+	}
 }
