@@ -61,7 +61,10 @@ public class MenuActivity extends Activity implements OnClickListener{
 			
 		case R.id.bOptions:
 			break;
+			
 		case R.id.bAbout:
+			Intent iAbout = new Intent("com.csc780.pacmon.ABOUTACTIVITY");
+			startActivity(iAbout);
 			break;
 			
 		case R.id.bExit: //finish the activity

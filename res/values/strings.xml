@@ -6,4 +6,20 @@
     <string name="exit">Exit Game</string>
     <string name="options">Options</string>
     <string name="about">About</string>
+    <string name="about_title">About/Help</string>
+    <string name="back">Back</string>
+    <string name="howtoplay">How to play</string>
+    
+    <string name="about_game_text">
+    				\n
+    				About this game PACMON.\n
+    				This game is made by Qui Phu Lu and Hanzen Lim.\n
+    				This is a project for Mr. Puder mobile development class Spring 2012.</string>
+	<string name="how_to_play_text">
+					\n
+					User control pacmon using accelerometer.\n
+					Tilt left to move Pacmon left.\n
+					Tilt right to move Pacmon right.\n
+					Tilt up to move Pacmon up.\n
+					Tilt down to move Pacmon down.</string>
 </resources>

@@ -1,36 +1,30 @@
 package com.csc780.pacmon;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class AboutActivity extends Activity implements OnClickListener{
 	
 	
-	private Button singlePlayButton;
-	private Button multiPlayButton;
-	private Button optionsButton;
+	private Button howToPlayButton;
 	private Button aboutButton;
-	private Button exitButton;
-	
+	private Button backButton;
+	private TextView areaTextView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.menu);
-		Typeface tf = Typeface.createFromAsset(getAssets(),
-                "fonts/press_start.ttf");
-		
-		singlePlayButton = (Button) findViewById(R.id.bSingle);
-		multiPlayButton = (Button) findViewById(R.id.bMulti);
-		optionsButton = (Button) findViewById(R.id.bOptions);
-		aboutButton = (Button) findViewById(R.id.bAbout);
-		exitButton = (Button) findViewById(R.id.bExit);
+		setContentView(R.layout.about);
+
+		howToPlayButton = (Button) findViewById(R.id.bHowToPlay);
+		aboutButton = (Button) findViewById(R.id.bAboutAbout);
+		backButton = (Button) findViewById(R.id.bBack);
+		areaTextView = (TextView) findViewById(R.id.tvDisplayArea);
 /*		
 		singlePlayButton.setTypeface(tf);
 		multiPlayButton.setTypeface(tf);
@@ -38,11 +32,9 @@ public class AboutActivity extends Activity implements OnClickListener{
 		aboutButton.setTypeface(tf);
 		exitButton.setTypeface(tf);
 */	
-		singlePlayButton.setOnClickListener(this);
-		multiPlayButton.setOnClickListener(this);
-		optionsButton.setOnClickListener(this);
+		howToPlayButton.setOnClickListener(this);
 		aboutButton.setOnClickListener(this);
-		exitButton.setOnClickListener(this);
+		backButton.setOnClickListener(this);
 		
 	}
 
@@ -51,20 +43,14 @@ public class AboutActivity extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		switch (v.getId()){
 		
-		case R.id.bSingle: //start single player game
-			Intent sGame = new Intent("com.csc780.pacmon.GAMEACTIVITY");
-			startActivity(sGame);
+		case R.id.bHowToPlay:
+			areaTextView.setText(R.string.how_to_play_text);
+			break;
+		case R.id.bAboutAbout:
+			areaTextView.setText(R.string.about_game_text);
 			break;
 			
-		case R.id.bMulti:
-			break;
-			
-		case R.id.bOptions:
-			break;
-		case R.id.bAbout:
-			break;
-			
-		case R.id.bExit: //finish the activity
+		case R.id.bBack: //finish the activity
 			this.finish();
 			break;
 		
