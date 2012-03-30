@@ -11,17 +11,24 @@ import java.util.Random;
  * 		
  */
 
-public class GameEngine {
+public class GameEngine implements Runnable {
+	private final static int    MAX_FPS = 40;
+	// maximum number of frames to be skipped
+	private final static int    MAX_FRAME_SKIPS = 5;
+	// the frame period
+	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
 	private Maze maze;
+	private Thread thread;
 	Pacmon pacmon;
 	ArrayList<Monster> ghosts;
 	
 	int playerScore;
-	float timer;
+	int timer; int timerCount;
 	int lives;
+	int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
 	int inputDirection;
 	int pX, pY;
@@ -37,6 +44,8 @@ public class GameEngine {
 		pacmon = new Pacmon();  // new pacmon
 		
 		playerScore = 0;
+		timer = 60;
+		timerCount = 0;
 		
 		ghosts = new ArrayList<Monster>();
 		
@@ -55,6 +64,7 @@ public class GameEngine {
 	
 	//update
 	public void update(){
+		updateTimer();
 		updatePac();
 		updateGhost();
 	}
@@ -243,6 +253,16 @@ public class GameEngine {
 		}
 	}
 	
+	// count down timer once per MAX_FPS
+	private void updateTimer(){
+		timerCount++;
+		if (timerCount % 40 == 0){
+			timer--;
+			timerCount = 0;
+		}
+		if (timer == -1)  gameState = 2;  // LOST
+		
+	}
 	
 	// using accelerometer to set direction of player
 	public void setInputDir(int dir){
@@ -265,8 +285,8 @@ public class GameEngine {
 		return this.mazeColumn;
 	}
 
-	public float getTimer() {
-		return timer;
+	public String getTimer() {
+		return "Time: " + timer;
 	}
 
 	public String getLives() {
@@ -275,6 +295,15 @@ public class GameEngine {
 
 	public String getPlayerScore() {
 		return "Score: " + playerScore;
+	}
+	
+	public int getGameState(){
+		return gameState;
+	}
+
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	
