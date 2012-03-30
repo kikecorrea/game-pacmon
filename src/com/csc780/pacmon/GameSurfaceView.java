@@ -98,10 +98,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
 		
 		paint = new Paint();
+		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
 		paint.setTextSize(24);
 		
 		paint2 = new Paint();
+		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(50);
 		
@@ -123,7 +125,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	// when game is in ready mode
 	private void updateReady(Canvas canvas){
-		//beginTime = System.currentTimeMillis(); // temporary for testing 1 thread
 		
 		try {
 			canvas = surfaceHolder.lockCanvas();
@@ -142,10 +143,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawMaze(canvas); // draw updated maze
 					
 					//long time = 5L - timeDiff/1000;
-					canvas.drawText("Getting Ready in ", 50, 350, paint2);	
+					canvas.drawText("Getting Ready in " + gameEngine.getReadyCountDown(),
+									45, 350, paint2);	
 					
 					try {
-						Thread.sleep(17);
+						Thread.sleep(35);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -232,7 +234,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateGameOver(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("GAME OVER", 130, 350, paint2);
+		canvas.drawText("GAME OVER", 125, 350, paint2);
 		canvas.drawText(gameEngine.getPlayerScore(), 150, 420, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
@@ -249,9 +251,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Congratulations!", 130, 350, paint2);
-		canvas.drawText("You won", 160, 400, paint2);
-		canvas.drawText(gameEngine.getPlayerScore(), 150, 450, paint2);
+		canvas.drawText("Congratulations!", 70, 350, paint2);
+		canvas.drawText("You won", 130, 400, paint2);
+		canvas.drawText(gameEngine.getPlayerScore(), 130, 450, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
