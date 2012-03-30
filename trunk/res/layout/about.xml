@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/tvAboutTitle"
+        android:textColor="@android:color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/about_title"
+        android:textSize="45dp" />
+
+    <ScrollView
+        android:id="@+id/scrollerText"
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:layout_below="@id/tvAboutTitle" >
+
+        <TextView
+            android:id="@+id/tvDisplayArea"
+            android:textColor="#ffdaa520"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="@string/about_game_text" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/bHowToPlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/scrollerText"
+        android:layout_centerHorizontal="true"
+        android:text="@string/howtoplay" />
+
+    <Button
+        android:id="@+id/bAboutAbout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/bHowToPlay"
+        android:layout_alignBottom="@+id/bHowToPlay"
+        android:layout_toLeftOf="@+id/bHowToPlay"
+        android:text="@string/about" />
+
+    <Button
+        android:id="@+id/bBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/bHowToPlay"
+        android:layout_alignBottom="@+id/bHowToPlay"
+        android:layout_alignRight="@+id/tvAboutTitle"
+        android:text="@string/back" />
+
+</RelativeLayout>
