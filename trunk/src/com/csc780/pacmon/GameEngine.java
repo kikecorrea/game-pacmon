@@ -45,19 +45,22 @@ public class GameEngine implements Runnable {
 	private boolean isRunning;
 	
 	
+	
+	
 	//timer
 	private long beginTime; // the time when the cycle begun
 	private long timeDiff; // the time it took for the cycle to execute
 	private int sleepTime; // ms to sleep (<0 if we're behind)
 	private int framesSkipped; // number of frames being skipped
 	
+	private long readyCountDown;
 	
 	//Constructor create players, ghosts and Maze
 	public GameEngine(){
 		pacmon = new Pacmon();  // new pacmon
 		
 		playerScore = 0;
-		timer = 60;
+		timer = 75;
 		timerCount = 0;
 		gameState = 0;
 		
@@ -284,42 +287,6 @@ public class GameEngine implements Runnable {
 		
 	}
 	
-	// using accelerometer to set direction of player
-	public void setInputDir(int dir){
-		this.inputDirection = dir;
-	}
-	
-	public Maze getMaze(){
-		return this.maze;
-	}
-	
-	public int[][] getMazeArray(){
-		return this.mazeArray;
-	}
-
-	public int getMazeRow() {
-		return this.mazeRow;
-	}
-
-	public int getMazeColumn() {
-		return this.mazeColumn;
-	}
-
-	public String getTimer() {
-		return "Time: " + timer;
-	}
-
-	public String getLives() {
-		return "Life remaining: " + pacmon.getpLives();
-	}
-
-	public String getPlayerScore() {
-		return "Score: " + playerScore;
-	}
-	
-	public int getGameState(){
-		return gameState;
-	}
 
 	public void run() {
 		while (isRunning){
@@ -331,27 +298,30 @@ public class GameEngine implements Runnable {
 		}
 	}
 	
+	// loop through ready if gameState is READY
 	private void updateReady(){
 		beginTime = System.currentTimeMillis();
 
-		long time = 5L - timeDiff/1000;
+		readyCountDown = 5L - timeDiff/1000;		
+		sleepTime = (int) (FRAME_PERIOD - timeDiff);
 
 		if (sleepTime > 0) {
 			// if sleepTime > 0 we're OK
 			try {
 				// send the thread to sleep for a short period
 				// very useful for battery saving
-				Thread.sleep(20);
+				Thread.sleep(sleepTime);
 			} catch (InterruptedException e) {
 			}
 		}
 		
 		timeDiff += System.currentTimeMillis() - beginTime;
-		if(timeDiff > 4999)
+		if(timeDiff >= 5000)
 			gameState = RUNNING;
 		
 	}
 	
+	// loop through running if gameState is RUNNING
 	private void updateRunning(){
 		beginTime = System.currentTimeMillis();
 		framesSkipped = 0; // resetting the frames skipped
@@ -389,4 +359,48 @@ public class GameEngine implements Runnable {
 	public void resume() {
 		isRunning = true;
 	}
+	
+	// using accelerometer to set direction of player
+	public void setInputDir(int dir){
+		this.inputDirection = dir;
+	}
+	
+	public Maze getMaze(){
+		return this.maze;
+	}
+	
+	public int[][] getMazeArray(){
+		return this.mazeArray;
+	}
+
+	public int getMazeRow() {
+		return this.mazeRow;
+	}
+
+	public int getMazeColumn() {
+		return this.mazeColumn;
+	}
+
+	public String getTimer() {
+		return "Time: " + timer;
+	}
+
+	public String getLives() {
+		return "Life remaining: " + pacmon.getpLives();
+	}
+
+	public String getPlayerScore() {
+		return "Score: " + playerScore;
+	}
+	
+	public int getGameState(){
+		return gameState;
+	}
+
+	public long getReadyCountDown(){
+		return readyCountDown;
+	}
+	
+	
+	
 }
