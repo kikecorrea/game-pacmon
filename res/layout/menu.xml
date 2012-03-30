@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <ImageView 
+        android:contentDescription="MenuTitle"
         android:id="@+id/ivPacman"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
@@ -13,62 +14,32 @@
         />
     <Button
         android:id="@+id/bSingle"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="25dp"
+        style="@style/menu_button"
+        android:textColor="@drawable/button_text_color"
         android:text="@string/singleplayer" />
-
+		
     <Button
         android:id="@+id/bMulti"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="25dp"
+        style="@style/menu_button"
+        android:textColor="@drawable/button_text_color"
         android:text="@string/multiplayer" />
 
     <Button
         android:id="@+id/bOptions"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="25dp"
+        style="@style/menu_button"
+        android:textColor="@drawable/button_text_color"
         android:text="@string/options" />
     
     <Button
         android:id="@+id/bAbout"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="25dp"
+        style="@style/menu_button"
+        android:textColor="@drawable/button_text_color"
         android:text="@string/about" />
     
     <Button
         android:id="@+id/bExit"
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="@android:color/white"
-        android:textSize="25dp"
+        style="@style/menu_button"
+        android:textColor="@drawable/button_text_color"
         android:text="@string/exit"  />"
     
     
