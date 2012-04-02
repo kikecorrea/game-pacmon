@@ -278,7 +278,7 @@ public class GameEngine implements Runnable {
 			ghost.setDir(LEFT);
 		else if (ghost.getX() < pX && ghostArray[index].contains(RIGHT))
 			ghost.setDir(RIGHT);
-		else
+		else // if no possible smart direction, move ghost randomly
 			moveGhostRandom(index, ghost);
 		
 	}
@@ -309,9 +309,6 @@ public class GameEngine implements Runnable {
 		for (int i = 0; i < ghosts.size(); i++){
 			ghosts.get(i).reset();
 		}
-		
-		
-		System.out.println(ghosts.size());
 		
 		if (lives == 0) gameState = GAMEOVER;
 	}
