@@ -23,6 +23,10 @@ Links:
 
 [JournalQui#Week_3/18_-_3/25]
 
+[JournalQui#Week_3/25_-_4/1]
+
+[JournalQui#Week_4/1_-_4/8]
+
 === Week 2/5 - 2/12 ===
 Progress:
    * Created code repository
@@ -107,3 +111,26 @@ Learned:
    * Research on ways to do game's logic and render
 Plan for next week:
    * Make menu and score
+
+=== Week 3/25 - 4/1 ===
+Progress:
+   * Split game into 2 threads, logic thread and render thread
+   * Added AboutActivity in MenuActivity.
+   * Added score keeping
+   * Added timer and game Ready/Running/GameOver/Won conditions
+Problem:
+   * Keeping the code clean and well organized
+Learned:
+   * Make better game loop and conditions
+Plan for next week:
+   * Collision detection and smart ghosts
+
+
+=== Week 4/1 - 4/8 ===
+Progress:
+   * Collision detection
+Problem:
+   
+Learned:
+   
+Plan for next week:
