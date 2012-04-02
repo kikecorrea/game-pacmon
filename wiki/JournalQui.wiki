@@ -128,7 +128,7 @@ Plan for next week:
 
 === Week 4/1 - 4/8 ===
 Progress:
-   * Collision detection
+   * Collision detection both random and smart ghosts
 Problem:
    
 Learned:
