@@ -196,7 +196,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas); // draw ghosts
 					
 					drawScore(canvas); // draw score and lives
-
+					
 					// calculate how long did the cycle take
 					timeDiff = System.currentTimeMillis() - beginTime;
 					// calculate sleep time
