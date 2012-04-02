@@ -88,7 +88,7 @@ public class Maze {
 */
 	
 	private ArrayList<Integer> t2[] = new ArrayList[16];
-	private int foodCount = 100;
+	private int foodCount = 126;
 	
 	
 	public Maze() {

@@ -23,7 +23,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -141,6 +141,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				synchronized (surfaceHolder) {
 					canvas.drawRGB(0, 0, 0);
 					drawMaze(canvas); // draw updated maze
+					drawPacmon(canvas);
+					drawGhost(canvas);
+					drawScore(canvas);
 					
 					//long time = 5L - timeDiff/1000;
 					canvas.drawText("Getting Ready in " + gameEngine.getReadyCountDown(),
