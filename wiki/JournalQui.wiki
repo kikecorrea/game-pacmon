@@ -115,9 +115,9 @@ Plan for next week:
 === Week 3/25 - 4/1 ===
 Progress:
    * Split game into 2 threads, logic thread and render thread
-   * Added AboutActivity in MenuActivity.
+   * Added (about) activity in game menu.
    * Added score keeping
-   * Added timer and game Ready/Running/GameOver/Won conditions
+   * Added timer and game Ready/Running/Game Over/Won conditions
 Problem:
    * Keeping the code clean and well organized
 Learned:
