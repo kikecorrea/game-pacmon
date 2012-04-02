@@ -18,12 +18,12 @@ public class Monster {
 		state = 0;
 	}
 	
-	
-	
-	public void spawnMonster(){
-		
+	// reset ghost when player die
+	public void reset(){
+		x = 7 * 32;
+		y = 9 * 32;
+		dir = 8;
 	}
-
 
 	
 

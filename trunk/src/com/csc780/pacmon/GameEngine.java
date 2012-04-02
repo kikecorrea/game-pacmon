@@ -58,9 +58,10 @@ public class GameEngine implements Runnable {
 	//Constructor create players, ghosts and Maze
 	public GameEngine(){
 		pacmon = new Pacmon();  // new pacmon
+		lives = pacmon.getpLives();
 		
 		playerScore = 0;
-		timer = 75;
+		timer = 90;
 		timerCount = 0;
 		gameState = 0;
 		
@@ -218,15 +219,15 @@ public class GameEngine implements Runnable {
 				//check if at crossing using directional maze and update new direction
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (crossing == 1) moveGhost(RD, ghosts.get(i));
-					if (crossing == 2) moveGhost(LD, ghosts.get(i));
-					if (crossing == 3) moveGhost(RU, ghosts.get(i));
-					if (crossing == 4) moveGhost(LU, ghosts.get(i));
-					if (crossing == 5) moveGhost(RDU, ghosts.get(i));
-					if (crossing == 6) moveGhost(LDU, ghosts.get(i));
-					if (crossing == 7) moveGhost(RLD, ghosts.get(i));
-					if (crossing == 8) moveGhost(RLU, ghosts.get(i));
-					if (crossing == 9) moveGhost(RLUD, ghosts.get(i));
+					if (crossing == 1) moveGhostRandom(RD, ghosts.get(i));
+					if (crossing == 2) moveGhostRandom(LD, ghosts.get(i));
+					if (crossing == 3) moveGhostRandom(RU, ghosts.get(i));
+					if (crossing == 4) moveGhostRandom(LU, ghosts.get(i));
+					if (crossing == 5) moveGhostRandom(RDU, ghosts.get(i));
+					if (crossing == 6) moveGhostRandom(LDU, ghosts.get(i));
+					if (crossing == 7) moveGhostRandom(RLD, ghosts.get(i));
+					if (crossing == 8) moveGhostRandom(RLU, ghosts.get(i));
+					if (crossing == 9) moveGhostRandom(RLUD, ghosts.get(i));
 
 				}
 
@@ -234,6 +235,8 @@ public class GameEngine implements Runnable {
 
 			//get direction after calculate
 			int ghostCurDir = ghosts.get(i).getDir();
+			
+			
 			
 			if (movable) {
 				if (ghostCurDir == UP) // up
@@ -249,16 +252,43 @@ public class GameEngine implements Runnable {
 			// set new location of ghost after moving
 			ghosts.get(i).setX(gX);
 			ghosts.get(i).setY(gY);
+			
+			checkCollision(gX, gY);
 
 		}
 	}
 	
 	// move ghost using directional array
-	private void moveGhost(int index, Monster ghost){
+	private void moveGhostRandom(int index, Monster ghost){
 		int n = (int)(Math.random() * ghostArray[index].size()); // randomize
 		int d = ghostArray[index].get(n);  //apply random to get direction
 		ghost.setDir(d);
 	
+	}
+	
+	//check if ghost touch player
+	private void checkCollision(int gX, int gY){
+		int pX = pacmon.getpX();
+		int pY = pacmon.getpY();
+		int radius = 10;
+		
+		if (Math.abs(pX - gX) + Math.abs(pY - gY) < radius) //ghost touches player
+			diePacmon();
+	}
+	
+	//when ghost touches player, pacmon dies
+	private void diePacmon(){
+		lives--;
+		gameState = READY;
+		pacmon.reset();
+		for (int i = 0; i < ghosts.size(); i++){
+			ghosts.get(i).reset();
+		}
+		
+		
+		System.out.println(ghosts.size());
+		
+		if (lives == 0) gameState = GAMEOVER;
 	}
 	
 	// eat food ==> score and power ==> speed
@@ -386,7 +416,7 @@ public class GameEngine implements Runnable {
 	}
 
 	public String getLives() {
-		return "Life remaining: " + pacmon.getpLives();
+		return "Life remaining: " + lives;
 	}
 
 	public String getPlayerScore() {

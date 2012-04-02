@@ -31,6 +31,13 @@ public class Pacmon {
 		pLives = 3;
 		pNormalSpeed = 2;
 		pPowerSpeed = 4;
+		dir = RIGHT;
+	}
+	
+	public void reset(){
+		pX = pY = 32;
+		pXOrigin = pYOrigin = 1;
+		dir = RIGHT;
 	}
 
 	public int getpX() {
