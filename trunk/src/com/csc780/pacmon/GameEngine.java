@@ -208,11 +208,11 @@ public class GameEngine implements Runnable {
 			gY = ghosts.get(i).getY();
 			XmodW = gX % blockSize;
 			YmodH = gY % blockSize;
-			boolean movable = true;
-			int crossing;
+			
 			
 			// check direction and change if it is allowed
 			if (XmodW == 0 && YmodH == 0) {
+				int crossing;
 				boxX = gX / blockSize;
 				boxY = gY / blockSize;
 				
@@ -228,26 +228,35 @@ public class GameEngine implements Runnable {
 					if (crossing == 7) moveGhostRandom(RLD, ghosts.get(i));
 					if (crossing == 8) moveGhostRandom(RLU, ghosts.get(i));
 					if (crossing == 9) moveGhostRandom(RLUD, ghosts.get(i));
-
+				}
+				
+				if (i == 2){
+					if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
+					if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
+					if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
+					if (crossing == 4) moveGhostSmart(LU, ghosts.get(i));
+					if (crossing == 5) moveGhostSmart(RDU, ghosts.get(i));
+					if (crossing == 6) moveGhostSmart(LDU, ghosts.get(i));
+					if (crossing == 7) moveGhostSmart(RLD, ghosts.get(i));
+					if (crossing == 8) moveGhostSmart(RLU, ghosts.get(i));
+					if (crossing == 9) moveGhostSmart(RLUD, ghosts.get(i));		
 				}
 
 			}
 
+			
+			
 			//get direction after calculate
 			int ghostCurDir = ghosts.get(i).getDir();
-			
-			
-			
-			if (movable) {
-				if (ghostCurDir == UP) // up
-					gY = gY - gNormalSpeed;
-				if (ghostCurDir == DOWN) // down
-					gY = gY + gNormalSpeed;
-				if (ghostCurDir == RIGHT) // right
-					gX = gX + gNormalSpeed;
-				if (ghostCurDir == LEFT) // left
-					gX = gX - gNormalSpeed;
-			}
+
+			if (ghostCurDir == UP) // up
+				gY = gY - gNormalSpeed;
+			if (ghostCurDir == DOWN) // down
+				gY = gY + gNormalSpeed;
+			if (ghostCurDir == RIGHT) // right
+				gX = gX + gNormalSpeed;
+			if (ghostCurDir == LEFT) // left
+				gX = gX - gNormalSpeed;
 			
 			// set new location of ghost after moving
 			ghosts.get(i).setX(gX);
@@ -256,6 +265,22 @@ public class GameEngine implements Runnable {
 			checkCollision(gX, gY);
 
 		}
+	}
+	
+	private void moveGhostSmart(int index, Monster ghost){
+		int pX = pacmon.getpX();
+		int pY = pacmon.getpY();
+		if (ghost.getY() > pY && ghostArray[index].contains(UP))
+			ghost.setDir(UP);
+		else if (ghost.getY() < pY && ghostArray[index].contains(DOWN))
+			ghost.setDir(DOWN);
+		else if (ghost.getX() > pX && ghostArray[index].contains(LEFT))
+			ghost.setDir(LEFT);
+		else if (ghost.getX() < pX && ghostArray[index].contains(RIGHT))
+			ghost.setDir(RIGHT);
+		else
+			moveGhostRandom(index, ghost);
+		
 	}
 	
 	// move ghost using directional array

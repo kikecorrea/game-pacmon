@@ -150,7 +150,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 									45, 350, paint2);	
 					
 					try {
-						Thread.sleep(35);
+						Thread.sleep(25);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -197,9 +197,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					
 					drawScore(canvas); // draw score and lives
 
-					//if (gameEngine.getGameState() == GAMEOVER)  gameState = GAMEOVER;
-					//if (gameEngine.getGameState() == WON)		gameState = WON;
-					
 					// calculate how long did the cycle take
 					timeDiff = System.currentTimeMillis() - beginTime;
 					// calculate sleep time
@@ -213,15 +210,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 							Thread.sleep(sleepTime);
 						} catch (InterruptedException e) {
 						}
-					}
-
-					while (sleepTime < 0 && framesSkipped < MAX_FRAME_SKIPS) {
-						// we need to catch up
-						// update without rendering
-						//gameEngine.update();
-						// add frame period to check if in next frame
-						sleepTime += FRAME_PERIOD;
-						framesSkipped++;
 					}
 				}
 			}
