@@ -31,3 +31,8 @@
  * Move the game engine into server, Ran into problems with multithread, synchronization and deadlock. Had problems with the latency from sending data and updating the view. 
  * Tried to optimize the movement. There is little bit lag between sending the data and player movement
  * Research on input prediction and lag compensation to improve player's movement
+
+==March 26 - March 30 ==
+ * Prepare for presentation
+ * Change some code so that I can control the pacman using keyboard. Will be use for Demo
+ * Optimize server to send data 40 update per second
