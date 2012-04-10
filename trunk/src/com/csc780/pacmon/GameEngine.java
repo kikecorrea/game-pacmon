@@ -61,7 +61,7 @@ public class GameEngine implements Runnable {
 		lives = pacmon.getpLives();
 		
 		playerScore = 0;
-		timer = 90;
+		timer = 120;
 		timerCount = 0;
 		gameState = 0;
 		
@@ -219,27 +219,28 @@ public class GameEngine implements Runnable {
 				//check if at crossing using directional maze and update new direction
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (crossing == 1) moveGhostRandom(RD, ghosts.get(i));
-					if (crossing == 2) moveGhostRandom(LD, ghosts.get(i));
-					if (crossing == 3) moveGhostRandom(RU, ghosts.get(i));
-					if (crossing == 4) moveGhostRandom(LU, ghosts.get(i));
-					if (crossing == 5) moveGhostRandom(RDU, ghosts.get(i));
-					if (crossing == 6) moveGhostRandom(LDU, ghosts.get(i));
-					if (crossing == 7) moveGhostRandom(RLD, ghosts.get(i));
-					if (crossing == 8) moveGhostRandom(RLU, ghosts.get(i));
-					if (crossing == 9) moveGhostRandom(RLUD, ghosts.get(i));
-				}
+					if (timer % 4 == i){
+						if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
+						if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
+						if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
+						if (crossing == 4) moveGhostSmart(LU, ghosts.get(i));
+						if (crossing == 5) moveGhostSmart(RDU, ghosts.get(i));
+						if (crossing == 6) moveGhostSmart(LDU, ghosts.get(i));
+						if (crossing == 7) moveGhostSmart(RLD, ghosts.get(i));
+						if (crossing == 8) moveGhostSmart(RLU, ghosts.get(i));
+						if (crossing == 9) moveGhostSmart(RLUD, ghosts.get(i));
+					} else {
+						if (crossing == 1) moveGhostRandom(RD, ghosts.get(i));
+						if (crossing == 2) moveGhostRandom(LD, ghosts.get(i));
+						if (crossing == 3) moveGhostRandom(RU, ghosts.get(i));
+						if (crossing == 4) moveGhostRandom(LU, ghosts.get(i));
+						if (crossing == 5) moveGhostRandom(RDU, ghosts.get(i));
+						if (crossing == 6) moveGhostRandom(LDU, ghosts.get(i));
+						if (crossing == 7) moveGhostRandom(RLD, ghosts.get(i));
+						if (crossing == 8) moveGhostRandom(RLU, ghosts.get(i));
+						if (crossing == 9) moveGhostRandom(RLUD, ghosts.get(i));
 				
-				if (i == 2){
-					if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
-					if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
-					if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
-					if (crossing == 4) moveGhostSmart(LU, ghosts.get(i));
-					if (crossing == 5) moveGhostSmart(RDU, ghosts.get(i));
-					if (crossing == 6) moveGhostSmart(LDU, ghosts.get(i));
-					if (crossing == 7) moveGhostSmart(RLD, ghosts.get(i));
-					if (crossing == 8) moveGhostSmart(RLU, ghosts.get(i));
-					if (crossing == 9) moveGhostSmart(RLUD, ghosts.get(i));		
+					}
 				}
 
 			}

@@ -12,11 +12,12 @@
     
     <string name="about_game_text">
     				\n
-    				About this game PACMON.\n
+    				ABOUT PACMON:\n
     				This game is made by Qui Phu Lu and Hanzen Lim.\n
     				This is a project for Mr. Puder mobile development class Spring 2012.</string>
 	<string name="how_to_play_text">
 					\n
+					HOW TO PLAY:\n
 					User control pacmon using accelerometer.\n
 					Tilt left to move Pacmon left.\n
 					Tilt right to move Pacmon right.\n
