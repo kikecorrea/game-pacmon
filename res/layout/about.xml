@@ -23,7 +23,8 @@
             android:textColor="#ffdaa520"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="@string/about_game_text" />
+            android:text="@string/about_game_text"
+            android:textSize="18dp" />
     </ScrollView>
 
     <Button
