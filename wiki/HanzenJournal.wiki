@@ -36,3 +36,12 @@
  * Prepare for presentation
  * Change some code so that I can control the pacman using keyboard. Will be use for Demo
  * Optimize server to send data 40 update per second
+
+==April 2 - April 6 ==
+ * Still working on multiplayer server,
+ * Research on lag compensation, interpolation, early prediction for multiplayer option
+
+== April 9 - April 14 ==
+ * Implemented lag compensation, interpolation, 
+ * Added circular que for receiving data from client side
+ * Implemented multiple client connection for server side
