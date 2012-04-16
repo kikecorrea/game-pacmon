@@ -43,5 +43,5 @@
 
 == April 9 - April 14 ==
  * Implemented lag compensation, interpolation, 
- * Added circular que for receiving data from client side
+ * Added circular que for receiving data for client side
  * Implemented multiple client connection for server side
