@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk android:minSdkVersion="8" />
-
+	<uses-permission android:name="android.permission.INTERNET" />
     <application
         android:debuggable="true"
         android:icon="@drawable/pac_mon_icon"
@@ -32,6 +32,17 @@
             </intent-filter>
         </activity>
         
+         <activity
+            android:name="com.csc780.multipacmon.MGameActivity"
+            android:screenOrientation="portrait"
+            android:label="MGameActivity" >
+            <intent-filter>
+                <action android:name="com.csc780.pacmon.MGAMEACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
         <activity
             android:name=".AboutActivity"
             android:screenOrientation="portrait"
@@ -42,11 +53,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        
-        <activity android:name=".GamePrefsActivity" />
-        
-        <activity android:name=".ShowSettingsActivity" />
-        
         
     </application>
 
