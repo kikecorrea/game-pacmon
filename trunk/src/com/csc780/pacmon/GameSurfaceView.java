@@ -36,8 +36,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	int movingTextX, movingTextY;   // for ready and gameover screen
 	
 	private Pacmon pacmon;
-	private int direction;
-
 	
 	
 	private GameEngine gameEngine;
@@ -56,6 +54,19 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private Context mContext;
 	
 	private int gameState;
+	private Rect srcRect;
+	private Rect dstRect;
+	private Rect[] pSrcUp = new Rect[3];
+	private Rect[] pSrcDown = new Rect[3];
+	private Rect[] pSrcLeft = new Rect[3];
+	private Rect[] pSrcRight = new Rect[3];
+	private Rect[] pDst = new Rect[12];
+	
+	private Rect[] gSrcUp = new Rect[2];
+	private Rect[] gSrcDown = new Rect[2];
+	private Rect[] gSrcLeft = new Rect[2];
+	private Rect[] gSrcRight = new Rect[2];
+	private Rect[] gDst = new Rect[8];
 	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
@@ -86,7 +97,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 		
 		initBitmap();  // init all Bitmap and its components
-
+		initSprite();
+		
 		ghosts = gameEngine.ghosts;
 		
 		surfaceHolder = getHolder();
@@ -114,6 +126,37 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(50);
+		
+	}
+	
+	private void initSprite(){
+		int offset = 32;
+		pSrcUp[0] = new Rect(0, 0, 32, 32);
+		pSrcUp[1] = new Rect(32, 0, 64, 32);
+		pSrcUp[2] = new Rect(64, 0, 96, 32);
+		
+		pSrcDown[0] = new Rect(0, 32, 32, 64);
+		pSrcDown[1] = new Rect(32, 32, 64, 64);
+		pSrcDown[2] = new Rect(64, 32, 96, 64);
+		
+		pSrcRight[0] = new Rect(0, 64, 32, 96);
+		pSrcRight[1] = new Rect(32, 64, 64, 96);
+		pSrcRight[2] = new Rect(64, 64, 96, 96);
+		
+		pSrcLeft[0] = new Rect(0, 96, 32, 128);
+		pSrcLeft[1] = new Rect(32, 96, 64, 128);
+		
+		gSrcUp[0] = new Rect(0, 0, 32, 32);
+		gSrcUp[1] = new Rect(32, 0, 64, 32);
+		
+		gSrcDown[0] = new Rect(0, 32, 32, 64);
+		gSrcDown[1] = new Rect(32, 32, 64, 64);
+		
+		gSrcRight[0] = new Rect(0, 64, 32, 96);
+		gSrcRight[1] = new Rect(32, 64, 64, 96);;
+		
+		gSrcLeft[0] = new Rect(0, 96, 32, 128);
+		gSrcLeft[1] = new Rect(32, 96, 64, 128);
 		
 	}
 	
@@ -198,17 +241,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				synchronized (surfaceHolder) {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
-
-					//gameEngine.update();
-						
+				
 					canvas.drawRGB(0, 0, 0);
-
 					drawMaze(canvas); // draw updated maze
-
 					drawPacmon(canvas); // draw Pacman
-
 					drawGhost(canvas); // draw ghosts
-					
 					drawScore(canvas); // draw score and lives
 					
 					// calculate how long did the cycle take
@@ -248,7 +285,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				}
 				surfaceHolder = getHolder();
 			} else {
-
 				synchronized (surfaceHolder) {
 					canvas.drawRGB(0, 0, 0);
 					drawMaze(canvas); // draw updated maze
@@ -262,7 +298,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-
 				}
 			}
 		} finally {
@@ -272,7 +307,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
-		
 	}
 	
 	private void updateGameOver(Canvas canvas){
@@ -317,45 +351,39 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		for (int i = 0; i < gameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
 			int n;
-			if (direction == UP)	n = 0;
-			else if (direction == DOWN)		n = 1;
-			else if (direction == RIGHT)		n = 2;
-			else 		n = 3;
+			if (direction == UP)	srcRect = gSrcUp[currentFrame];
+			else if (direction == DOWN)		srcRect = gSrcDown[currentFrame];
+			else if (direction == RIGHT)		srcRect = gSrcRight[currentFrame];
+			else 	srcRect = gSrcRight[currentFrame];	
 			
-			int srcY = n * blockSize;
-			int srcX = mCurrentFrame * blockSize;
 			int gX = ghosts.get(i).getX();
 			int gY = ghosts.get(i).getY();
-			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
 			
 			if (i == 0)
-				canvas.drawBitmap(bluey_img, src, dst, null);
+				canvas.drawBitmap(bluey_img, srcRect, dst, null);
 			else if (i == 1)
-				canvas.drawBitmap(redy_img, src, dst, null);
+				canvas.drawBitmap(redy_img, srcRect, dst, null);
 			else if (i == 2)
-				canvas.drawBitmap(yellowy_img, src, dst, null);
+				canvas.drawBitmap(yellowy_img, srcRect, dst, null);
 		}
 	}
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas) {
 		currentFrame = ++currentFrame % 3;
-		int n;
+		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
-		if (direction == UP)	n = 0;
-		else if (direction == DOWN)		n = 1;
-		else if (direction == RIGHT)		n = 2;
-		else 		n = 3;
+		if (direction == UP)	srcRect = pSrcUp[currentFrame];
+		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
+		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
+		else 	srcRect = pSrcRight[currentFrame];	
 		
-		int srcY = n * blockSize;
-		int srcX = currentFrame * blockSize;
 		int pX = pacmon.getpX();
 		int pY = pacmon.getpY();
-		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-		canvas.drawBitmap(pac_img, src, dst, null);
+		canvas.drawBitmap(pac_img, srcRect, dst, null);
 		
 	}
 	
@@ -410,11 +438,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			}
 		}
 	}
-	
-	public void setDir(int dir){
-		this.direction = dir;
-	}
-
 }
 
 
