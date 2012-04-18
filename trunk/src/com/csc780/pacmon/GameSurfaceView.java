@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+//deals with rendering the game data
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	private final static int    MAX_FPS = 60;
@@ -37,6 +38,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private Pacmon pacmon;
 	private int direction;
 
+	
+	
 	private GameEngine gameEngine;
 	private ArrayList<Monster> ghosts;
 	
@@ -60,6 +63,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private int sleepTime; // ms to sleep (<0 if we're behind)
 	private int framesSkipped; // number of frames being skipped
 
+	private SoundEngine soundEngine; // sound manager
+	private boolean isPlayOn;
 	
 	public GameSurfaceView(Context context, Pacmon pacmon, GameEngine gameEngine) {
 		super(context);
@@ -69,6 +74,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		gameState = READY;
 		
 		mContext = context;
+		
+		soundEngine = new SoundEngine(context);
+		isPlayOn = true;
 		
 		blockSize = 32;  // size of block
 		
@@ -112,20 +120,26 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	//thread to update and draw. Game loop
 	public void run() {
 		Canvas canvas;
-
+		
 		while (isRunning) {
 			canvas = null;
-			if (gameEngine.getGameState() == READY)    updateReady(canvas);
+			if (gameEngine.getGameState() == READY){
+				if (isPlayOn){
+					soundEngine.play(4);
+					isPlayOn = false;
+				}
+				updateReady(canvas);
+
+			}
 			if (gameEngine.getGameState() == RUNNING)  updateRunning(canvas);
 			if (gameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
 			if (gameEngine.getGameState() == WON)	   updateWon(canvas);
-			
+			if (gameEngine.getGameState() == DIE)	   updateDie(canvas);
 		}
 	}
 	
 	// when game is in ready mode
 	private void updateReady(Canvas canvas){
-		
 		try {
 			canvas = surfaceHolder.lockCanvas();
 			if (canvas == null) {
@@ -220,6 +234,45 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
+	}
+	
+	private void updateDie(Canvas canvas){
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
+
+				synchronized (surfaceHolder) {
+					canvas.drawRGB(0, 0, 0);
+					drawMaze(canvas); // draw updated maze
+					drawPacmon(canvas);
+					drawGhost(canvas);
+					drawScore(canvas);
+					
+					try {
+						Thread.sleep(25);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
+		}
+		
 	}
 	
 	private void updateGameOver(Canvas canvas){
