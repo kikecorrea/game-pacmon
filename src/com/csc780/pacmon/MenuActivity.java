@@ -60,6 +60,8 @@ public class MenuActivity extends Activity implements OnClickListener{
 			break;
 			
 		case R.id.bOptions:
+			Intent ops = new Intent(this, GamePrefsActivity.class);
+			startActivity(ops);
 			break;
 			
 		case R.id.bAbout:
