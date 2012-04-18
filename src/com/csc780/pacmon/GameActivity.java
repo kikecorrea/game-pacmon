@@ -21,6 +21,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 	private float xAccel;
 	private float yAccel;
 	private GameEngine gameEngine;
+	private SoundEngine soundEngine;
 	
     /** Called when the activity is first created. */
     @Override
@@ -31,7 +32,8 @@ public class GameActivity extends Activity implements SensorEventListener{
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        gameEngine = new GameEngine();
+        soundEngine = new SoundEngine(this);
+        gameEngine = new GameEngine(soundEngine);
         gameView = new GameSurfaceView(this, gameEngine.pacmon, gameEngine);
 
         setContentView(gameView);

@@ -20,7 +20,7 @@ public class GameEngine implements Runnable {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
 	
 	private Maze maze;
 	private Thread mThread;
@@ -53,10 +53,16 @@ public class GameEngine implements Runnable {
 	private int sleepTime; // ms to sleep (<0 if we're behind)
 	private int framesSkipped; // number of frames being skipped
 	
+	
 	private long readyCountDown;
 	
+	private SoundEngine soundEngine;
+	
 	//Constructor create players, ghosts and Maze
-	public GameEngine(){
+	public GameEngine(SoundEngine soundEngine){
+		this.soundEngine = soundEngine;
+		soundEngine.playReady();
+		
 		pacmon = new Pacmon();  // new pacmon
 		lives = pacmon.getpLives();
 		
@@ -305,13 +311,20 @@ public class GameEngine implements Runnable {
 	//when ghost touches player, pacmon dies
 	private void diePacmon(){
 		lives--;
-		gameState = READY;
+		gameState = DIE;
+		
+		//reset
 		pacmon.reset();
 		for (int i = 0; i < ghosts.size(); i++){
 			ghosts.get(i).reset();
 		}
 		
-		if (lives == 0) gameState = GAMEOVER;
+		soundEngine.playDie();
+		
+		if (lives == 0) {
+			gameState = GAMEOVER;
+			soundEngine.playGameOver();
+		}
 	}
 	
 	// eat food ==> score and power ==> speed
@@ -319,9 +332,12 @@ public class GameEngine implements Runnable {
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
 			playerScore++;   // increase score
+			
+			soundEngine.playEatCherry();
+			
 			if (playerScore == maze.getFoodCount())
 				gameState = WON;
-			//maze.clearFood(boxX, boxY);
+			
 		}
 		
 		if (mazeArray[boxY][boxX] == 2){
@@ -347,8 +363,29 @@ public class GameEngine implements Runnable {
 			if (gameState == RUNNING)  updateRunning();
 			if (gameState == GAMEOVER) updateGameOver();
 			if (gameState == WON)	   updateWon();
+			if (gameState == DIE)	   updateDie();
 			
 		}
+	}
+	
+	public void updateDie() {
+		beginTime = System.currentTimeMillis();
+	
+		sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+		if (sleepTime > 0) {
+			// if sleepTime > 0 we're OK
+			try {
+				// send the thread to sleep for a short period
+				// very useful for battery saving
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+			}
+		}
+		
+		timeDiff += System.currentTimeMillis() - beginTime;
+		if(timeDiff >= 1200)
+			gameState = READY;
 	}
 	
 	// loop through ready if gameState is READY
