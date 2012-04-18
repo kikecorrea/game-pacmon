@@ -145,6 +145,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		pSrcLeft[0] = new Rect(0, 96, 32, 128);
 		pSrcLeft[1] = new Rect(32, 96, 64, 128);
+		pSrcLeft[2] = new Rect(64, 96, 96, 128);
 		
 		gSrcUp[0] = new Rect(0, 0, 32, 32);
 		gSrcUp[1] = new Rect(32, 0, 64, 32);
@@ -351,10 +352,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		for (int i = 0; i < gameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
 			int n;
-			if (direction == UP)	srcRect = gSrcUp[currentFrame];
-			else if (direction == DOWN)		srcRect = gSrcDown[currentFrame];
-			else if (direction == RIGHT)		srcRect = gSrcRight[currentFrame];
-			else 	srcRect = gSrcRight[currentFrame];	
+			if (direction == UP)	srcRect = gSrcUp[mCurrentFrame];
+			else if (direction == DOWN)		srcRect = gSrcDown[mCurrentFrame];
+			else if (direction == RIGHT)		srcRect = gSrcRight[mCurrentFrame];
+			else 	srcRect = gSrcLeft[mCurrentFrame];	
 			
 			int gX = ghosts.get(i).getX();
 			int gY = ghosts.get(i).getY();
@@ -378,7 +379,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		if (direction == UP)	srcRect = pSrcUp[currentFrame];
 		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
-		else 	srcRect = pSrcRight[currentFrame];	
+		else 	srcRect = pSrcLeft[currentFrame];	
 		
 		int pX = pacmon.getpX();
 		int pY = pacmon.getpY();
