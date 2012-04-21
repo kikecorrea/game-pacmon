@@ -44,7 +44,7 @@ public class GameEngine implements Runnable {
 	
 	private boolean isRunning;
 	
-	
+	private int gX, gY;
 	
 	
 	//timer
@@ -59,7 +59,7 @@ public class GameEngine implements Runnable {
 	private SoundEngine soundEngine;
 	
 	//Constructor create players, ghosts and Maze
-	public GameEngine(SoundEngine soundEngine){
+	public GameEngine(SoundEngine soundEngine, int level){
 		this.soundEngine = soundEngine;
 		soundEngine.playReady();
 		
@@ -71,19 +71,22 @@ public class GameEngine implements Runnable {
 		timerCount = 0;
 		gameState = 0;
 		
-		ghosts = new ArrayList<Monster>();
-		
-		ghosts.add(new Monster());
-		ghosts.add(new Monster());
-		ghosts.add(new Monster());
-		
 		// maze stuff
 		maze = new Maze();
-		mazeArray = maze.getMaze();
+		mazeArray = maze.getMaze(level);
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
-		directionMaze = maze.getDirectionMaze();
+		directionMaze = maze.getDirectionMaze(level);
 		ghostArray = maze.getGhostArray();
+		
+		ghosts = new ArrayList<Monster>();
+		
+		int gX = maze.getGhostSpawnLocX();
+		int gY = maze.getGhostSpawnLocY();
+		ghosts.add(new Monster());
+		ghosts.add(new Monster());
+		ghosts.add(new Monster());
+		
 		
 		isRunning = true;
 		mThread = new Thread(this);
@@ -114,12 +117,12 @@ public class GameEngine implements Runnable {
 
 			if (inputDirection == LEFT){  // move left allowed if can move to left
 		        if (boxX > 0 )
-		            if ( mazeArray[boxY][boxX - 1] != 0)
+		            if (boxX == 0 || mazeArray[boxY][boxX - 1] != 0)
 		                newDirection = inputDirection;
 			}
 			if (inputDirection == RIGHT){   // move right
 		        if (boxX < mazeColumn )
-		            if (mazeArray[boxY][boxX + 1] != 0) 
+		            if (boxX == mazeColumn - 1 || mazeArray[boxY][boxX + 1] != 0) 
 		                newDirection = inputDirection;
 			}	
 			if (inputDirection == DOWN){ // move down
@@ -150,6 +153,9 @@ public class GameEngine implements Runnable {
 			
 			boxX = pX / blockSize;
 			boxY = pY / blockSize;
+			
+			boxX %= mazeColumn;
+			boxY %= mazeRow;
 			eatFoodPower(boxX, boxY);
 			
 			movable = true;
@@ -193,6 +199,11 @@ public class GameEngine implements Runnable {
 			if (newDirection == LEFT) // left
 				pX = pX - pNormalSpeed;
 		}
+		
+		if(pX == 448)
+			pX = 4;
+		if(pX == 0)
+			pX = 444;
 		
 		pacmon.setpX(pX);
 		pacmon.setpY(pY);

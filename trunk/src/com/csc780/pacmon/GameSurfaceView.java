@@ -49,6 +49,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private int mazeRow, mazeColumn;
 	private int blockSize;
 	
+	private Maze maze;
+	
 	private Paint paint, paint2;
 	
 	private Context mContext;
@@ -91,9 +93,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		
 		blockSize = 32;  // size of block
 		
+		maze = gameEngine.getMaze();
 		mazeArray = gameEngine.getMazeArray();
-		mazeRow = gameEngine.getMazeRow();
-		mazeColumn = gameEngine.getMazeColumn();
+		mazeRow = maze.getMazeRow();
+		mazeColumn = maze.getMazeColumn();
 
 		
 		initBitmap();  // init all Bitmap and its components

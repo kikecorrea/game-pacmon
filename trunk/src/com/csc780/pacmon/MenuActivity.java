@@ -52,7 +52,7 @@ public class MenuActivity extends Activity implements OnClickListener{
 		switch (v.getId()){
 		
 		case R.id.bSingle: //start single player game
-			Intent sGame = new Intent("com.csc780.pacmon.GAMEACTIVITY");
+			Intent sGame = new Intent("com.csc780.pacmon.LEVELSELECTACTIVITY");
 			startActivity(sGame);
 			break;
 			

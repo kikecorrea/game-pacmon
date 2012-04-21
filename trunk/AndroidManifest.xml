@@ -32,6 +32,17 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:name=".LevelSelectActivity"
+            android:screenOrientation="portrait"
+            android:label="LevelSelectActivity" >
+            <intent-filter>
+                <action android:name="com.csc780.pacmon.LEVELSELECTACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
          <activity
             android:name="com.csc780.multipacmon.MGameActivity"
             android:screenOrientation="portrait"
