@@ -97,10 +97,10 @@ public class MGameEngine  {
 		
 		// maze stuff
 		maze = new Maze();
-		mazeArray = maze.getMaze();
+		mazeArray = maze.getMaze(1);
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
-		directionMaze = maze.getDirectionMaze();
+		directionMaze = maze.getDirectionMaze(1);
 		ghostArray = maze.getGhostArray();
 		
 		isRunning = true;

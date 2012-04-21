@@ -31,9 +31,11 @@ public class GameActivity extends Activity implements SensorEventListener{
         mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        
+        int level = getIntent().getIntExtra("level", 1);
 
         soundEngine = new SoundEngine(this);
-        gameEngine = new GameEngine(soundEngine);
+        gameEngine = new GameEngine(soundEngine, level);
         gameView = new GameSurfaceView(this, gameEngine.pacmon, gameEngine);
 
         setContentView(gameView);
