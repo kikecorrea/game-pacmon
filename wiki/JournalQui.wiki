@@ -27,6 +27,12 @@ Links:
 
 [JournalQui#Week_4/1_-_4/8]
 
+[JournalQui#Week_4/8_-_4/15]
+
+[JournalQui#Week_4/15_-_4/22]
+
+[JournalQui#Week_4/22_-_4/29]
+
 === Week 2/5 - 2/12 ===
 Progress:
    * Created code repository
@@ -129,8 +135,40 @@ Plan for next week:
 === Week 4/1 - 4/8 ===
 Progress:
    * Collision detection both random and smart ghosts
+   * A little code clean up
 Problem:
-   
+   * None
 Learned:
-   
+   * Model View Controller design concept
 Plan for next week:
+   * Add sound
+
+=== Week 4/8 - 4/15 ===
+Progress:
+   * Sound added for single player
+Problem:
+   * Finding sounds files
+Learned:
+   * Make better game loop and conditions
+Plan for next week:
+   * Collision detection and smart ghosts
+
+=== Week 4/15 - 4/22 ===
+Progress:
+   * Improved multi-player (now playable) with 30% cpu usage
+Problem:
+   * Allocation of new object make Garbage collector running every 5s
+Learned:
+   * Multiplayer data sent and receive optimization
+Plan for next week:
+   * Push maze's data from server to both clients
+
+=== Week 4/22 - 4/29 ===
+Progress:
+   * 
+Problem:
+   * 
+Learned:
+   * 
+Plan for next week:
+   * 
