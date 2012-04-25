@@ -71,7 +71,14 @@ public class GameActivity extends Activity implements SensorEventListener{
 		super.onDestroy();
 		//gameView.pause();
 	}
+	
 
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		soundEngine.endMusic();
+		super.finish();
+	}
 
 	@Override
 	public void onBackPressed() {
@@ -128,12 +135,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 			gameEngine.setInputDir(LEFT);
 			//gameView.setDir(4);
 		}
-
-		
-		
+	
 	}
-    
-    
-    
     
 }
