@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Display;
 
 public class GameActivity extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
@@ -36,7 +38,11 @@ public class GameActivity extends Activity implements SensorEventListener{
 
         soundEngine = new SoundEngine(this);
         gameEngine = new GameEngine(soundEngine, level);
-        gameView = new GameSurfaceView(this, gameEngine.pacmon, gameEngine);
+        
+        Display display = getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        gameView = new GameSurfaceView(this, gameEngine, width, height);
 
         setContentView(gameView);
         
