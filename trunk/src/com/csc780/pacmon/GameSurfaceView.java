@@ -9,9 +9,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -37,7 +39,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	private Pacmon pacmon;
 	
-	
 	private GameEngine gameEngine;
 	private ArrayList<Monster> ghosts;
 	
@@ -47,7 +48,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	//maze info
 	private int[][] mazeArray;
 	private int mazeRow, mazeColumn;
-	private int blockSize;
+	private float blockSize;
 	
 	private Maze maze;
 	
@@ -79,11 +80,16 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private SoundEngine soundEngine; // sound manager
 	private boolean isPlayOn;
 	
-	public GameSurfaceView(Context context, Pacmon pacmon, GameEngine gameEngine) {
-		super(context);
-		this.pacmon = pacmon;
-		this.gameEngine = gameEngine;
+	private float screenWidth;
+	private float screenHeight;
+	private float scaleFactor;
+	
+	public GameSurfaceView(Context context, GameEngine gameEngine, int sWidth, int sHeight) {
 		
+		super(context);
+		
+		this.gameEngine = gameEngine;
+		this.pacmon = gameEngine.pacmon;
 		gameState = READY;
 		
 		mContext = context;
@@ -91,7 +97,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		soundEngine = new SoundEngine(context);
 		isPlayOn = true;
 		
-		blockSize = 32;  // size of block
+		screenWidth = sWidth;
+		screenHeight = sHeight;
+		
+		blockSize = screenWidth / 15.f;  // size of block
+		scaleFactor = blockSize / 32.f;  // scale factor for block
+		
 		
 		maze = gameEngine.getMaze();
 		mazeArray = gameEngine.getMazeArray();
@@ -133,7 +144,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initSprite(){
-		int offset = 32;
 		pSrcUp[0] = new Rect(0, 0, 32, 32);
 		pSrcUp[1] = new Rect(32, 0, 64, 32);
 		pSrcUp[2] = new Rect(64, 0, 96, 32);
@@ -207,8 +217,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawScore(canvas);
 					
 					//long time = 5L - timeDiff/1000;
-					canvas.drawText("Getting Ready in " + gameEngine.getReadyCountDown(),
-									45, 350, paint2);	
+					canvas.drawText("Ready in " + gameEngine.getReadyCountDown(),
+									screenWidth/4 , screenHeight/2 , paint2);
 					
 					try {
 						Thread.sleep(25);
@@ -333,9 +343,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Congratulations!", 70, 350, paint2);
-		canvas.drawText("You won", 130, 400, paint2);
-		canvas.drawText(gameEngine.getPlayerScore(), 130, 450, paint2);
+		canvas.drawText("Congratulations!", screenWidth/3 , screenHeight/2 - 50, paint2);
+		canvas.drawText("You won", screenWidth/3 , screenHeight/2 , paint2);
+		canvas.drawText(gameEngine.getPlayerScore(), screenWidth/3 , screenHeight/2 + 50, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -360,9 +370,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			else if (direction == RIGHT)		srcRect = gSrcRight[mCurrentFrame];
 			else 	srcRect = gSrcLeft[mCurrentFrame];	
 			
-			int gX = ghosts.get(i).getX();
-			int gY = ghosts.get(i).getY();
-			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
+			int gX = Math.round(ghosts.get(i).getX() * scaleFactor);
+			int gY = Math.round(ghosts.get(i).getY() * scaleFactor);
+			
+			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
 			if (i == 0)
 				canvas.drawBitmap(bluey_img, srcRect, dst, null);
@@ -384,18 +395,20 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
 		else 	srcRect = pSrcLeft[currentFrame];	
 		
-		int pX = pacmon.getpX();
-		int pY = pacmon.getpY();
-		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
+		int pX = Math.round(pacmon.getpX() * scaleFactor);
+		int pY = Math.round(pacmon.getpY() * scaleFactor);
+		
+		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
+		
 		canvas.drawBitmap(pac_img, srcRect, dst, null);
 		
 	}
 	
 	// draw score
 	public void drawScore(Canvas canvas){
-		canvas.drawText(gameEngine.getPlayerScore(), 20, 736, paint);
-		canvas.drawText(gameEngine.getLives(), 150, 736, paint);
-		canvas.drawText(gameEngine.getTimer(), 350, 736, paint);
+		canvas.drawText(gameEngine.getPlayerScore(), 20, blockSize * 23, paint);
+		canvas.drawText(gameEngine.getLives(), screenWidth/2 - 25, blockSize * 23, paint);
+		canvas.drawText(gameEngine.getTimer(), screenWidth/2 + 50, blockSize * 23, paint);
 	}
 	
 
