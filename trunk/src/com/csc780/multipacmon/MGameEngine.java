@@ -7,6 +7,7 @@ import java.util.Random;
 import com.csc780.pacmon.Maze;
 import com.csc780.pacmon.Monster;
 import com.csc780.pacmon.Pacmon;
+import com.csc780.pacmon.SoundEngine;
 
 
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
@@ -70,11 +71,15 @@ public class MGameEngine  {
 	
 	private long readyCountDown;
 	
+	private SoundEngine soundEngine;
+	
 	//Constructor create players, ghosts and Maze
-	public MGameEngine(){
-		pacmon = new Pacmon();  // new pacmon
-		pacmon2=new Pacmon();
+	public MGameEngine(SoundEngine soundEngine){
+		this.soundEngine = soundEngine;
 		
+		pacmon = new Pacmon();  // new pacmon
+		pacmon2 = new Pacmon();
+	
 		pacmon.setpX(32);
 		pacmon.setpY(32);
 	
@@ -166,6 +171,9 @@ public class MGameEngine  {
 		
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
+			
+			soundEngine.playEatCherry();
+			
 			//playerScore++;   // increase score
 			//if ( (playerScore + playerScore2)== maze.getFoodCount())
 			if ( this.totalScores== maze.getFoodCount())
@@ -322,7 +330,7 @@ public class MGameEngine  {
 		}
 		
 		String x[]={"P1 lives:" + String.valueOf(receiver.pacmonLives[0]), "P2 lives:"+String.valueOf(receiver.pacmonLives[1]) };
-	return x;
+		return x;
 	}
 	
 	public int getCountDown()

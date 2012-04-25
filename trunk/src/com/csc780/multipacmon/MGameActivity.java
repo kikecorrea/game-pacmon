@@ -1,5 +1,7 @@
 package com.csc780.multipacmon;
 
+import com.csc780.pacmon.SoundEngine;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +11,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.Display;
 
 public class MGameActivity extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
@@ -21,6 +24,8 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	private float xAccel;
 	private float yAccel;
 	private MGameEngine mgameEngine;
+	private SoundEngine soundEngine;
+	
 	
     /** Called when the activity is first created. */
     @Override
@@ -31,8 +36,12 @@ public class MGameActivity extends Activity implements SensorEventListener{
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
-        mgameEngine = new MGameEngine();
-        mgameView = new MGameSurfaceView(this, mgameEngine.pacmon, mgameEngine.pacmon2, mgameEngine);
+        soundEngine = new SoundEngine(this);
+        mgameEngine = new MGameEngine(soundEngine);
+        Display display = getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+        mgameView = new MGameSurfaceView(this, mgameEngine, width, height);
 
         setContentView(mgameView);
         
