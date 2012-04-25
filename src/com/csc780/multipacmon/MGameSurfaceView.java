@@ -46,7 +46,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	private ArrayList<Monster> ghosts;
 	
 	// bitmap
-	private Bitmap pac_img, wall, door, bluey_img, redy_img, yellowy_img, food, power ;
+	private Bitmap pac_img2, pac_img, wall, door, bluey_img, redy_img, yellowy_img, food, power ;
 	
 	//maze info
 	private int[][] mazeArray;
@@ -67,10 +67,10 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 
 	
-	public MGameSurfaceView(Context context, Pacmon pacmon, Pacmon pacmon2, MGameEngine gameEngine) {
+	public MGameSurfaceView(Context context, MGameEngine gameEngine, int width, int height) {
 		super(context);
-		this.pacmon = pacmon;
-		this.pacmon2=pacmon2;
+		this.pacmon = gameEngine.pacmon;
+		this.pacmon2 = gameEngine.pacmon2;
 		this.mgameEngine = gameEngine;
 		
 		gameState = READY;
@@ -102,7 +102,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
 		power = BitmapFactory.decodeResource(getResources(), R.drawable.power);
-		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite);
+		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite_green);
+		pac_img2 = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite_orange);
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
@@ -158,7 +159,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					//drawScore(canvas);
 			
 					int x=mgameEngine.getCountDown();
- 					canvas.drawText("Getting Ready in " + x, 45, 350, paint2);	
+ 					canvas.drawText("Ready in " + x, 45, 350, paint2);	
  					
  					if(x==0)
 					{  mgameEngine.setGameState(RUNNING); }
@@ -361,7 +362,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		
 		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-		canvas.drawBitmap(pac_img, src, dst, null);
+		canvas.drawBitmap(pac_img2, src, dst, null);
 		
 	}
 	
