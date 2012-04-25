@@ -407,8 +407,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	// draw score
 	public void drawScore(Canvas canvas){
 		canvas.drawText(gameEngine.getPlayerScore(), 20, blockSize * 23, paint);
-		canvas.drawText(gameEngine.getLives(), screenWidth/2 - 25, blockSize * 23, paint);
-		canvas.drawText(gameEngine.getTimer(), screenWidth/2 + 50, blockSize * 23, paint);
+		canvas.drawText(gameEngine.getLives(), screenWidth/2, blockSize * 23, paint);
+		canvas.drawText(gameEngine.getTimer(), screenWidth/2, blockSize * 23 + 25, paint);
 	}
 	
 

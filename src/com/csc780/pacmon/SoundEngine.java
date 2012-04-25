@@ -31,10 +31,9 @@ public class SoundEngine {
 		soundsMap.put(GAMEOVER, sounds.load(context, R.raw.pacman_opening_song, 1));
 		soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacman_eating_cherry, 1));
 		
-		
-		
 	    // the music that is played at the beginning
-	    music = MediaPlayer.create(context, R.raw.pacman_opening_song);
+	    music = MediaPlayer.create(context, R.raw.level_music);
+	    music.setLooping(true);
 	}
 	
 	//play the sound depends on the input request
@@ -70,7 +69,15 @@ public class SoundEngine {
 	}
 	
 	public void playMusic(){
-		
+		music.start();
+	}
+	
+	public void stopMusic(){
+		music.pause();
+	}
+	
+	public void endMusic(){
+		music.release();
 	}
 	
 	public void playReady(){

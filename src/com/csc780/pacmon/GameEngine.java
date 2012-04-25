@@ -330,10 +330,12 @@ public class GameEngine implements Runnable {
 			ghosts.get(i).reset();
 		}
 		
+		soundEngine.stopMusic();
 		soundEngine.playDie();
 		
 		if (lives == 0) {
 			gameState = GAMEOVER;
+			soundEngine.endMusic();
 			soundEngine.playGameOver();
 		}
 	}
@@ -346,8 +348,10 @@ public class GameEngine implements Runnable {
 			
 			soundEngine.playEatCherry();
 			
-			if (playerScore == maze.getFoodCount())
+			if (playerScore == maze.getFoodCount()){
 				gameState = WON;
+				soundEngine.stopMusic();
+			}
 			
 		}
 		
@@ -363,7 +367,11 @@ public class GameEngine implements Runnable {
 			timer--;
 			timerCount = 0;
 		}
-		if (timer == -1)  gameState = GAMEOVER;  // LOST
+		if (timer == -1){
+			gameState = GAMEOVER;  // LOST
+			soundEngine.stopMusic();
+			soundEngine.playGameOver();
+		}
 		
 	}
 	
@@ -417,8 +425,10 @@ public class GameEngine implements Runnable {
 		}
 		
 		timeDiff += System.currentTimeMillis() - beginTime;
-		if(timeDiff >= 5000)
+		if(timeDiff >= 5000) {
 			gameState = RUNNING;
+			soundEngine.playMusic();
+		}
 		
 	}
 	
@@ -443,6 +453,7 @@ public class GameEngine implements Runnable {
 			} catch (InterruptedException e) {
 			}
 		}
+		
 	}
 	
 	private void updateGameOver(){
