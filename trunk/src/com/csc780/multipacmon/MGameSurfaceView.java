@@ -8,7 +8,9 @@ import com.csc780.pacmon.R;
 import com.csc780.pacmon.R.drawable;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -28,7 +30,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4, SEARCHING=5;
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -57,13 +59,15 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	
 	private Context mContext;
 	
-	private int gameState;
+	//private int gameState;
 	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
 	private long timeDiff; // the time it took for the cycle to execute
 	private int sleepTime; // ms to sleep (<0 if we're behind)
 	private int framesSkipped; // number of frames being skipped
+	
+	private int countForSearching=0;
 
 
 	
@@ -73,7 +77,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		this.pacmon2 = gameEngine.pacmon2;
 		this.mgameEngine = gameEngine;
 		
-		gameState = READY;
+	//	gameState = READY;  //never used, this was use in single player
 		
 		mContext = context;
 		
@@ -118,6 +122,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(50);
 		
+	
+		
 	}
 	
 	//thread to update and draw. Game loop
@@ -127,12 +133,69 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 		while (isRunning) {
 			canvas = null;
+			if(mgameEngine.getGameState()==SEARCHING) {updateSearching(canvas); }
 			if (mgameEngine.getGameState() == READY)    updateReady(canvas);
 			if (mgameEngine.getGameState() == RUNNING)  {updateRunning(canvas);}
 			if (mgameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
 			if (mgameEngine.getGameState() == WON)	   updateWon(canvas);
 		
 		}
+	}
+	
+	private void updateSearching(Canvas canvas)
+	{
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
+
+				synchronized (surfaceHolder) {
+					canvas.drawRGB(0, 0, 0);
+					//drawMaze(canvas); // draw updated maze
+					
+					
+ 					
+ 					
+ 					if(mgameEngine.clientDiscoverer.isFinish)
+					{  
+					 
+					   canvas.drawText("found server", 45, 350, paint2);
+					   if(countForSearching > 30)
+					   {
+						   mgameEngine.callDispatcher();
+						   mgameEngine.setGameState(READY);
+					   }
+					   
+					   //for sleeping this thread. so we can see found server for a couple of second
+					   countForSearching++;
+						   
+					}
+ 					else
+ 						canvas.drawText("searching", 45, 350, paint2);	
+	
+					try {
+						Thread.sleep(25);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
+		}
+		
 	}
 	
 	// when game is in ready mode

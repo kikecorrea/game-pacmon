@@ -15,19 +15,18 @@ import android.util.Log;
 
 public class Receiving extends Thread {
 
-	private String serverHostname;
+	private final String serverHostname;
 	private DatagramSocket clientSocket;
 	private DatagramPacket sendPacket;
 	private DatagramPacket receivePacket;
 	private InetAddress IPAddress;
 	private byte[] receiveData;
 	
-	private LinkedList<Pair> dataList=new LinkedList<Pair>();
-	private CircularQue que=new CircularQue(3);
-	private CircularQue que2=new CircularQue(3);
-	private CircularQue ghost1Que=new CircularQue(3);
-	private CircularQue ghost2Que=new CircularQue(3);
-	private CircularQue ghost3Que=new CircularQue(3);
+	private CircularQue pac1que=new CircularQue(4);
+	private CircularQue pac2que2=new CircularQue(4);
+	private CircularQue ghost1Que=new CircularQue(4);
+	private CircularQue ghost2Que=new CircularQue(4);
+	private CircularQue ghost3Que=new CircularQue(4);
 	
 	//store the lives of pacmon
 	public volatile int pacmonLives[]=new int [2];
@@ -104,8 +103,8 @@ public class Receiving extends Thread {
 		}
 		else if(!temp[0].equals(previousTick))
 		{
-			que.write(Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Integer.parseInt(temp[3]));
-			que2.write(Integer.parseInt(temp[4]), Integer.parseInt(temp[5]),Integer.parseInt(temp[6]));
+			pac1que.write(Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Integer.parseInt(temp[3]));
+			pac2que2.write(Integer.parseInt(temp[4]), Integer.parseInt(temp[5]),Integer.parseInt(temp[6]));
 			
 			ghost1Que.write(Integer.parseInt(temp[7]), Integer.parseInt(temp[8]),Integer.parseInt(temp[9]));
 			ghost2Que.write(Integer.parseInt(temp[10]), Integer.parseInt(temp[11]),Integer.parseInt(temp[12]));
@@ -127,12 +126,12 @@ public class Receiving extends Thread {
 	
 	public int [] deQueP1()
 	{
-		int p1[]=que.read();
+		int p1[]=pac1que.read();
 		return p1;
 	}
 	public int [] deQueP2()
 	{
-		int p2[]=que2.read();
+		int p2[]=pac2que2.read();
 		return p2;
 	}
 	//deQue GHOST
@@ -152,60 +151,6 @@ public class Receiving extends Thread {
 		return g3;
 	}
 	
-	//check countDown
-//	public void CountDown(String temp, int length)
-//	{
-//		int x=Integer.parseInt(temp.substring(0, length));
-//
-//			if(x>0)
-//				countDown=x;
-//			else
-//			{
-//				countDown=x;
-//				checkCountDown=false;
-//			}
-//	}
-	
-	
-	
-//	//for linkedList
-//	public void addReceiveData(String data, int length)
-//	{
-//		String temp[]=data.substring(0, length).split(":", 3);
-//		
-//		//adding data only if tickCounter is different
-//		if(!temp[0].equals(previousTick))
-//		{
-//			dataList.add(new Pair(Integer.parseInt(temp[1]), Integer.parseInt(temp[2])));
-//			//dataList.add(data.substring(0, length));
-//			previousTick=temp[0];
-//		}
-//		
-//		
-//	}
-	
-//	public int [] getReceiveData()
-//	{
-//		Log.d(String.valueOf(dataList.size()), "this is size");
-//		//System.out.println("SIZE::" +dataList.size());
-//		//String temp=dataList.remove();
-//		Pair pair=dataList.remove();
-//	
-//		//String bp[]=temp.split(":", 3);
-//		
-//		int xy[]={pair.x, pair.y};
-//		
-//		return xy;
-//		
-//	}
-//	public boolean checkListEmpty()
-//	{
-//		if(dataList.size()<=0)
-//			return true;
-//		else 
-//			return false;
-//	}
-	
 	@Override
 	public void run()
 	{
@@ -223,14 +168,11 @@ public class Receiving extends Thread {
 				try {
 			          clientSocket.receive(receivePacket); 
 			       
-			           String receiveData = //receivePacket.getData().toString();
-			               new String(receivePacket.getData()); 
+			           String receiveData =   new String(receivePacket.getData()); 
 			          
 			         // System.out.println("RECEIVE:" + receiveData);
 			
-			          //saving data to linked list
-			          //this.addReceiveData(receiveData, receivePacket.getLength());
-			        	  this.addQue(receiveData, receivePacket.getLength());
+		        	  this.addQue(receiveData, receivePacket.getLength());
 			  
 			         }
 			      catch (SocketTimeoutException ste){
@@ -243,15 +185,3 @@ public class Receiving extends Thread {
 	}
 }
 
-
-class Pair
-{
-	public int x;
-	public int y;
-	
-	public Pair(int x, int y)
-	{
-		this.x=x;
-		this.y=y;
-	}
-}

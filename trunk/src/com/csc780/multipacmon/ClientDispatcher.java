@@ -25,10 +25,10 @@ public class ClientDispatcher {
 	//sets the sending port
 	public int sendPort;
 	
-	public ClientDispatcher()
+	public ClientDispatcher(String ip)
 	{
 
-		serverHostname = new String ("192.168.0.195");
+		serverHostname = new String (ip);
 		sendData = new byte[24]; 
 		receiveData = new byte[24];
 		

@@ -27,13 +27,13 @@ public class Sending extends Thread {
 	public volatile String data="1";
 
 	
-	public Sending(int port)
+	public Sending(int port, String ip)
 	{
 		//set the sending port;
 		this.port=port;
 		
 		ready=new AtomicBoolean(true);
-		serverHostname = new String ("192.168.0.195");
+		serverHostname = new String (ip);
 		sendData = new byte[24]; 
 		
 		try {
@@ -49,6 +49,10 @@ public class Sending extends Thread {
 		
 	}
 	
+	public void notifyTheThread()
+	{
+		this.notifyAll();
+	}
 	
 	@Override
 	public void run()
@@ -61,7 +65,14 @@ public class Sending extends Thread {
 		 {
 		
 		//	sendData = new byte[12]; 
-			//synchronized(this)
+//			//synchronized(this)
+			try {
+				this.sleep(20);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		    if(this.ready.get())
 				{   
 				go=true; ready.set(false); 
