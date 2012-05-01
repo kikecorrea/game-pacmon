@@ -26,7 +26,7 @@ public class MGameEngine  {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5;
 	
 	private Maze maze;
 	private Thread mThread;
@@ -73,6 +73,8 @@ public class MGameEngine  {
 	
 	private SoundEngine soundEngine;
 	
+	public ClientDiscoverer clientDiscoverer;
+	
 	//Constructor create players, ghosts and Maze
 	public MGameEngine(SoundEngine soundEngine){
 		this.soundEngine = soundEngine;
@@ -89,10 +91,11 @@ public class MGameEngine  {
 		lives = pacmon.getpLives();
 		lives2=pacmon2.getpLives();
 		
+		
 		//playerScore = 0;
 		timer = 90;
 		timerCount = 0;
-		gameState = 0;
+		gameState = 5;
 		
 		ghosts = new ArrayList<Monster>();
 		
@@ -111,11 +114,55 @@ public class MGameEngine  {
 		isRunning = true;
 	
 		
+//		receiver=new Receiving();
+//		///gets the receiver port, then needs to send to server
+//		int port=receiver.getPortReceive();
+		
+		
+		//client discoverer
+	   clientDiscoverer = new ClientDiscoverer();
+		//clientDiscoverer.startDiscovery();
+		clientDiscoverer.start();
+		
+		//String ip=clientDiscoverer.getipAddress();
+		
+//		try {
+//			Thread.sleep(5000);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//		clientDispatcher=new ClientDispatcher(ip);
+//		clientDispatcher.connectToServer(port);
+//		
+//		//returns port for sending to server
+//		//clientDispatcher.connectToServer(port);
+//		int sendPort=clientDispatcher.sendPort;
+//		int id=clientDispatcher.id;
+//		
+//		receiver.setID(id);   ///########################### need to remove, this didn't use it at all
+//	
+//		sending=new Sending(sendPort, ip);
+//		
+//		sending.start();
+//		receiver.start();
+		
+		//start the gameEngine
+		//mThread.start();
+		
+	}
+	
+	public void callDispatcher()
+	{
+		String ip=clientDiscoverer.getipAddress();
+		
 		receiver=new Receiving();
 		///gets the receiver port, then needs to send to server
 		int port=receiver.getPortReceive();
 		
-		clientDispatcher=new ClientDispatcher();
+		
+		clientDispatcher=new ClientDispatcher(ip);
 		clientDispatcher.connectToServer(port);
 		
 		//returns port for sending to server
@@ -125,14 +172,10 @@ public class MGameEngine  {
 		
 		receiver.setID(id);   ///########################### need to remove, this didn't use it at all
 	
-		sending=new Sending(sendPort);
+		sending=new Sending(sendPort, ip);
 		
 		sending.start();
 		receiver.start();
-		
-		//start the gameEngine
-		//mThread.start();
-		
 	}
 	
 	
@@ -210,9 +253,10 @@ public class MGameEngine  {
 	public void setInputDir(int dir){
 
 		this.inputDirection = dir;
+		
 		sending.data=String.valueOf(dir);
 		sending.ready.set(true);
-		//client.setDataSent(String.valueOf(dir));
+		//sending.notifyTheThread();
 	}
 	
 	public Maze getMaze(){
@@ -361,6 +405,12 @@ public class MGameEngine  {
 	
 	public String getTimer()
 	{ return "Time:" + receiver.timer;}
+	
+	public void killAllThread()
+	{
+		receiver.isRunning=false;
+		sending.isRunning=false;
+	}
 	
 	
 }

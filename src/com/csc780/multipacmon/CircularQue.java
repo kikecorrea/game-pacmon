@@ -28,10 +28,14 @@ public class CircularQue {
         
         public void write(int x, int y, int z)
         {
-            //check if readPOinter is behind me,
+            //check if readPOinter is front of me,
             if(writePointer==(readPointer-1))
             {
-                readPointer=(QueSize/2) - 1;
+            	if(readPointer%QueSize==0 && readPointer!=0)
+            		readPointer=1;
+            	else
+            		readPointer+=1;
+             //   readPointer=(QueSize/2) - 1;
                // System.out.println("move POinter POinter");
                 que[writePointer]=new pairXY(x,y,z);
             }

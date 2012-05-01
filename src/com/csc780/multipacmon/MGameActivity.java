@@ -10,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.view.Display;
 
@@ -37,6 +38,11 @@ public class MGameActivity extends Activity implements SensorEventListener{
         mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
 
         soundEngine = new SoundEngine(this);
+        
+        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
+	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
+	       multicastLock.acquire();
+	       
         mgameEngine = new MGameEngine(soundEngine);
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
@@ -44,6 +50,8 @@ public class MGameActivity extends Activity implements SensorEventListener{
         mgameView = new MGameSurfaceView(this, mgameEngine, width, height);
 
         setContentView(mgameView);
+        
+       
         
     }
 
@@ -67,9 +75,11 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+		mgameEngine.killAllThread();
+		//mgameView.pause();
 		super.onDestroy();
 		//gameView.pause();
-		//mgameView.pause();
+		
 	}
 
 
