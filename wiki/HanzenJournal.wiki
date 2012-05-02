@@ -45,3 +45,10 @@
  * Implemented lag compensation, interpolation, 
  * Added circular que for receiving data for client side
  * Implemented multiple client connection for server side
+
+== April 16- April 20 ==
+ * Research for UDP Broadcast
+ 
+== April 23 - April  27==
+ * Implemented UDP Broadcast
+ * Try implemen push down maze from server (Still in progress)
