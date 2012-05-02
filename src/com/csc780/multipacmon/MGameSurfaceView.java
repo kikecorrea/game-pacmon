@@ -174,7 +174,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					   
 					   //for sleeping this thread. so we can see found server for a couple of second
 					   countForSearching++;
-						   
+					   System.out.println(countForSearching);
 					}
  					else
  						canvas.drawText("searching", 45, 350, paint2);	
