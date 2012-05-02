@@ -165,10 +165,20 @@ Plan for next week:
 
 === Week 4/22 - 4/29 ===
 Progress:
-   * 
+   * UPD broadcast of IP for client to connect
 Problem:
-   * 
+   * Not working with school
 Learned:
-   * 
+   * UDP broadcast
 Plan for next week:
-   * 
+   * Simple Bluetooth
+
+=== Week 4/29 - 5/6 ===
+Progress:
+   * Simple Bluetooth message sending
+Problem:
+   * Implement UDP broadcast
+Learned:
+   * Bluetooth connection between phones
+Plan for next week:
+   * Clean up Code
