@@ -117,6 +117,7 @@ public class ClientDiscoverer extends Thread{
 						}
 		 		           isFinish=true;
 		 		           isRunning=false;
+		 		           
 		        	   }
 		        
 		           }
@@ -128,6 +129,7 @@ public class ClientDiscoverer extends Thread{
 		           System.out.println ("Timeout Occurred: Packet assumed lost");
 		        } 
 		      }
+		      System.out.println("leaving discoverer");
 		     clientSocket.close(); 
 		   }
 		   catch (UnknownHostException ex) { 
