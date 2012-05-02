@@ -23,8 +23,8 @@ public class MenuActivity extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.menu);
-		Typeface tf = Typeface.createFromAsset(getAssets(),
-                "fonts/press_start.ttf");
+		//Typeface tf = Typeface.createFromAsset(getAssets(),
+        //        "fonts/press_start.ttf");
 		
 		singlePlayButton = (Button) findViewById(R.id.bSingle);
 		multiPlayButton = (Button) findViewById(R.id.bMulti);

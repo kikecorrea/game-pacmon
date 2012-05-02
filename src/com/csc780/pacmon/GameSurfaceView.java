@@ -9,11 +9,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -126,7 +124,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
 		power = BitmapFactory.decodeResource(getResources(), R.drawable.power);
-		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite);
+		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite_green);
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
