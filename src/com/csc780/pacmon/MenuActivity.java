@@ -62,6 +62,8 @@ public class MenuActivity extends Activity implements OnClickListener{
 			break;
 			
 		case R.id.bOptions:
+			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
+			startActivity(cmGame);
 			break;
 			
 		case R.id.bAbout:

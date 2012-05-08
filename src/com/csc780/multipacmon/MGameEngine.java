@@ -3,6 +3,7 @@ package com.csc780.multipacmon;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.csc780.pacmon.Maze;
 import com.csc780.pacmon.Monster;
@@ -75,9 +76,14 @@ public class MGameEngine  {
 	
 	public ClientDiscoverer clientDiscoverer;
 	
+	//for dialog progress
+	protected AtomicBoolean serverReady;
+	
 	//Constructor create players, ghosts and Maze
-	public MGameEngine(SoundEngine soundEngine){
+	public MGameEngine(SoundEngine soundEngine, AtomicBoolean ready){
+		
 		this.soundEngine = soundEngine;
+		serverReady = ready;
 		
 		pacmon = new Pacmon();  // new pacmon
 		pacmon2 = new Pacmon();
@@ -121,7 +127,6 @@ public class MGameEngine  {
 		
 		//client discoverer
 	   clientDiscoverer = new ClientDiscoverer();
-		//clientDiscoverer.startDiscovery();
 		clientDiscoverer.start();
 		
 		//String ip=clientDiscoverer.getipAddress();
@@ -176,6 +181,7 @@ public class MGameEngine  {
 		
 		sending.start();
 		receiver.start();
+	
 	}
 	
 	
