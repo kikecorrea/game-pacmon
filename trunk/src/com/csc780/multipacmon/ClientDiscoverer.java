@@ -57,23 +57,19 @@ public class ClientDiscoverer extends Thread{
 
 		      DatagramPacket sendPacket = 
 		         new DatagramPacket(sendData, sendData.length, group, port); 
-		  
-		      
-		  
+
 		      DatagramPacket receivePacket = 
 		         new DatagramPacket(receiveData, receiveData.length); 
 		  
 		   //   System.out.println ("Waiting for return packet");
 		      clientSocket.setSoTimeout(2000);
-
-		      
+   
 		     // clientSocket.send(sendPacket); 
 		      
 		      boolean isRunning=true;
 		      int i=0;
 		      while(isRunning)
-		      {
-		    	 
+		      {    	 
 			     //sendPacket=null;
 		        
 			     try {
@@ -115,14 +111,13 @@ public class ClientDiscoverer extends Thread{
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
+		 		           //this variable is used in MGameSurfaceView in updateSearching
 		 		           isFinish=true;
 		 		           isRunning=false;
 		 		           
 		        	   }
 		        
 		           }
-		   
-
 		          }
 		        catch (SocketTimeoutException ste)
 		        {
@@ -139,87 +134,5 @@ public class ClientDiscoverer extends Thread{
 		     System.err.println(ex);
 		    }
 	}
-//	public void startDiscovery()
-//	{
-//		
-//		  try {
-//			  clientSocket.joinGroup(group);
-//		    
-//		      byte[] sendData = new byte[24]; 
-//		      byte[] receiveData = new byte[24]; 
-//		  
-//		      String temp="password";
-//		      sendData=temp.getBytes();
-//
-//		      DatagramPacket sendPacket = 
-//		         new DatagramPacket(sendData, sendData.length, group, port); 
-//		  
-//		      
-//		  
-//		      DatagramPacket receivePacket = 
-//		         new DatagramPacket(receiveData, receiveData.length); 
-//		  
-//		   //   System.out.println ("Waiting for return packet");
-//		      clientSocket.setSoTimeout(20000);
-//
-//		      clientSocket.send(sendPacket); 
-//		     // clientSocket.send(sendPacket); 
-//		      
-//		      boolean isRunning=true;
-//		      while(isRunning)
-//		      {
-//		    	 
-//			     //sendPacket=null;
-//		        
-//			     try {
-//		          
-//		           clientSocket.receive(receivePacket); 
-//		           String modifiedSentence = new String(receivePacket.getData()); 
-//		           
-//		           modifiedSentence=modifiedSentence.substring(0,receivePacket.getLength());
-//		           
-//		           //we don't want to get the same data from client
-//		           if(modifiedSentence.equals(temp))
-//		           {
-//		               System.out.println("same in client");
-//		           }
-//		           else
-//		           {
-//		        	   if(modifiedSentence.equals("error"))
-//		        	   {
-//		        		   System.out.println("Stil trying to find server");
-//		        	   }
-//		        	   else
-//		        	   {
-//		        		   InetAddress returnIPAddress = receivePacket.getAddress();
-//		      		     
-//		 		          // int port = receivePacket.getPort();
-//		 		           ipAddress = returnIPAddress.getHostAddress();
-//		 		          // System.out.println ("From server at: " + returnIPAddress.getHostAddress() + 
-//		 		          //                     ":" + port);
-//		 		          // System.out.println("Message: " + modifiedSentence); 
-//		 		           
-//		 		           clientSocket.leaveGroup(group);
-//		 		           System.out.println("leaving discoverer");
-//		 		           isRunning=false;
-//		        	   }
-//		        
-//		           }
-//		   
-//
-//		          }
-//		        catch (SocketTimeoutException ste)
-//		        {
-//		           System.out.println ("Timeout Occurred: Packet assumed lost");
-//		        } 
-//		      }
-//		     clientSocket.close(); 
-//		   }
-//		   catch (UnknownHostException ex) { 
-//		     System.err.println(ex);
-//		    }
-//		   catch (IOException ex) {
-//		     System.err.println(ex);
-//		    }
-//	}
+
 }

@@ -1,9 +1,7 @@
-package com.csc780.multipacmon;
+package com.csc780.clientmultiserver;
 
 import java.util.ArrayList;
 
-import com.csc780.pacmon.Monster;
-import com.csc780.pacmon.Pacmon;
 import com.csc780.pacmon.R;
 import com.csc780.pacmon.R.drawable;
 
@@ -22,7 +20,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class MGameSurfaceView extends SurfaceView implements Runnable {
+public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 	private final static int    MAX_FPS = 40;
 	// maximum number of frames to be skipped
@@ -41,11 +39,12 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	int mCurrentFrame = 0;
 	int movingTextX, movingTextY;   // for ready and gameover screen
 	
-	private Pacmon pacmon, pacmon2;
+	private CMPacmon pacmon, pacmon2;
+	
 	private int direction;
 
-	private MGameEngine mgameEngine;
-	private ArrayList<Monster> ghosts;
+	private CMGameEngine cmgameEngine;
+	private ArrayList<CMMonster> ghosts;
 	
 	// bitmap
 	private Bitmap pac_img2, pac_img, wall, door, bluey_img, redy_img, yellowy_img, food, power ;
@@ -71,11 +70,14 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 
 	
-	public MGameSurfaceView(Context context, MGameEngine gameEngine, int width, int height) {
+	public CMGameSurfaceView(Context context, CMGameEngine gameEngine, int width, int height) {
 		super(context);
-		this.pacmon = gameEngine.pacmon;
-		this.pacmon2 = gameEngine.pacmon2;
-		this.mgameEngine = gameEngine;
+		
+		this.cmgameEngine = gameEngine;
+		
+		this.pacmon = this.cmgameEngine.pacmon;
+		this.pacmon2 = this.cmgameEngine.pacmon2;
+		
 		
 	//	gameState = READY;  //never used, this was use in single player
 		
@@ -133,11 +135,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 		while (isRunning) {
 			canvas = null;
-			if(mgameEngine.getGameState()==SEARCHING) {updateSearching(canvas); }
-			if (mgameEngine.getGameState() == READY)    updateReady(canvas);
-			if (mgameEngine.getGameState() == RUNNING)  {updateRunning(canvas);}
-			if (mgameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
-			if (mgameEngine.getGameState() == WON)	   updateWon(canvas);
+			if(cmgameEngine.getGameState()==SEARCHING) {updateSearching(canvas); }
+			if (cmgameEngine.getGameState() == READY)    updateReady(canvas);
+			if (cmgameEngine.getGameState() == RUNNING)  {updateRunning(canvas);}
+			if (cmgameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
+			if (cmgameEngine.getGameState() == WON)	   updateWon(canvas);
 		
 		}
 	}
@@ -158,32 +160,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 				synchronized (surfaceHolder) {
 					canvas.drawRGB(0, 0, 0);
 					//drawMaze(canvas); // draw updated maze
-		
- 					if(mgameEngine.clientDiscoverer.isFinish)
-					{   
- 						//flag for progress dialog to finish
- 						mgameEngine.serverReady.set(true);
- 						
-					   //canvas.drawText("found server", 45, 350, paint2);
-					   if(countForSearching > 50)
-					   {
-						   mgameEngine.callDispatcher();
-						   
-						   mgameEngine.setGameState(READY);
-					   }
-					   
-					   //for sleeping this thread. so we can see found server for a couple of second
-					   countForSearching++;
-					}
- 					//else
- 						//canvas.drawText("searching", 45, 350, paint2);	
-	
-					try {
-						Thread.sleep(25);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
 				
 				}
 			}
@@ -217,14 +194,9 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					drawPacmon(canvas);
 					drawPacmon2(canvas);
 					drawGhost(canvas);
-
-					//drawScore(canvas);
+					drawScore(canvas);
 			
-					int x=mgameEngine.getCountDown();
- 					canvas.drawText("Ready in " + x, 45, 350, paint2);	
- 					
- 					if(x==0)
-					{  mgameEngine.setGameState(RUNNING); }
+ 					canvas.drawText("Ready in " + cmgameEngine.getReadyCountDown(), 45, 350, paint2);	
 	
 					try {
 						Thread.sleep(25);
@@ -242,8 +214,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
-		
-		//mgameEngine.setGameState(RUNNING);
+
 	}
 	
 	private void updateRunning(Canvas canvas){
@@ -263,22 +234,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
 
-					//gameEngine.update();	
-						
 					canvas.drawRGB(0, 0, 0);
-
-					mgameEngine.eatFoodPower();
-					mgameEngine.eatFoodPower2();
-					
 					drawMaze(canvas); // draw updated maze
-
 					drawPacmon(canvas); // draw Pacman
 					drawPacmon2(canvas); // draw Pacman
-
-					drawGhost(canvas); // draw ghosts
-					
-					mgameEngine.checkLives();
-					
+					drawGhost(canvas); // draw ghosts					
 					drawScore(canvas); // draw score and lives
 					
 					// calculate how long did the cycle take
@@ -312,7 +272,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
 		canvas.drawText("GAME OVER", 125, 350, paint2);
-		String [] scores=mgameEngine.getScores();
+		String [] scores=cmgameEngine.getScores();
 		canvas.drawText(scores[0], 150, 420, paint2);
 		canvas.drawText(scores[1], 150, 520, paint2);
 		
@@ -332,7 +292,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		isRunning = false;
 		canvas.drawText("Congratulations!", 70, 350, paint2);
 		canvas.drawText("You won", 130, 400, paint2);
-		String [] scores=mgameEngine.getScores();
+		String [] scores=cmgameEngine.getScores();
 		
 		canvas.drawText(scores[0], 130, 450, paint2);
 		canvas.drawText(scores[1], 130, 550, paint2);
@@ -352,7 +312,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	// draw current location of ghosts
 	private void drawGhost(Canvas canvas) {
 		mCurrentFrame = ++mCurrentFrame % 2;
-		for (int i = 0; i < mgameEngine.ghosts.size(); i++) {
+		for (int i = 0; i < cmgameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
 			int n;
 			if (direction == UP)	n = 0;
@@ -362,8 +322,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			
 			int srcY = n * blockSize;
 			int srcX = mCurrentFrame * blockSize;
-			
-			mgameEngine.setxyGhost(i);
 			
 			int gX = ghosts.get(i).getX();
 			int gY = ghosts.get(i).getY();
@@ -390,15 +348,10 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		else if (direction == RIGHT)		n = 2;
 		else 		n = 3;
 		
-		mgameEngine.setxyp1();
-		
-		
 		int srcY = n * blockSize;
 		int srcX = currentFrame * blockSize;
 		int pX = pacmon.getpX();
 		int pY = pacmon.getpY();
-		
-		//System.out.println("pxPy::" + pX + "::"+ pY);
 		
 		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
@@ -414,9 +367,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		else if (direction == DOWN)		n = 1;
 		else if (direction == RIGHT)		n = 2;
 		else 		n = 3;
-		
-		mgameEngine.setxyp2();
-		
+
 		int srcY = n * blockSize;
 		int srcX = currentFrame * blockSize;
 		int pX = pacmon2.getpX();
@@ -430,12 +381,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	
 	// draw score
 	public void drawScore(Canvas canvas){
-		String x[]=mgameEngine.getScores();
-		String  lives[]=mgameEngine.checkLives();
+		String x[]=cmgameEngine.getScores();
+		String  lives[]=cmgameEngine.getLives();
 		canvas.drawText(x[0], 20, 736, paint);
 		canvas.drawText(lives[0], 150, 736, paint);
-		canvas.drawText(mgameEngine.getTimer(), 350, 749, paint);
-		
+		canvas.drawText(cmgameEngine.getTimer(), 350, 749, paint);
 		canvas.drawText(x[1], 20, 760, paint);
 		canvas.drawText(lives[1], 150, 760, paint);
 		
@@ -486,9 +436,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		}
 	}
 	
-	public void setDir(int dir){
-		this.direction = dir;
-	}
 
 }
 

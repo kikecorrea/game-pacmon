@@ -1,9 +1,11 @@
-package com.csc780.multipacmon;
+package com.csc780.clientmultiserver;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.csc780.clientmultiserver.CMGameActivity;
+import com.csc780.pacmon.GameActivity;
 import com.csc780.pacmon.SoundEngine;
+
+
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -21,34 +23,43 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
 
-public class MGameActivity extends Activity implements SensorEventListener{
+public class CMGameActivity extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
-	private MGameSurfaceView mgameView;
+	private CMGameSurfaceView mgameView;
 	private SensorManager mySensorManager;
 	private Sensor myAccelerometer;
 	
 	//change in x and y of pac-mon
 	private float xAccel;
 	private float yAccel;
-	private MGameEngine mgameEngine;
+	private CMGameEngine gameEngine;
 	private SoundEngine soundEngine;
 	
 	//progress dialog
-	private static final int SEARCHING_SERVER = 0;
-	private static final int SERVER_CONNECTED = 1;
+	private static final int SERVER_CLIENT = 0;
+	private static final int DIALOG_PROGRESS = 1;
+	private static final int CLIENT_CONNECTED = 2;
+	private static final int CLIENT_SEARCHING = 3;
+	private static final int SERVER_CONNECTED = 4;
 	private ProgressDialog mProgressDialog;
     private Handler mProgressHandler;
     private volatile boolean progressStatus=false;
+    private AtomicBoolean clientReady;
+    
+    //dialog for client connected message
     AlertDialog connectedDialog;
-    private AtomicBoolean serverReady;
-	
-
+    
+    //for server
+    ServerThread serverThread;
+   
+		
+    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        serverReady = new AtomicBoolean(false);
+        clientReady=new AtomicBoolean(false);
         
         mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -60,19 +71,29 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
 	       multicastLock.acquire();
 	       
-        mgameEngine = new MGameEngine(soundEngine, serverReady);
+	       
+        gameEngine = new CMGameEngine();
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
         int height = display.getHeight();
-        mgameView = new MGameSurfaceView(this, mgameEngine, width, height);
+        mgameView = new CMGameSurfaceView(this, gameEngine, width, height);
 
         setContentView(mgameView);
         
-        showDialog(SEARCHING_SERVER);
-        mProgressDialog.setProgress(0);
-        handlerThreadClient();	
+        //start the server
+    	//we will pass clientReady so that we can check if progress dialog is finish
+        //we need to initialize it here bec. if killAllThread is called then it will
+        //give nullPointerException, which means receiving, sending thread hasn't been initialize 
+    	serverThread=new ServerThread(gameEngine, clientReady);
         
-        //handler for client
+    	//start the server, client discoverer and dispatcher
+		serverThread.start();
+		showDialog(DIALOG_PROGRESS);
+        mProgressDialog.setProgress(0);
+        handlerThreadServer();		
+    	
+     
+        //handler for server
         //handler is use to get message from the message pool
         mProgressHandler = new Handler() {
             
@@ -82,32 +103,33 @@ public class MGameActivity extends Activity implements SensorEventListener{
                     mProgressDialog.dismiss();
                     
                     //remember to put connectedDialog.dismiss() somewhere
-                    showDialog(SERVER_CONNECTED);       
+                    showDialog(CLIENT_CONNECTED);       
                     new Thread(new Runnable()
                 	{
                 		public void run()
                 		{
                 			try {
-								Thread.sleep(1000);
+								Thread.sleep(1500);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
-                			MGameActivity.this.connectedDialog.dismiss();
+                			CMGameActivity.this.connectedDialog.dismiss();
                 		}
                 	}).start();
          
                 }
             }
         };
+        
     }
     
-    protected void handlerThreadClient()
+    protected void handlerThreadServer()
     {
     	Thread t= new Thread(new Runnable()
     	{
     		public void run()
     		{
-    			while(!serverReady.get())
+    			while(!clientReady.get())
     			{
     				try {
 						Thread.sleep(500);
@@ -124,33 +146,35 @@ public class MGameActivity extends Activity implements SensorEventListener{
     
     protected Dialog onCreateDialog(int id) {
         switch(id) {	
-        case SEARCHING_SERVER:
+        case DIALOG_PROGRESS:
         	mProgressDialog = new ProgressDialog(this);
 
           //  mProgressDialog.setIcon(R.drawable.alert_dialog_icon);
-            mProgressDialog.setMessage("Searching for server...");
+            mProgressDialog.setTitle("Server started");
+            mProgressDialog.setMessage("Waiting for client...");
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                 	mProgressDialog.dismiss();
-                	MGameActivity.this.finish();
+                	CMGameActivity.this.finish();
                     /* User clicked Yes so do some stuff */
                 }
             });
         return mProgressDialog;
-        
-        case SERVER_CONNECTED:
+            
+        case CLIENT_CONNECTED:
         	AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
             connectedDialog = builder2.setTitle("Get Ready")
-                .setMessage("Found server")
+                .setMessage("Client has connected")
                 .create();
             connectedDialog.show();
         return connectedDialog;
-            
+         
         default:
             return null;
         }
     }
+
 
 	@Override
 	protected void onPause() {
@@ -171,8 +195,9 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		mgameEngine.killAllThread();
+		
+		// stop receiving and sending thread
+		serverThread.killSendingReceiving();
 		//mgameView.pause();
 		super.onDestroy();
 		//gameView.pause();
@@ -186,7 +211,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		builder.setMessage("Do you want to quit?").setCancelable(false)
 				.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						MGameActivity.this.finish();
+						CMGameActivity.this.finish();
 					}
 				})
 				.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
@@ -218,21 +243,21 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		//float z = event.values[2];
 		
 		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
-			mgameEngine.setInputDir(UP);
+			gameEngine.setInputDirPlayer2(UP);
 			//gameView.setDir(1);
 		}
 		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
-			mgameEngine.setInputDir(DOWN);
+			gameEngine.setInputDirPlayer2(DOWN);
 			//gameView.setDir(2);
 		}
 		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// right
-			mgameEngine.setInputDir(RIGHT);
+			gameEngine.setInputDirPlayer2(RIGHT);
 			//gameView.setDir(3);
 		}
 		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// left
-			mgameEngine.setInputDir(LEFT);
+			gameEngine.setInputDirPlayer2(LEFT);
 			//gameView.setDir(4);
 		}
 

@@ -62,14 +62,14 @@ public class CircularQue {
             	int x[]={-1,-2,-3};
             	return x;
             }
-            pairXY temp=que[readPointer];
-            
-            int x[]={temp.x, temp.y, temp.z};
-            
+
             if(readPointer%QueSize==0 && readPointer!=0)
                 readPointer=0;
             else
                 readPointer++;
+            
+            pairXY temp=que[readPointer];
+            int x[]={temp.x, temp.y, temp.z};
         return x;
         }
         
