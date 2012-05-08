@@ -57,6 +57,28 @@
             </intent-filter>
         </activity>
         
+         <activity
+            android:name="com.csc780.clientmultiserver.CMGameActivity"
+            android:screenOrientation="portrait"
+            android:label="CMGameActivity" >
+            <intent-filter>
+                <action android:name="com.csc780.pacmon.CMGAMEACTIVITY" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+         <activity
+            android:name="com.csc780.pacmon.ClientOrServer"
+            android:screenOrientation="portrait"
+            android:label="ClientOrServer" >
+            <intent-filter>
+                <action android:name="com.csc780.pacmon.CLIENTORSERVER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
         <activity
             android:name=".AboutActivity"
             android:screenOrientation="portrait"
