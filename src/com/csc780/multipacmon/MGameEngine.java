@@ -386,13 +386,14 @@ public class MGameEngine  {
 	public int getCountDown()
 	{
 		int x=receiver.countDown;
+
 		if(x>80)
 			return 3;
 		else if(x<=80 && x>=40)
 		{
 			return 2;
 		}
-		else if(x<40 && x>0)
+		else if(x<40 && x>30)
 			return 1;
 			
 		else

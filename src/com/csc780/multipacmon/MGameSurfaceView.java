@@ -212,6 +212,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			} else {
 
 				synchronized (surfaceHolder) {
+					System.out.println("INSIDE READY");
 					canvas.drawRGB(0, 0, 0);
 					drawMaze(canvas); // draw updated maze
 					drawPacmon(canvas);
@@ -221,6 +222,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					//drawScore(canvas);
 			
 					int x=mgameEngine.getCountDown();
+				
  					canvas.drawText("Ready in " + x, 45, 350, paint2);	
  					
  					if(x==0)
