@@ -731,6 +731,7 @@ public class CMGameEngine implements Runnable {
             //   System.out.println("GO AWAY");
 
         }
+        System.out.println("GG:"+tickCounter);
 
         this.tickCounter++;
         //System.out.println("THIS IS TICK updatREADY::"+ this.tickCounter);
@@ -822,7 +823,14 @@ public class CMGameEngine implements Runnable {
     }
 
     public long getReadyCountDown() {
-        return readyCountDown;
+       // return readyCountDown;
+    	if (this.tickCounter <-80)
+    		return 3;
+    	else if(tickCounter >-80 && tickCounter < -40)
+    		return 2;
+    	else
+    		return 1;
+    	
     }
 
     public int[] returnPacmonPxPy() {

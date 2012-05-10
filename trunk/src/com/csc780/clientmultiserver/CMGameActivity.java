@@ -109,7 +109,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
                 		public void run()
                 		{
                 			try {
-								Thread.sleep(1500);
+								Thread.sleep(700);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
@@ -132,7 +132,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     			while(!clientReady.get())
     			{
     				try {
-						Thread.sleep(500);
+						Thread.sleep(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

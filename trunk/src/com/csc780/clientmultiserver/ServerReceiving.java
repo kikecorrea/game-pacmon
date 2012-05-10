@@ -37,8 +37,6 @@ public class ServerReceiving extends Thread {
     public void DestroySocket()
     {
     	serverSocket.close();
-    	receivePacket=null;
-    	sendPacket=null;
     }
 
     //Constructor
