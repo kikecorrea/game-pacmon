@@ -42,11 +42,6 @@ public class ServerThread extends Thread{
     	dispatchReceiver.DestroySocket();
     	receiveThread.DestroySocket();
     	sendThread.DestroySocket();
-   
-    	serverDiscovery=null;
-    	dispatchReceiver=null;
-    	receiveThread=null;
-    	sendThread=null;
     	
     }
     

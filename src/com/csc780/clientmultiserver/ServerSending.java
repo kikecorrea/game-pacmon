@@ -45,9 +45,6 @@ public class ServerSending extends Thread {
     public void DestroySocket()
     {
     	serverSocket.close();
-    	receivePacket=null;
-    	sendPacket=null;
-    	gameEngine=null;
     }
     
     //we need this blank constructor so that we can instantiate it in serverThread. its also a fix for killAllThread in CMGameActivity
