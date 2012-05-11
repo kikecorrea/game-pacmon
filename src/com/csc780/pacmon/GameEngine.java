@@ -32,9 +32,13 @@ public class GameEngine implements Runnable {
 	int lives;
 	private int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
+	int powerMode;		// for count down of power speed
+	int pNormalSpeed;	// pacmon normal moving speed
+	int pPowerSpeed;	// pacmon power moving speed, when eat Power
 	int inputDirection;
 	int pX, pY;
 	int newDirection;
+	
 	
 	ArrayList<Integer> ghostArray[];
 	int directionMaze[][];
@@ -66,6 +70,9 @@ public class GameEngine implements Runnable {
 		pacmon = new Pacmon();  // new pacmon
 		lives = pacmon.getpLives();
 		
+		pNormalSpeed = pacmon.getpNormalSpeed();
+		pPowerSpeed = pacmon.getpPowerSpeed();
+		
 		playerScore = 0;
 		timer = 120;
 		timerCount = 0;
@@ -91,6 +98,7 @@ public class GameEngine implements Runnable {
 		isRunning = true;
 		mThread = new Thread(this);
 		mThread.start();
+		
 	}
 	
 	//update
@@ -190,14 +198,22 @@ public class GameEngine implements Runnable {
 		}
 		
 		if( movable){
-			if (newDirection == UP) // up
-				pY = pY - pNormalSpeed;
-			if (newDirection == DOWN) // down
-				pY = pY + pNormalSpeed;
-			if (newDirection == RIGHT) // right
-				pX = pX + pNormalSpeed;
-			if (newDirection == LEFT) // left
-				pX = pX - pNormalSpeed;
+			if (newDirection == UP) { // up
+				if (powerMode > 0) 		pY = pY - pPowerSpeed; // in power mode
+				else			pY = pY - pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == DOWN){  // down
+				if (powerMode > 0) 		pY = pY + pPowerSpeed; // power mode
+				else			pY = pY + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == RIGHT){ // right
+				if (powerMode > 0) 		pX = pX + pPowerSpeed; // power mode
+				else			pX = pX + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == LEFT) {// left
+				if (powerMode > 0) 		pX = pX - pPowerSpeed;	// power mode
+				else			pX = pX - pNormalSpeed;			// normal mode
+			}
 		}
 		
 		if(pX == 448)
@@ -355,8 +371,10 @@ public class GameEngine implements Runnable {
 			
 		}
 		
+		// eat power
 		if (mazeArray[boxY][boxX] == 2){
-			mazeArray[boxY][boxX] = 5; // blank
+			mazeArray[boxY][boxX] = 5;
+			this.powerMode = 5;// blank
 		}
 	}
 	
@@ -366,6 +384,7 @@ public class GameEngine implements Runnable {
 		if (timerCount % 40 == 0){
 			timer--;
 			timerCount = 0;
+			powerMode--;
 		}
 		if (timer == -1){
 			gameState = GAMEOVER;  // LOST
