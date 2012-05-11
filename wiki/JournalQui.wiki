@@ -33,6 +33,10 @@ Links:
 
 [JournalQui#Week_4/22_-_4/29]
 
+[JournalQui#Week_4/29_-_5/6]
+
+[JournalQui#Week_5/6_-_5/13]
+
 === Week 2/5 - 2/12 ===
 Progress:
    * Created code repository
@@ -182,3 +186,8 @@ Learned:
    * Bluetooth connection between phones
 Plan for next week:
    * Clean up Code
+
+=== Week 5/6 - 5/13 ===
+Progress:
+   * Server in Android client, now 2 players can play using UDP broadcast without server.
+   * Final Commit and Code Cleanup
