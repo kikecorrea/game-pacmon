@@ -50,6 +50,10 @@ public class MGameEngine  {
 	int blockSize = 32;
 	int mazeRow, mazeColumn;
 	
+	int pNormalSpeed, pPowerSpeed;
+	int powerMode1;
+	int powerMode2;
+	
 	private boolean isRunning;
 	
 	private int checkCounter=0;
@@ -97,6 +101,8 @@ public class MGameEngine  {
 		lives = pacmon.getpLives();
 		lives2=pacmon2.getpLives();
 		
+		pNormalSpeed = pacmon.getpNormalSpeed();
+		pPowerSpeed = pacmon.getpPowerSpeed();
 		
 		//playerScore = 0;
 		timer = 90;
@@ -232,6 +238,7 @@ public class MGameEngine  {
 		
 		if (mazeArray[boxY][boxX] == 2){
 			mazeArray[boxY][boxX] = 5; // blank
+			this.powerMode1 = 5;
 		}
 	}
         // eat food ==> score and power ==> speed
@@ -251,6 +258,7 @@ public class MGameEngine  {
 		
 		if (mazeArray[boxY][boxX] == 2){
 			mazeArray[boxY][boxX] = 5; // blank
+			this.powerMode2 = 5;
 		}
 	}
         
