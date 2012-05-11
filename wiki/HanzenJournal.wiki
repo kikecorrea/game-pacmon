@@ -47,8 +47,20 @@
  * Implemented multiple client connection for server side
 
 == April 16- April 20 ==
- * Research for UDP Broadcast
+ * Researched  UDP Broadcast
  
 == April 23 - April  27==
  * Implemented UDP Broadcast
- * Try implemen push down maze from server (Still in progress)
+ * Try implementing push down maze from server (Still in progress)
+
+== April 30 - May 4 ==
+ * Refactor code
+ * Move server to client side, now client can host as a server or client
+
+== May 7 - May 11 ==
+ * Add documentation on code
+ * Add manual ip configuration option for server feature
+ * refactoring code to reduce garbage collector
+
+
+
