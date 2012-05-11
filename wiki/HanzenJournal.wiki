@@ -62,3 +62,6 @@
  * Add manual ip configuration option for server feature
  * refactoring code to reduce garbage collector
 
+== May 14 - May 18 ==
+ * Final clean up of code
+ * add more documentation
