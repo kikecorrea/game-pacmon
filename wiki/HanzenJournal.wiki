@@ -50,8 +50,8 @@
  * Researched  UDP Broadcast
  
 == April 23 - April  27==
- * Implemented UDP Broadcast
- * Try implementing push down maze from server (Still in progress)
+ * Implemented UDP Broadcast, now client can connect to server without knowing configuration settings
+ * Tried implementing push down maze from server (Still in progress)
 
 == April 30 - May 4 ==
  * Refactor code
@@ -61,6 +61,4 @@
  * Add documentation on code
  * Add manual ip configuration option for server feature
  * refactoring code to reduce garbage collector
-
-
 
