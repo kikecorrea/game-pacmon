@@ -5,8 +5,10 @@ import java.util.Random;
 
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
 /*
- * GameEngine class is the controller of the game. GameEngine oversees updates 
+ * CMGameEngine class is the controller of the game. GameEngine oversees updates 
  * 		models(maze, pacmon, monster) as well as call drawing.
+ * 
+ * This class is similar to GameEngine in the pacmon package but with minor modification to work with server
  * 		
  */
 public class CMGameEngine implements Runnable {
@@ -77,9 +79,8 @@ public class CMGameEngine implements Runnable {
 
         // maze stuff
         maze = new CMMaze();
-        
+      
         int randLevel = (int)(Math.random()*2) + 1;
-        
         mazeArray = maze.getMaze(1);    //change
         mazeRow = maze.getMazeRow();
         mazeColumn = maze.getMazeColumn();
@@ -88,15 +89,11 @@ public class CMGameEngine implements Runnable {
 
         isRunning = true;
         mThread = new Thread(this);
-
-        //mThread.start();
-
     }
 
     public void startTheEngine() {
         mThread.start();
         this.gameState=READY;
-        //System.out.println("GAME engine started");
     }
 
     //update
@@ -109,10 +106,7 @@ public class CMGameEngine implements Runnable {
         this.tickCounter++;
         if (this.tickCounter >= 80) {
             this.tickCounter = 0;
-
         }
-
-
     }
 
     public void updatePac2() {
@@ -176,8 +170,7 @@ public class CMGameEngine implements Runnable {
         if (XmodW == 0 && YmodH == 0) {
 
             boxX = pX2 / blockSize;
-            boxY = pY2 / blockSize;
-            
+            boxY = pY2 / blockSize; 
             boxX %= mazeColumn;
             boxY %= mazeRow;
             
@@ -466,8 +459,6 @@ public class CMGameEngine implements Runnable {
                 }
             }
 
-
-
             //get direction after calculate
             int ghostCurDir = ghosts.get(i).getDir();
 
@@ -535,8 +526,6 @@ public class CMGameEngine implements Runnable {
         {
             moveGhostRandom(index, ghost);
         }
-
-
 
     }
 
@@ -785,9 +774,7 @@ public class CMGameEngine implements Runnable {
     }
 
     public void setInputDirPlayer2(int dir) {
-
         this.inputDirection2 = dir;
-
     }
 
     public CMMaze getMaze() {
@@ -809,10 +796,6 @@ public class CMGameEngine implements Runnable {
     public String getTimer() {
         return String.valueOf(timer);
     }
-
-//    public String getLives() {
-//        return "Life remaining: " + lives;
-//    }
 
     public String getPlayerScore() {
         return "Score: " + playerScore;
@@ -865,7 +848,6 @@ public class CMGameEngine implements Runnable {
         int x[] = {this.mazeData1, this.mazeData2};
         return x;
     }
-    
     //methods used for local client side
     public String[] getScores()
 	{

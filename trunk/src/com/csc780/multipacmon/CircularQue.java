@@ -1,28 +1,20 @@
 package com.csc780.multipacmon;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-//ssf
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CircularQue {
 	
-	private pairXY que[];
+	private ModelData que[];
         volatile public int readPointer=0;
         volatile public int writePointer=0;
         volatile public int QueSize;
 	
 	public CircularQue(int size)
 	{
-            que= new pairXY[size];
-            
+            que= new ModelData[size];
             for(int i=0; i<size; i++)
-                que[i]=new pairXY();
-            
+                que[i]=new ModelData();        
             //-1 cause end of que is size-1
             QueSize=size-1;
 	}
@@ -36,30 +28,24 @@ public class CircularQue {
             		readPointer=1;
             	else
             		readPointer+=1;
-             //   readPointer=(QueSize/2) - 1;
-               // System.out.println("move POinter POinter");
-                que[writePointer]=new pairXY(x,y,z);
+                que[writePointer]=new ModelData(x,y,z);
             }
-            else
-                que[writePointer]=new pairXY(x,y,z);
+            else{
+            que[writePointer]=new ModelData(x,y,z);     
+            }
             
-            
-            //check if at the end of list, so that we switch it to the beginning
+            //check if at the end of list, if true we move pointer to the beginning of que
             if(writePointer%QueSize==0 && writePointer!=0)
                 writePointer=0;
             else
-                writePointer++;
-//        this.notify();
-    
-           
+                writePointer++;      
         }
         
         public int [] read()
         {
-        	
             if(readPointer==writePointer)
             {
-            	//we sent to -1,-2 so gameView just render old values
+            	//default values is -1,-2, -3 so gameView just render old values
             	int x[]={-1,-2,-3};
             	return x;
             }
@@ -69,30 +55,30 @@ public class CircularQue {
             else
                 readPointer++;
             
-            pairXY temp=que[readPointer];
+            ModelData temp=que[readPointer];
             int x[]={temp.x, temp.y, temp.z};
         return x;
         }
         
 }
 
-class pairXY
+//this class represents the data for each model i.e. pacmon, ghost
+class ModelData
 {
 	public int x;
 	public int y;
 	public int z;
-        
-        public pairXY()
-        {
-            
-        }
-        
-        public pairXY(int x, int y, int z)
-        {
-            this.x=x;
-            this.y=y;
-            this.z=z;
-        }
+               
+	public ModelData(){
+		
+	}
+	
+    public ModelData(int x, int y, int z)
+    {
+        this.x=x;
+        this.y=y;
+        this.z=z;
+    }
 }
 
 

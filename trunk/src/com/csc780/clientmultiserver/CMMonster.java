@@ -4,7 +4,9 @@
  */
 package com.csc780.clientmultiserver;
 
-
+/*
+ * This class if handles the Ghost in pacmon
+ */
 public class CMMonster {
 
 	private int x;

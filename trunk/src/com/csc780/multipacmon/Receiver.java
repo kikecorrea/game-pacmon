@@ -13,7 +13,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.util.Log;
 
-public class Receiving extends Thread {
+/**
+ * This class handles the receiving data from server
+ */
+public class Receiver extends Thread {
 
 	private final String serverHostname;
 	private DatagramSocket clientSocket;
@@ -37,22 +40,14 @@ public class Receiving extends Thread {
 	
 	//timer
 	public volatile int timer;
-	
 	public boolean isRunning=true;
-	
-	
 	protected AtomicBoolean ready;
-	
 	private String previousTick="0";
-	
 	private int id;
-	
 	private int socketPort;
-	
 	volatile int mazeData1, mazeData2;
-
 	
-	public Receiving()
+	public Receiver()
 	{
 		pacmonLives[0]=3;
 		pacmonLives[1]=3;
@@ -62,13 +57,10 @@ public class Receiving extends Thread {
 		receiveData = new byte[128]; 
 		
 		try {
-			
 			socketPort=5000+(int)(Math.random()*(6000-5000));
 			clientSocket = new DatagramSocket(socketPort);
-			
-			
-			IPAddress = InetAddress.getByName(serverHostname);
 
+			IPAddress = InetAddress.getByName(serverHostname);
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
@@ -77,7 +69,6 @@ public class Receiving extends Thread {
 		}
 	}
 
-	
 	//get port number to be sent to server 
 	public int getPortReceive()
 	{
@@ -91,7 +82,7 @@ public class Receiving extends Thread {
 		this.id=id;
 	}
 	
-	//for circular Que
+	//add data in circularQue
 	public void addQue(String data, int length)
 	{
 		String temp[]=data.substring(0, length).split(":", 23); 
@@ -154,31 +145,19 @@ public class Receiving extends Thread {
 	@Override
 	public void run()
 	{
-		//receivePacket = 
-		  //       new DatagramPacket(receiveData, receiveData.length); 
-		
 		while(isRunning)
 		{
-		//	receiveData = new byte[64]; 
 			try {
-				receivePacket = 
-				         new DatagramPacket(receiveData, receiveData.length);  
-				  
+				receivePacket = new DatagramPacket(receiveData, receiveData.length);    
 				clientSocket.setSoTimeout(10000);
 				try {
 			          clientSocket.receive(receivePacket); 
-			       
-			           String receiveData =   new String(receivePacket.getData()); 
-			          
-			         // System.out.println("RECEIVE:" + receiveData);
-			
+			          String receiveData =   new String(receivePacket.getData()); 
 		        	  this.addQue(receiveData, receivePacket.getLength());
-			  
 			         }
 			      catch (SocketTimeoutException ste){
 			           //System.out.println ("Timeout Occurred: Packet assumed lost");
 			      }
-				
 			} catch (IOException e) 
 			{	e.printStackTrace();  }
 		}

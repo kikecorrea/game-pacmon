@@ -8,11 +8,13 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.util.Log;
 
-public class ClientDispatcher {
-
+/**
+ * This class handles the configuration like port, ip 
+ * for sending and receiving data
+ */
+public class ClientConnectionSetUp {
 	
 	private String serverHostname;
 	private DatagramSocket clientSocket;
@@ -28,9 +30,8 @@ public class ClientDispatcher {
 	//sets the sending port
 	public int sendPort;
 	
-	public ClientDispatcher(String ip)
+	public ClientConnectionSetUp(String ip)
 	{
-
 		serverHostname = new String (ip);
 		sendData = new byte[24]; 
 		receiveData = new byte[24];
@@ -53,17 +54,14 @@ public class ClientDispatcher {
 		String xy[]=temp.split(":", 2);
 		
 		this.id=Integer.parseInt(xy[0]);
-		this.sendPort=Integer.parseInt(xy[1]);
-		
+		this.sendPort=Integer.parseInt(xy[1]);	
 	}
 	
 	
 	public void connectToServer(int portForReceiving)
 	{
 		boolean keepRunning=true;
-
 		try {
-		
 			clientSocket.setSoTimeout(2000);
 			
 		while(keepRunning)
@@ -71,22 +69,18 @@ public class ClientDispatcher {
 			try{
 			sendData=String.valueOf(portForReceiving).getBytes();
 			sendPacket =  new DatagramPacket(sendData, sendData.length, IPAddress, 9800); 
-		  clientSocket.send(sendPacket);
+		    clientSocket.send(sendPacket);
 
+		    //System.out.println("sent dispatcher");
+		    receivePacket = new DatagramPacket(receiveData, receiveData.length); 
 		  
-		  System.out.println("sent dispatcher");
-		  receivePacket = 
-			         new DatagramPacket(receiveData, receiveData.length); 
+		    clientSocket.receive(receivePacket);
 		  
-		  clientSocket.receive(receivePacket);
-		  
-		  keepRunning=false;
-		  System.out.println("Executed keepRunning");
-		  String temp=new String(receivePacket.getData());
-		  System.out.println("This is data in dispatchet::"+ temp);
-		  this.parseData(temp, receivePacket.getLength());
+		    keepRunning=false;
+		    String temp=new String(receivePacket.getData());
+		    this.parseData(temp, receivePacket.getLength());
 			}catch (SocketTimeoutException ste){
-		           System.out.println ("Timeout Occurred: Packet assumed lost");
+		       //System.out.println ("Timeout Occurred: Packet assumed lost");
 		    } 
 		 }
 		}
@@ -94,6 +88,5 @@ public class ClientDispatcher {
 			System.out.println("Error in sending socket::");
 			e.printStackTrace();
 		}
-
 	}
 }

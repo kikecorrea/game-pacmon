@@ -21,6 +21,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
 
+/**
+ * This class handles the accelerometer, MGameEngine, MGameSurfaceView
+ */
 public class MGameActivity extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
@@ -56,6 +59,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 
         soundEngine = new SoundEngine(this);
         
+        //This is to overwrite and enable UDP broadcast on android hardware
         WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
 	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
 	       multicastLock.acquire();
@@ -173,10 +177,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		mgameEngine.killAllThread();
-		//mgameView.pause();
 		super.onDestroy();
-		//gameView.pause();
-		
 	}
 
 
@@ -199,7 +200,6 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	}
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -209,7 +209,6 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		try {
 			Thread.sleep(16);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -235,12 +234,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 			mgameEngine.setInputDir(LEFT);
 			//gameView.setDir(4);
 		}
-
-		
-		
+	
 	}
-    
-    
-    
     
 }

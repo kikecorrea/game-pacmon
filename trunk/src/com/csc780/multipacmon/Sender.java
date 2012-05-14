@@ -9,7 +9,10 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Sending extends Thread {
+/**
+ * This class handles the sending data to server
+ */
+public class Sender extends Thread {
 	
 	private String serverHostname;
 	private DatagramSocket clientSocket;
@@ -18,20 +21,14 @@ public class Sending extends Thread {
 	private InetAddress IPAddress;
 	private int port;
 	private byte[] sendData;
-	
 	protected AtomicBoolean ready;
-	
 	protected boolean isRunning=true;
-	
-	
 	public volatile String data="1";
 
-	
-	public Sending(int port, String ip)
+	public Sender(int port, String ip)
 	{
 		//set the sending port;
 		this.port=port;
-		
 		ready=new AtomicBoolean(true);
 		serverHostname = new String (ip);
 		sendData = new byte[24]; 
@@ -45,8 +42,7 @@ public class Sending extends Thread {
 		}
 		catch (UnknownHostException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 	
 	public void notifyTheThread()
@@ -58,14 +54,10 @@ public class Sending extends Thread {
 	public void run()
 	{
 		boolean go=false;
-		//sendPacket =  new DatagramPacket(sendData, sendData.length, IPAddress, port); 
-		//Runtime rc=Runtime.getRuntime();
-		 String temp;
+		String temp;
 		while(isRunning)
 		 {
-		
-		//	sendData = new byte[12]; 
-//			//synchronized(this)
+
 			try {
 				this.sleep(20);
 			} catch (InterruptedException e1) {
@@ -74,9 +66,7 @@ public class Sending extends Thread {
 			}
 			
 		    if(this.ready.get())
-				{   
-				go=true; ready.set(false); 
-				}
+			{   go=true; ready.set(false); }
 			
 			if(go)
 			{
@@ -95,7 +85,6 @@ public class Sending extends Thread {
 			}
 		
 			go=false;
-			//rc.gc();
 		   }
 		 }
 		

@@ -61,9 +61,9 @@ public class MGameEngine  {
 	
 	private int pacCounter=0;
 	
-	private Receiving receiver;
-	private Sending sending;
-	private ClientDispatcher clientDispatcher;
+	private Receiver receiver;
+	private Sender sending;
+	private ClientConnectionSetUp clientDispatcher;
 	
 	volatile private int totalScores=0;
 	
@@ -78,7 +78,7 @@ public class MGameEngine  {
 	
 	private SoundEngine soundEngine;
 	
-	public ClientDiscoverer clientDiscoverer;
+	public AutoDiscoverer clientDiscoverer;
 	
 	//for dialog progress
 	protected AtomicBoolean serverReady;
@@ -124,56 +124,23 @@ public class MGameEngine  {
 		ghostArray = maze.getGhostArray();
 		
 		isRunning = true;
-	
-		
-//		receiver=new Receiving();
-//		///gets the receiver port, then needs to send to server
-//		int port=receiver.getPortReceive();
-		
-		
-		//client discoverer
-	   clientDiscoverer = new ClientDiscoverer();
-		clientDiscoverer.start();
-		
-		//String ip=clientDiscoverer.getipAddress();
-		
-//		try {
-//			Thread.sleep(5000);
-//		} catch (InterruptedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		clientDispatcher=new ClientDispatcher(ip);
-//		clientDispatcher.connectToServer(port);
-//		
-//		//returns port for sending to server
-//		//clientDispatcher.connectToServer(port);
-//		int sendPort=clientDispatcher.sendPort;
-//		int id=clientDispatcher.id;
-//		
-//		receiver.setID(id);   ///########################### need to remove, this didn't use it at all
-//	
-//		sending=new Sending(sendPort, ip);
-//		
-//		sending.start();
-//		receiver.start();
-		
-		//start the gameEngine
-		//mThread.start();
-		
+
+	   //initialize clientDiscoverer and start discovery
+	   clientDiscoverer = new AutoDiscoverer();
+	   clientDiscoverer.start();
+
 	}
 	
 	public void callDispatcher()
 	{
 		String ip=clientDiscoverer.getipAddress();
 		
-		receiver=new Receiving();
+		receiver=new Receiver();
 		///gets the receiver port, then needs to send to server
 		int port=receiver.getPortReceive();
 		
 		
-		clientDispatcher=new ClientDispatcher(ip);
+		clientDispatcher=new ClientConnectionSetUp(ip);
 		clientDispatcher.connectToServer(port);
 		
 		//returns port for sending to server
@@ -183,7 +150,7 @@ public class MGameEngine  {
 		
 		receiver.setID(id);   ///########################### need to remove, this didn't use it at all
 	
-		sending=new Sending(sendPort, ip);
+		sending=new Sender(sendPort, ip);
 		
 		sending.start();
 		receiver.start();
