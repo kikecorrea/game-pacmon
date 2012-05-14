@@ -22,6 +22,10 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * This class handles the rendering of screen
+ *
+ */
 public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 	private final static int    MAX_FPS = 40;
@@ -77,28 +81,21 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		this.pacmon2 = gameEngine.pacmon2;
 		this.mgameEngine = gameEngine;
 		
-	//	gameState = READY;  //never used, this was use in single player
-		
+		//gameState = READY;  //never used, this was use in single player
 		mContext = context;
 		
 		blockSize = 32;  // size of block
-		
 		mazeArray = gameEngine.getMazeArray();
 		mazeRow = gameEngine.getMazeRow();
 		mazeColumn = gameEngine.getMazeColumn();
 
-		
 		initBitmap();  // init all Bitmap and its components
-
 		ghosts = gameEngine.ghosts;
 		
 		surfaceHolder = getHolder();
 		isRunning = true;
 		setKeepScreenOn(true);
-		
-
-		
-		
+	
 	}
 	
 	private void initBitmap(){
@@ -121,9 +118,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(50);
-		
 	
-		
 	}
 	
 	//thread to update and draw. Game loop
@@ -157,8 +152,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 				synchronized (surfaceHolder) {
 					canvas.drawRGB(0, 0, 0);
-					//drawMaze(canvas); // draw updated maze
-		
+
  					if(mgameEngine.clientDiscoverer.isFinish)
 					{   
  						//flag for progress dialog to finish
@@ -167,24 +161,19 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					   //canvas.drawText("found server", 45, 350, paint2);
 					   if(countForSearching > 50)
 					   {
-						   mgameEngine.callDispatcher();
-						   
+						   mgameEngine.callDispatcher();   
 						   mgameEngine.setGameState(READY);
-					   }
-					   
+					   }   
 					   //for sleeping this thread. so we can see found server for a couple of second
 					   countForSearching++;
 					}
- 					//else
- 						//canvas.drawText("searching", 45, 350, paint2);	
-	
+ 		
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-				
+					}	
 				}
 			}
 		} finally {
@@ -193,8 +182,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			if (canvas != null) {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
-		}
-		
+		}	
 	}
 	
 	// when game is in ready mode
@@ -219,22 +207,17 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					drawPacmon2(canvas);
 					drawGhost(canvas);
 
-					//drawScore(canvas);
-			
-					int x=mgameEngine.getCountDown();
-				
+					int x=mgameEngine.getCountDown();	
  					canvas.drawText("Ready in " + x, 45, 350, paint2);	
  					
  					if(x==0)
 					{  mgameEngine.setGameState(RUNNING); }
-	
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
-				
+					}	
 				}
 			}
 		} finally {
@@ -244,8 +227,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 				surfaceHolder.unlockCanvasAndPost(canvas);
 			}
 		}
-		
-		//mgameEngine.setGameState(RUNNING);
 	}
 	
 	private void updateRunning(Canvas canvas){
@@ -255,7 +236,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				surfaceHolder = getHolder();
@@ -265,8 +245,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
 
-					//gameEngine.update();	
-						
 					canvas.drawRGB(0, 0, 0);
 
 					mgameEngine.eatFoodPower();
@@ -298,8 +276,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 						}
 					}
 				}
-				
-			//	System.out.println("finish drawing");
 			}
 		} finally {
 			// in case of an exception the surface is not left in
@@ -322,7 +298,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -343,13 +318,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		((Activity) mContext).finish();
 	}
-	
 
 	// draw current location of ghosts
 	private void drawGhost(Canvas canvas) {
@@ -393,15 +366,12 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		else 		n = 3;
 		
 		mgameEngine.setxyp1();
-		
-		
+	
 		int srcY = n * blockSize;
 		int srcX = currentFrame * blockSize;
 		int pX = pacmon.getpX();
 		int pY = pacmon.getpY();
-		
-		//System.out.println("pxPy::" + pX + "::"+ pY);
-		
+
 		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
 		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
 		canvas.drawBitmap(pac_img, src, dst, null);
@@ -468,7 +438,6 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		// TODO Auto-generated method stub
 
 	}
 	

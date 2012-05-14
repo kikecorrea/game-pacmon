@@ -8,29 +8,20 @@ import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-public class DispatcherReceiver {
+/**
+ * This class contains the configuration settings for server.
+ * This class will send info to the client about port and IP
+ *
+ */
+public class ServerConnectionInfo {
     private DatagramSocket serverSocket;
     private byte[] receiveData;
-    private byte[] sendData;
- 
-    
+    private byte[] sendData; 
     private DatagramPacket receivePacket;
     private DatagramPacket sendPacket;
-    
-    
     private boolean playerSet=false;
-    
     public int firstPlayerData;
-
-    
     public InetAddress firstIPAddress;
-    
-//    private GameEngine gameEngine;
-//    private ServerSending serversending;
-//    private ServerSending serversending2;
-//    
-//    private boolean firstTime=true, secondTime=true;
     
     public void DestroySocket()
     {
@@ -40,7 +31,7 @@ public class DispatcherReceiver {
     }
     
     //Constructor
-    public DispatcherReceiver()
+    public ServerConnectionInfo()
     {   
        receiveData = new byte[24]; 
        sendData = new byte[24]; 
@@ -48,7 +39,7 @@ public class DispatcherReceiver {
        try {
             serverSocket = new DatagramSocket(9800);
         } catch (SocketException ex) {
-            Logger.getLogger(DispatcherReceiver.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerConnectionInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -61,54 +52,36 @@ public class DispatcherReceiver {
         //x is the port of receiving client
         int x=Integer.parseInt(temp);
 
-            firstPlayerData=x;
-            this.firstIPAddress=receivePacket.getAddress();
-            
-            System.out.println("Player1 receive from::" + this.firstIPAddress + "::port::" + x);
-      
-            return "1:9876";   //returns player1 idand port
+        firstPlayerData=x;
+        this.firstIPAddress=receivePacket.getAddress();
+        return "1:9876";   //returns player1 idand port
       
     }
-    
 
     public void runReceivingDispather()
     {  
        int i=0;
-      
        try {
          //change this to 2 loops
          while(i<1)
          {
-         //  receiveData  = new byte[12]; 
-            
-           receivePacket = 
-             new DatagramPacket(receiveData, receiveData.length); 
-
-           System.out.println("Dispatcher");
+           receivePacket = new DatagramPacket(receiveData, receiveData.length); 
            serverSocket.receive(receivePacket);
-           
-           
+
            String temp=this.assignReceiver(receivePacket);
-           
            //returns the port number for receiver server
            sendData=temp.getBytes();
-           
-           
+       
            InetAddress address=receivePacket.getAddress();
            int tempPort=receivePacket.getPort();
            
-           sendPacket = 
-                    new DatagramPacket(sendData, sendData.length, address, 
-                               tempPort); 
-               
+           sendPacket = new DatagramPacket(sendData, sendData.length, address,  tempPort);   
            serverSocket.send(sendPacket);
-      
          i++;
          }
        } catch (IOException ex) {
-                Logger.getLogger(DispatcherReceiver.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ServerConnectionInfo.class.getName()).log(Level.SEVERE, null, ex);
        }     
     }
-    
 }
 

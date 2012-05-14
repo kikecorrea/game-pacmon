@@ -20,6 +20,13 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+/**
+ * This class handles the rendering of screen
+ * 
+ * It is similar to GameSurfaceView in pacmon package 
+ * but with minor modification to work with server
+ *
+ */
 public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 	private final static int    MAX_FPS = 40;

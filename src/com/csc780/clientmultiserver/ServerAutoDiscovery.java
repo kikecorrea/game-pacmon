@@ -14,38 +14,39 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author mamon
+ *This class handles the auto discovery
+ *This class will broadcast its ip address until a clients connects to it
  */
-public class ServerDiscovery extends Thread {
+public class ServerAutoDiscovery extends Thread {
     
     private MulticastSocket serverSocket;
     private InetAddress group;
     private int port;
-    
-    
+
     public void DestroySocket()
     {
     	serverSocket.close();
     }
-    
-    
-    public ServerDiscovery()
+ 
+    public ServerAutoDiscovery()
     {
         try {
            serverSocket = new MulticastSocket(4322);
+           
+           //server will broadcast to this generic address then if a clients listens to this 
+           //address it will receive info about server's real IP address
            group=InetAddress.getByName("230.0.0.1");
            port=4322;
         } catch (UnknownHostException ex) {
-            Logger.getLogger(ServerDiscovery.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerAutoDiscovery.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-                Logger.getLogger(ServerDiscovery.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ServerAutoDiscovery.class.getName()).log(Level.SEVERE, null, ex);
             }
     }
     
     public void run()
     {
-        try
+     try
      { 
       serverSocket.joinGroup(group);
   
@@ -62,29 +63,22 @@ public class ServerDiscovery extends Thread {
           sendData  = new byte[24]; 
           receiveData = new byte[24]; 
 
-          DatagramPacket receivePacket = 
-             new DatagramPacket(receiveData, receiveData.length); 
-
-          System.out.println ("Started server discovery waiting for client");
+          DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length); 
 
           serverSocket.receive(receivePacket); 
-          
-
-         String temp= new String(receivePacket.getData());
-         System.out.println("boo::"+temp);
-         temp=temp.substring(0, receivePacket.getLength());
          
-          
+         String temp= new String(receivePacket.getData());
+         temp=temp.substring(0, receivePacket.getLength());
+      
           if(ipAddr.equals(temp))
           {
-              System.out.println("the same old");
+              //System.out.println("the same old");
           }
           else
           {
             sentence = new String(receivePacket.getData()); 
             sentence=sentence.substring(0, receivePacket.getLength());
-            //System.out.println("this is data:"+ sentence);
-            
+  
             if(sentence.equals("password"))
             {
                 InetAddress addr = InetAddress.getLocalHost();
@@ -92,57 +86,31 @@ public class ServerDiscovery extends Thread {
         
                  sendData = ipAddr.getBytes(); 
   
-                 DatagramPacket sendPacket = 
-                  new DatagramPacket(sendData, sendData.length, group, 
-                               port); 
+                 DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, group, port); 
   
                  serverSocket.send(sendPacket); 
-                // serverSocket.send(sendPacket); 
                  sendPacket=null;
                i++;
-               System.out.println("One clients receive");
             }
             else
             {
                 String x="error";
-        
-                 sendData = x.getBytes(); 
-  
-                 DatagramPacket sendPacket = 
-                  new DatagramPacket(sendData, sendData.length, group, 
-                               port); 
-  
+                sendData = x.getBytes(); 
+ 
+                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, group, port); 
                  serverSocket.send(sendPacket); 
                  sendPacket=null;
-             
             }
-
-          //InetAddress IPAddress = receivePacket.getAddress(); 
-  
-          //int port = receivePacket.getPort(); 
-  
-          //System.out.println ("From: " + IPAddress + ":" + port);
-          //System.out.println ("Message: " + sentence);
-
-          //capitalizedSentence = sentence.toUpperCase(); 
-          
           }
-       
-
         }
-        System.out.println("Exiting server");
-
       }
       catch (SocketException ex) {
         System.out.println("UDP Port 9876 is occupied.");
         System.exit(1);
       }catch (UnknownHostException ex) {
-                        Logger.getLogger(ServerDiscovery.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(ServerAutoDiscovery.class.getName()).log(Level.SEVERE, null, ex);
       }catch (IOException ex) {
-                        Logger.getLogger(ServerDiscovery.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-    }
-    
-   
+                        Logger.getLogger(ServerAutoDiscovery.class.getName()).log(Level.SEVERE, null, ex);
+      }
+    } 
 }

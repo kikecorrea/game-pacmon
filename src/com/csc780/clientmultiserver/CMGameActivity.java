@@ -23,6 +23,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.Display;
 
+/**
+ * This class handles the accelerometer, MGameEngine, MGameSurfaceView
+ */
 public class CMGameActivity extends Activity implements SensorEventListener{
 	final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	
@@ -52,8 +55,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     
     //for server
     ServerThread serverThread;
-   
-		
+   	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -204,7 +206,6 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		
 	}
 
-
 	@Override
 	public void onBackPressed() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -260,12 +261,6 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 			gameEngine.setInputDirPlayer2(LEFT);
 			//gameView.setDir(4);
 		}
-
-		
-		
 	}
-    
-    
-    
     
 }

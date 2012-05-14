@@ -4,51 +4,46 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * This class creates the thread for sending, receiving, autodiscovery, connectioninfo
+ */
 public class ServerThread extends Thread{
  
     private CMGameEngine ges;
     private ServerSending sendThread;
     private ServerReceiving receiveThread;
-    private DispatcherReceiver dispatchReceiver;
-    private ServerDiscovery serverDiscovery;
-    
+    private ServerConnectionInfo dispatchReceiver;
+    private ServerAutoDiscovery serverDiscovery;
     private AtomicBoolean clientReady;
-    
-    
+
     public ServerThread(CMGameEngine game, AtomicBoolean ready)
     {
     	 ges=game;
     	 clientReady=ready;
     	 
-    	  //we want to create receiveThread so incase client sends data
+         //we want to create receiveThread so incase client sends data
          receiveThread=new ServerReceiving(ges,  9876);
          sendThread = new ServerSending();
          
          //run the server discover
-         serverDiscovery=new ServerDiscovery();
+         serverDiscovery=new ServerAutoDiscovery();
          //dispatcher, listens and sends the info of receivingServer to client
-         dispatchReceiver=new DispatcherReceiver();
+         dispatchReceiver=new ServerConnectionInfo();
     }
     
     public void killSendingReceiving()
     {
-    	
     	receiveThread.isRunning.set(false);
     	sendThread.isRunning.set(false);
-    	
-  
     	serverDiscovery.DestroySocket();
     	dispatchReceiver.DestroySocket();
     	receiveThread.DestroySocket();
     	sendThread.DestroySocket();
-    	
     }
     
     public void run()
     {
          serverDiscovery.start();
-         
          dispatchReceiver.runReceivingDispather();
          
          //returns port of client,
@@ -63,7 +58,6 @@ public class ServerThread extends Thread{
          //start receive server
          receiveThread.start();
 
-         
          //waiting for two players to be ready before starting game engine
          while(!receiveThread.ready)
          {  	
@@ -89,19 +83,15 @@ public class ServerThread extends Thread{
         
          //remem gameEngine has its own thread running
          ges.startTheEngine();
-         
          sendThread.start();
-    
+
          //wait for thread to die
          try {
              sendThread.join();
-
              receiveThread.join();
              
          } catch (InterruptedException ex) {
              Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
          }
     }
-    
-   
 }
