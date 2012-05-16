@@ -12,18 +12,18 @@ There are 3 packages in PacMon source
 I. pacmon package: 
 
 Classes:
-MenuActivity 		   - handles the menu activity giving options for single player, multiplayer, options, exit
-ClientOrServer 		 - handles dialog box for selecting client or server
-LevelSelectActivity - sets the level for the game play
-GameActivity 		   - handles the accelerometer input, initialized GameSurfaceView, GameEngine, SoundEngine
-GameEngine 		     - handles the movement of pacmon, ghost, maze
-GameSurfaceView 	  - handles the rendering of screen
-Maze 				       - contains the layout of the maze
-Monster 			      - contains the ghost code
-Pacmon 				     - contains the pacmon code
-SoundEngine 		    - handles the sound during game play
-GamePrefsActivity 	- sets the preference for the game play
-ShowSettingActivity - sets the settings for the game play
+MenuActivity           - handles the menu activity giving options for single player, multiplayer, options, exit
+ClientOrServer         - handles dialog box for selecting client or server
+LevelSelectActivity    - sets the level for the game play
+GameActivity           - handles the accelerometer input, initialized GameSurfaceView, GameEngine, SoundEngine
+GameEngine             - handles the movement of pacmon, ghost, maze
+GameSurfaceView        - handles the rendering of screen
+Maze                   - contains the layout of the maze
+Monster                - contains the ghost code
+Pacmon                 - contains the pacmon code
+SoundEngine            - handles the sound during game play
+GamePrefsActivity      - sets the preference for the game play
+ShowSettingActivity    - sets the settings for the game play
 
 
 Game Logic:
@@ -42,11 +42,11 @@ II. multipacmon package:
 
 Classes:
 MGameActivity, MGameEngine, MGameSurfaceView - have been modified slightly from pacmon package to work w/ multiplayer
-AutoDiscovery 			    - listens for UDP broadcast to get IP address of server
-ClientConnectionSetup 	- communicates with server to send client info like port and ip address
-CircularQue  		     	- data structure storage of data from server/client. Deals with lag compensation, and early prediction
-Receiver 				       - handles the receiving data from server
-Sender 					       - handles the sending data to server
+AutoDiscovery               - listens for UDP broadcast to get IP address of server
+ClientConnectionSetup       - communicates with server to send client info like port and ip address
+CircularQue                 - data structure storage of data from server/client. Deals with lag compensation, and early prediction
+Receiver                    - handles the receiving data from server
+Sender                      - handles the sending data to server
 
 Game Logic
 
@@ -61,11 +61,11 @@ III. clientmultiserver:
 
 Classes:
 CMGameActivity, CMGameEngine, CMGameSurfaceView - have been modified slightly from pacmon package to work w/ client as a server
-ServerAutoDiscovery 		- sends UDP broadcast, broadcasting it's own IP address until clients connects to it
-ServerConnectionInfo		- sends information about the server i.e. port and IP address to client
-ServerReceiving				 - handles the receiving data from client
-ServerSending 			 	 - handles the sending data to client
-ServerThread				    - parent thread of ServerAutoDiscovery, ServerConnectionInfo, ServerReceiving, ServerSending
+ServerAutoDiscovery         - sends UDP broadcast, broadcasting it's own IP address until clients connects to it
+ServerConnectionInfo        - sends information about the server i.e. port and IP address to client
+ServerReceiving             - handles the receiving data from client
+ServerSending               - handles the sending data to client
+ServerThread                - parent thread of ServerAutoDiscovery, ServerConnectionInfo, ServerReceiving, ServerSending
 
 
 Game Logic
