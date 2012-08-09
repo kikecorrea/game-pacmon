@@ -3,6 +3,13 @@ package com.csc780.pacmon;
 import java.util.ArrayList;
 import java.util.Random;
 
+import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+
+
 
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
 /*
@@ -12,7 +19,7 @@ import java.util.Random;
  */
 
 public class GameEngine implements Runnable {
-	private final static int    MAX_FPS = 40;
+	private final static int    MAX_FPS = 50;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -30,6 +37,7 @@ public class GameEngine implements Runnable {
 	int playerScore;
 	int timer; int timerCount;
 	int lives;
+	
 	private int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
 	int powerMode;		// for count down of power speed
@@ -49,6 +57,7 @@ public class GameEngine implements Runnable {
 	private boolean isRunning;
 	
 	private int gX, gY;
+	public int level=-1, status=-1;
 	
 	
 	//timer
@@ -65,7 +74,9 @@ public class GameEngine implements Runnable {
 	//Constructor create players, ghosts and Maze
 	public GameEngine(SoundEngine soundEngine, int level){
 		this.soundEngine = soundEngine;
-		soundEngine.playReady();
+		
+		//soundEngine.playReady();
+		this.level = level;
 		
 		pacmon = new Pacmon();  // new pacmon
 		lives = pacmon.getpLives();
@@ -252,7 +263,7 @@ public class GameEngine implements Runnable {
 				//check if at crossing using directional maze and update new direction
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (timer % 4 == i){
+					if (timer % 4 != i){
 						if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
 						if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
 						if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
@@ -351,8 +362,8 @@ public class GameEngine implements Runnable {
 		
 		if (lives == 0) {
 			gameState = GAMEOVER;
-			soundEngine.endMusic();
 			soundEngine.playGameOver();
+				
 		}
 	}
 	
@@ -422,7 +433,7 @@ public class GameEngine implements Runnable {
 		}
 		
 		timeDiff += System.currentTimeMillis() - beginTime;
-		if(timeDiff >= 1200)
+		if(timeDiff >= 300)
 			gameState = READY;
 	}
 	
@@ -430,7 +441,7 @@ public class GameEngine implements Runnable {
 	private void updateReady(){
 		beginTime = System.currentTimeMillis();
 
-		readyCountDown = 5L - timeDiff/1000;		
+		readyCountDown = 1L - timeDiff/1000;		
 		sleepTime = (int) (FRAME_PERIOD - timeDiff);
 
 		if (sleepTime > 0) {
@@ -444,7 +455,7 @@ public class GameEngine implements Runnable {
 		}
 		
 		timeDiff += System.currentTimeMillis() - beginTime;
-		if(timeDiff >= 5000) {
+		if(timeDiff >= 1000) {
 			gameState = RUNNING;
 			soundEngine.playMusic();
 		}
@@ -480,7 +491,30 @@ public class GameEngine implements Runnable {
 	}
 	
 	private void updateWon(){
+		this.level+=1;
+		this.status=1;
 		pause();
+	}
+	
+	private void updateLevel(int level, int status)
+	{
+		
+		
+		
+		//DatabaseHandler db = new DatabaseHandler(this);
+		
+		
+		//SQLiteDatabase levelDB = SQLiteDatabase.openOrCreateDatabase("level.db", SQLiteDatabase.OPEN_READWRITE);
+	//	SQLiteDatabase levelDB = this.openOrCreateDatabase("level.db", SQLiteDatabase.OPEN_READONLY, null);		
+//		ContentValues cv = new ContentValues();
+//    	try{
+//    	//for first level
+//    	cv.put("finish", 1); 
+//        levelDB.update("level", cv, "stage=" + i, null);
+//    	}catch(SQLException e){
+//			e.printStackTrace();
+//		}
+		
 	}
 	
 	public void pause() {
@@ -513,15 +547,15 @@ public class GameEngine implements Runnable {
 	}
 
 	public String getTimer() {
-		return "Time: " + timer;
+		return "time: " + timer;
 	}
 
 	public String getLives() {
-		return "Life remaining: " + lives;
+		return "life: " + lives;
 	}
 
 	public String getPlayerScore() {
-		return "Score: " + playerScore;
+		return "score: " + playerScore;
 	}
 	
 	public int getGameState(){

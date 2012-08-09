@@ -35,8 +35,8 @@ public class ClientOrServer extends Activity {
     		builder.setMessage("Choose to be Server or Client...").setCancelable(false)
     				.setPositiveButton("Server", new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int which) {
-    						Intent cmGame = new Intent("com.csc780.pacmon.CMGAMEACTIVITY");
-    						startActivity(cmGame);
+    						Intent cmGame = new Intent("com.csc780.clientmultiserver.CMGAMEACTIVITY");
+    						startActivityForResult(cmGame,0);
     					}
     				})
     				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -47,8 +47,8 @@ public class ClientOrServer extends Activity {
     				})
     				.setNeutralButton("Client", new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int which) {
-    						Intent mGame = new Intent("com.csc780.pacmon.MGAMEACTIVITY");
-    						startActivity(mGame);
+    						Intent mGame = new Intent("com.csc780.multipacmon.SEARCHING");
+    						startActivityForResult(mGame,0);
     					}
     				});
     		AlertDialog alert = builder.create();
@@ -58,5 +58,12 @@ public class ClientOrServer extends Activity {
         default:
             return null;
         }
+    }
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        this.finish();
+
     }
 }

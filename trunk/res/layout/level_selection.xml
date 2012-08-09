@@ -14,13 +14,19 @@
     <Button
         android:id="@+id/bLevel1"
         style="@style/menu_button"
-        android:text="Level 1"
+
         android:textColor="@drawable/button_text_color" />
 
     <Button
         android:id="@+id/bLevel2"
         style="@style/menu_button"
-        android:text="Level 2"
+ 
+        android:textColor="@drawable/button_text_color" />
+    
+    <Button
+        android:id="@+id/bLevel3"
+        style="@style/menu_button"
+
         android:textColor="@drawable/button_text_color" />
 
 </LinearLayout>

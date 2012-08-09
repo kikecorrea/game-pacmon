@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -44,6 +46,7 @@ public class GameActivity extends Activity implements SensorEventListener{
         gameView = new GameSurfaceView(this, gameEngine, width, height);
 
         setContentView(gameView);
+       
         
     }
 
@@ -75,9 +78,18 @@ public class GameActivity extends Activity implements SensorEventListener{
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
+		
+		 Intent intent = new Intent();
+
+			 intent.putExtra("level", gameEngine.level);
+		     intent.putExtra("status", gameEngine.status);
+
+		        setResult(RESULT_OK, intent);
+		  
 		soundEngine.endMusic();
 		super.finish();
 	}
+
 
 	@Override
 	public void onBackPressed() {
@@ -116,7 +128,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < -0.5F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			gameEngine.setInputDir(UP);
 			//gameView.setDir(1);
 		}

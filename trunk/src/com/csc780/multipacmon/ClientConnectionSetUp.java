@@ -23,6 +23,7 @@ public class ClientConnectionSetUp {
 	private InetAddress IPAddress;
 	private byte[] sendData;
 	private byte[] receiveData;
+	public volatile boolean keepRunning;
 	
 	
 	//player id either player1 or player2
@@ -60,8 +61,9 @@ public class ClientConnectionSetUp {
 	
 	public void connectToServer(int portForReceiving)
 	{
-		boolean keepRunning=true;
+	
 		try {
+			keepRunning=true;
 			clientSocket.setSoTimeout(2000);
 			
 		while(keepRunning)
@@ -71,21 +73,21 @@ public class ClientConnectionSetUp {
 			sendPacket =  new DatagramPacket(sendData, sendData.length, IPAddress, 9800); 
 		    clientSocket.send(sendPacket);
 
-		    //System.out.println("sent dispatcher");
 		    receivePacket = new DatagramPacket(receiveData, receiveData.length); 
-		  
+
 		    clientSocket.receive(receivePacket);
 		  
-		    keepRunning=false;
 		    String temp=new String(receivePacket.getData());
 		    this.parseData(temp, receivePacket.getLength());
+		    keepRunning=false;
+		    
 			}catch (SocketTimeoutException ste){
 		       //System.out.println ("Timeout Occurred: Packet assumed lost");
 		    } 
 		 }
 		}
 		catch (IOException e) {
-			System.out.println("Error in sending socket::");
+			System.out.println("Error in sending socket:: ClientConnectionSetup.java");
 			e.printStackTrace();
 		}
 	}

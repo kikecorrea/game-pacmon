@@ -57,13 +57,16 @@ public class MenuActivity extends Activity implements OnClickListener{
 			break;
 			
 		case R.id.bMulti:
-			Intent mGame = new Intent("com.csc780.pacmon.MGAMEACTIVITY");
-			startActivity(mGame);
+//			Intent mGame = new Intent("com.csc780.pacmon.MGAMEACTIVITY");
+//			startActivity(mGame);
+//			break;
+			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
+			startActivity(cmGame);
 			break;
 			
 		case R.id.bOptions:
-			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
-			startActivity(cmGame);
+//			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
+//			startActivity(cmGame);
 			break;
 			
 		case R.id.bAbout:
@@ -72,7 +75,10 @@ public class MenuActivity extends Activity implements OnClickListener{
 			break;
 			
 		case R.id.bExit: //finish the activity
+			
 			this.finish();
+			this.onDestroy();
+			System.exit(1);
 			break;
 		
 		}

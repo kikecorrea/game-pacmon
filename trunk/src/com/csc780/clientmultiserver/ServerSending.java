@@ -4,6 +4,10 @@
  */
 package com.csc780.clientmultiserver;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -32,6 +36,11 @@ public class ServerSending extends Thread {
     private int portServer;
     private boolean countDown;
     public AtomicBoolean isRunning;
+    public int status=0,p1x,p1y,p1z,p2x,p2y,p2z,g1x,g1y,g1z,g2x,g2y,g2z,g3x,g3y,g3z,g4x,g4y,g4z,p1life,p2life,p1score,p2score,mazeX,mazeY;
+    public String temp;
+    
+    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+     DataOutputStream daos=new DataOutputStream(baos);
 
     //we need this blank constructor so that we can instantiate it in serverThread. its also a fix for killAllThread in CMGameActivity
     public ServerSending()
@@ -71,63 +80,118 @@ public class ServerSending extends Thread {
     	serverSocket.close();
     }
         
-    public String getData()
+    public void getData()
     {
+      baos=new ByteArrayOutputStream();
+      daos=new DataOutputStream(baos);
       //waits for for the next tick to occur
-      while(tickCounter==gameEngine.tickCounter)
+      while(tickCounter==gameEngine.tickCounter && isRunning.get()==true)
       {        }
 
-      int x=gameEngine.tickCounter;
+      tickCounter=gameEngine.tickCounter;
       
-      //need to fix synchronization problem what if gameEngine.tickCounter change after getting pX, pY
-      int p1xy[]=gameEngine.returnPacmonPxPy();
-      int p2xy[]=gameEngine.returnPacmon2PxPy();
       
-      int g1xy[]=gameEngine.returnGhost(0);
-      int g2xy[]=gameEngine.returnGhost(1);
-      int g3xy[]=gameEngine.returnGhost(2);
-      int pLives[]=gameEngine.returnPacLives();
-      int scores[]=gameEngine.returnScores();
-      int maze[]=gameEngine.returnMazeData();
-      String timer=gameEngine.getTimer();
+      p1x=gameEngine.pacmon.getpX();
+      p1y=gameEngine.pacmon.getpY();
+      p1z=gameEngine.pacmon.getDir();
       
-      tickCounter=x;   
-      String temp;       
-          temp=x + ":" + p1xy[0] + ":" + p1xy[1] + ":" + p1xy[2] + ":" 
-                       + p2xy[0] + ":" + p2xy[1] + ":" + p2xy[2] + ":" 
-                       + g1xy[0] + ":" + g1xy[1] + ":" + g1xy[2] + ":" 
-                       + g2xy[0] + ":" + g2xy[1] + ":" + g2xy[2] + ":" 
-                       + g3xy[0] + ":" + g3xy[1] + ":" + g3xy[2] + ":" 
-                       + pLives[0] + ":" + pLives[1] + ":"
-                       + scores[0] + ":" + scores[1] + ":" + timer + ":"
-                       + maze[0] + ":" + maze[1];          
-
-      return temp;       
+      p2x=gameEngine.pacmon2.getpX();
+      p2y=gameEngine.pacmon2.getpY();
+      p2z=gameEngine.pacmon2.getDir();
+      
+      g1x=gameEngine.ghosts.get(0).getX();
+      g1y=gameEngine.ghosts.get(0).getY();
+      g1z=gameEngine.ghosts.get(0).getDir();
+      
+      g2x=gameEngine.ghosts.get(1).getX();
+      g2y=gameEngine.ghosts.get(1).getY();
+      g2z=gameEngine.ghosts.get(1).getDir();
+      
+      g3x=gameEngine.ghosts.get(2).getX();
+      g3y=gameEngine.ghosts.get(2).getY();
+      g3z=gameEngine.ghosts.get(2).getDir();
+      
+      g4x=gameEngine.ghosts.get(3).getX();
+      g4y=gameEngine.ghosts.get(3).getY();
+      g4z=gameEngine.ghosts.get(3).getDir();
+      
+      p1life=gameEngine.lives;
+      p2life=gameEngine.lives2;
+      p1score=gameEngine.playerScore;
+      p2score=gameEngine.playerScore2;
+      
+      mazeX=gameEngine.mazeData1;
+      mazeY=gameEngine.mazeData2;
+      status = gameEngine.gameState;
+      
+//      temp=tickCounter + ":" + p1x + ":" + p1y + ":" + p1z + ":" 
+//              + p2x + ":" + p2y + ":" + p2z + ":" 
+//              + g1x + ":" + g1y + ":" + g1z + ":" 
+//              + g2x + ":" + g2y + ":" + g2z + ":" 
+//              + g3x + ":" + g3y + ":" + g3z + ":" 
+//              + p1life + ":" + p2life + ":"
+//              + p1score + ":" + p2score + ":" + gameEngine.timer + ":"
+//              + mazeX + ":" + mazeY + ":" + status;   
+      
+      try {
+		daos.writeInt(tickCounter);
+		daos.writeInt(p1x);daos.writeInt(p1y);daos.writeInt(p1z);
+		daos.writeInt(p2x);daos.writeInt(p2y);daos.writeInt(p2z);
+		
+		daos.writeInt(g1x);daos.writeInt(g1y);daos.writeInt(g1z);
+		daos.writeInt(g2x);daos.writeInt(g2y);daos.writeInt(g2z);
+		daos.writeInt(g3x);daos.writeInt(g3y);daos.writeInt(g3z);
+		
+		daos.writeInt(p1life);daos.writeInt(p2life);
+		daos.writeInt(p1score);daos.writeInt(p2score);daos.writeInt(gameEngine.timer);
+		daos.writeInt(mazeX);daos.writeInt(mazeY);daos.writeInt(status);
+		daos.writeInt(g4x);daos.writeInt(g4y);daos.writeInt(g4z);
+		
+		daos.close();
+		
+		
+		
+		
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+      
+    //  return temp;       
     }
  
     @Override
     public void run()
     {    
-       sendData  = new byte[128];  
+       //sendData  = new byte[128];  
        while(isRunning.get())
        {          
     	   try {
-			Thread.sleep(30);
-		} catch (InterruptedException e1) {
+			Thread.sleep(20);
+    	   } catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
+    	   }
     	   try {
-                String temp;
-               temp=this.getData();
+               // String temp;
+               //temp=this.getData();
       
-                sendData=temp.getBytes();
+               // sendData=temp.getBytes();
+    		   this.getData();
+    		   sendData=this.baos.toByteArray();
+//    		   ByteArrayInputStream bais=new ByteArrayInputStream(sendData);
+//               DataInputStream dais=new DataInputStream(bais);
+//               System.out.println("XX::"+ dais.readInt());
+//               System.out.println("YY::"+ dais.readInt());
+//               System.out.println("ZZ::"+ dais.readInt());
                 sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); 
-             
+               
 			    serverSocket.send(sendPacket);
 				} catch (IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
+
        }
+       
+       System.out.println("OUT IN SERVER SENDING");
     }
     
 }

@@ -67,6 +67,8 @@ public class AutoDiscoverer extends Thread{
 	           modifiedSentence=modifiedSentence.substring(0,receivePacket.getLength());
 		           
 		       //we don't want to get the same data from client
+	           //in a multicast broadcast whatever you send, you will receive
+	           //so we don't want to receive what we sent
 	           if(modifiedSentence.equals(temp))
 	           {  
 	        	  //System.out.println("same in client"); 
@@ -96,7 +98,7 @@ public class AutoDiscoverer extends Thread{
 	          }
 	        catch (SocketTimeoutException ste)
 	        {
-	           System.out.println ("Timeout Occurred: Packet assumed lost");
+	           System.out.println ("Timeout Occurred: Packet assumed lost, AutoDiscovery.java multipacmon");
 	        } 
 	      }
 	   clientSocket.close(); 

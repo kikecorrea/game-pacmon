@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -51,20 +52,18 @@ public class MGameActivity extends Activity implements SensorEventListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        serverReady = new AtomicBoolean(false);
-        
-        mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
+        String ip = getIntent().getStringExtra("ipaddress");
+       
         soundEngine = new SoundEngine(this);
         
         //This is to overwrite and enable UDP broadcast on android hardware
-        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
-	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
-	       multicastLock.acquire();
+//        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
+//	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
+//	       multicastLock.acquire();
+        
+        
 	       
-        mgameEngine = new MGameEngine(soundEngine, serverReady);
+        mgameEngine = new MGameEngine(soundEngine, ip);
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
         int height = display.getHeight();
@@ -72,89 +71,64 @@ public class MGameActivity extends Activity implements SensorEventListener{
 
         setContentView(mgameView);
         
-        showDialog(SEARCHING_SERVER);
-        mProgressDialog.setProgress(0);
-        handlerThreadClient();	
         
-        //handler for client
-        //handler is use to get message from the message pool
-        mProgressHandler = new Handler() {
-            
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (progressStatus) {
-                    mProgressDialog.dismiss();
-                    
-                    //remember to put connectedDialog.dismiss() somewhere
-                    showDialog(SERVER_CONNECTED);       
-                    new Thread(new Runnable()
-                	{
-                		public void run()
-                		{
-                			try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-                			MGameActivity.this.connectedDialog.dismiss();
-                		}
-                	}).start();
-         
-                }
-            }
-        };
-    }
-    
-    protected void handlerThreadClient()
-    {
-    	Thread t= new Thread(new Runnable()
-    	{
-    		public void run()
-    		{
-    			while(!serverReady.get())
-    			{
-    				try {
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-    			}
-    			progressStatus=true;
-    			mProgressHandler.sendEmptyMessage(0);
-    		}
-    	});
-    	t.start();
-    }
-    
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {	
-        case SEARCHING_SERVER:
-        	mProgressDialog = new ProgressDialog(this);
-
-          //  mProgressDialog.setIcon(R.drawable.alert_dialog_icon);
-            mProgressDialog.setMessage("Searching for server...");
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                	mProgressDialog.dismiss();
-                	MGameActivity.this.finish();
-                    /* User clicked Yes so do some stuff */
-                }
-            });
-        return mProgressDialog;
+        mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mySensorManager.registerListener(this, myAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+  }
         
-        case SERVER_CONNECTED:
-        	AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-            connectedDialog = builder2.setTitle("Get Ready")
-                .setMessage("Found server")
-                .create();
-            connectedDialog.show();
-        return connectedDialog;
-            
-        default:
-            return null;
-        }
-    }
+    
+//    protected void handlerThreadClient()
+//    {
+//    	Thread t= new Thread(new Runnable()
+//    	{
+//    		public void run()
+//    		{
+//    			while(!serverReady.get())
+//    			{
+//    				try {
+//						Thread.sleep(500);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//    			}
+//    			progressStatus=true;
+//    			mProgressHandler.sendEmptyMessage(0);
+//    		}
+//    	});
+//    	t.start();
+//    }
+//    
+//    protected Dialog onCreateDialog(int id) {
+//        switch(id) {	
+//        case SEARCHING_SERVER:
+//        	mProgressDialog = new ProgressDialog(this);
+//
+//          //  mProgressDialog.setIcon(R.drawable.alert_dialog_icon);
+//            mProgressDialog.setMessage("Searching for server...");
+//            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+//            mProgressDialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                	mProgressDialog.dismiss();
+//                	//kills the activity
+//                	MGameActivity.this.finish();
+//                    /* User clicked Yes so do some stuff */
+//                }
+//            });
+//        return mProgressDialog;
+//        
+//        case SERVER_CONNECTED:
+//        	AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+//            connectedDialog = builder2.setTitle("Get Ready")
+//                .setMessage("Found server")
+//                .create();
+//            connectedDialog.show();
+//        return connectedDialog;
+//            
+//        default:
+//            return null;
+//        }
+//    }
 
 	@Override
 	protected void onPause() {
@@ -176,8 +150,16 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+		mgameEngine.closeConnection();
 		mgameEngine.killAllThread();
 		super.onDestroy();
+	}
+	
+	@Override
+	public void finish() {
+		// TODO Auto-generated method stub
+		soundEngine.endMusic();
+		super.finish();
 	}
 
 
@@ -187,7 +169,22 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		builder.setMessage("Do you want to quit?").setCancelable(false)
 				.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent();
+				        
+				        intent.putExtra("CALLS", 5);
+				        
+				        setResult(RESULT_OK, intent);
+				        
+				        //notifies server client has quit
+				        mgameEngine.setInputDir(-99);
+				        try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+				        
 						MGameActivity.this.finish();
+						MGameActivity.this.onDestroy();
 					}
 				})
 				.setNegativeButton("Resume", new DialogInterface.OnClickListener() {

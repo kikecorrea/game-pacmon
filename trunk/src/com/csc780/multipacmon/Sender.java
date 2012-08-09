@@ -50,6 +50,12 @@ public class Sender extends Thread {
 		this.notifyAll();
 	}
 	
+	public void closeSocket()
+	{
+		this.isRunning=false;
+		clientSocket.close();
+	}
+	
 	@Override
 	public void run()
 	{
@@ -80,7 +86,7 @@ public class Sender extends Thread {
 		      try {
 				clientSocket.send(sendPacket);
 			} catch (IOException e) {
-				System.out.println("Error in sending socket::");
+				System.out.println("Error in sending socket:: Sender.java, multipacmon");
 				e.printStackTrace();
 			}
 		
