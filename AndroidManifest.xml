@@ -51,7 +51,7 @@
             android:screenOrientation="portrait"
             android:label="MGameActivity" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.MGAMEACTIVITY" />
+                <action android:name="com.csc780.multipacmon.MGAMEACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -62,8 +62,7 @@
             android:screenOrientation="portrait"
             android:label="CMGameActivity" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.CMGAMEACTIVITY" />
-
+                <action android:name="com.csc780.clientmultiserver.CMGAMEACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -75,6 +74,16 @@
             <intent-filter>
                 <action android:name="com.csc780.pacmon.CLIENTORSERVER" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+          <activity
+            android:name="com.csc780.multipacmon.Searching"
+            android:screenOrientation="portrait"
+            android:label="Searching" >
+            <intent-filter>
+                <action android:name="com.csc780.multipacmon.SEARCHING" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>

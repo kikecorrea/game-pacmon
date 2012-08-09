@@ -40,7 +40,7 @@ public class CMPacmon {
 	
 	public void reset(int x, int y){
 		pX=x;
-                pY=y;
+        pY=y;
 		pXOrigin = pYOrigin = 1;
 		dir = RIGHT;
 	}

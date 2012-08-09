@@ -29,13 +29,13 @@ import android.view.SurfaceView;
  */
 public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS = 40;
+	private final static int    MAX_FPS = 60;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4, SEARCHING=5;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -54,14 +54,14 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private ArrayList<CMMonster> ghosts;
 	
 	// bitmap
-	private Bitmap pac_img2, pac_img, wall, door, bluey_img, redy_img, yellowy_img, food, power ;
+	private Bitmap pac_img2, pac_img, wall, door, bluey_img, redy_img, yellowy_img, violet_img, food, power ;
 	
 	//maze info
 	private int[][] mazeArray;
 	private int mazeRow, mazeColumn;
 	private int blockSize;
 	
-	private Paint paint, paint2;
+	private Paint paint, paint2, paint3;
 	
 	private Context mContext;
 	
@@ -105,9 +105,6 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		isRunning = true;
 		setKeepScreenOn(true);
 		
-
-		
-		
 	}
 	
 	private void initBitmap(){
@@ -120,6 +117,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
+		violet_img = BitmapFactory.decodeResource(getResources(), R.drawable.violet_sprite);
 		
 		paint = new Paint();
 		paint.setAntiAlias(true);
@@ -129,10 +127,13 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
-		paint2.setTextSize(50);
+		paint2.setTextSize(45);
 		
-	
-		
+		paint3 = new Paint();
+		paint3.setAntiAlias(true);
+		paint3.setColor(Color.WHITE);
+		paint3.setTextSize(40);
+			
 	}
 	
 	//thread to update and draw. Game loop
@@ -147,7 +148,46 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 			if (cmgameEngine.getGameState() == RUNNING)  {updateRunning(canvas);}
 			if (cmgameEngine.getGameState() == GAMEOVER) updateGameOver(canvas);
 			if (cmgameEngine.getGameState() == WON)	   updateWon(canvas);
+			if (cmgameEngine.getGameState() == DISCONNECTED)  updateDisconnected(canvas);
+			if (cmgameEngine.getGameState() == DIE)  updateDie(canvas);
 		
+		}
+	}
+	
+	private void updateDie(Canvas canvas){
+		try {
+			canvas = surfaceHolder.lockCanvas();
+			if (canvas == null) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				surfaceHolder = getHolder();
+			} else {
+				synchronized (surfaceHolder) {
+					canvas.drawRGB(0, 0, 0);
+					drawMaze(canvas); // draw updated maze
+					drawPacmon(canvas);
+					drawPacmon2(canvas);
+					drawGhost(canvas);
+					drawScore(canvas);
+					
+					try {
+						Thread.sleep(25);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		} finally {
+			// in case of an exception the surface is not left in
+			// an inconsistent state
+			if (canvas != null) {
+				surfaceHolder.unlockCanvasAndPost(canvas);
+			}
 		}
 	}
 	
@@ -181,6 +221,23 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		
 	}
 	
+	private void updateDisconnected(Canvas canvas){
+		canvas = surfaceHolder.lockCanvas();
+		isRunning = false;
+		canvas.drawText("Connection Error", 50, 350, paint2);
+		
+		surfaceHolder.unlockCanvasAndPost(canvas);
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		((Activity) mContext).finish();
+	}
+	
+	
 	// when game is in ready mode
 	private void updateReady(Canvas canvas){
 		
@@ -203,7 +260,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas);
 					drawScore(canvas);
 			
- 					canvas.drawText("Ready in " + cmgameEngine.getReadyCountDown(), 45, 350, paint2);	
+ 					canvas.drawText("ready in " + cmgameEngine.getReadyCountDown(), 130, 350, paint2);	
 	
 					try {
 						Thread.sleep(25);
@@ -278,14 +335,28 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateGameOver(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("GAME OVER", 125, 350, paint2);
+		
+		
+		String whoWon="";
+		String whoDied="";
+		if(cmgameEngine.lives > cmgameEngine.lives2){
+			whoWon="you Won";
+			whoDied="enemy died";
+		}
+		else{
+			whoWon="you lose";
+			whoDied="you died";
+		}
+		
 		String [] scores=cmgameEngine.getScores();
-		canvas.drawText(scores[0], 150, 420, paint2);
-		canvas.drawText(scores[1], 150, 520, paint2);
+		canvas.drawText("GAME OVER", 110, 350, paint2);
+		canvas.drawText(whoWon, 140, 400, paint2);
+		canvas.drawText(whoDied, 140, 450, paint3);
+
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(6000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -297,16 +368,22 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Congratulations!", 70, 350, paint2);
-		canvas.drawText("You won", 130, 400, paint2);
+		String whoWon="";
+		if(cmgameEngine.playerScore > cmgameEngine.playerScore2)
+			whoWon="You Won";
+		else
+			whoWon="You Lose";
+		
+		canvas.drawText(whoWon, 130, 350, paint2);
+	
 		String [] scores=cmgameEngine.getScores();
 		
-		canvas.drawText(scores[0], 130, 450, paint2);
-		canvas.drawText(scores[1], 130, 550, paint2);
+		canvas.drawText("score(you):" + cmgameEngine.playerScore, 100, 400, paint3);
+		canvas.drawText("score(enemy):" + cmgameEngine.playerScore2, 92, 450, paint3);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(6000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -341,6 +418,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 				canvas.drawBitmap(redy_img, src, dst, null);
 			else if (i == 2)
 				canvas.drawBitmap(yellowy_img, src, dst, null);
+			else if (i==3)
+				canvas.drawBitmap(violet_img, src, dst, null);
 		}
 	}
 
@@ -388,13 +467,15 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	
 	// draw score
 	public void drawScore(Canvas canvas){
-		String x[]=cmgameEngine.getScores();
+
 		String  lives[]=cmgameEngine.getLives();
-		canvas.drawText(x[0], 20, 736, paint);
-		canvas.drawText(lives[0], 150, 736, paint);
-		canvas.drawText(cmgameEngine.getTimer(), 350, 749, paint);
-		canvas.drawText(x[1], 20, 760, paint);
-		canvas.drawText(lives[1], 150, 760, paint);
+		canvas.drawText("you:", 20, 736, paint);
+		canvas.drawText("enemy:", 20, 760, paint);
+		canvas.drawText("score:" +String.valueOf(cmgameEngine.playerScore), 120, 736, paint);
+		canvas.drawText("score:"+String.valueOf(cmgameEngine.playerScore2), 120, 760, paint);
+		canvas.drawText("lives:" + String.valueOf(cmgameEngine.lives), 230, 736, paint);
+		canvas.drawText("lives:" + String.valueOf(cmgameEngine.lives2), 230, 760, paint);
+		canvas.drawText("Time:" + cmgameEngine.getTimer(), 350, 749, paint);
 		
 	}
 	

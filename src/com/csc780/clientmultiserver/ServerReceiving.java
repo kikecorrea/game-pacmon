@@ -51,16 +51,17 @@ public class ServerReceiving extends Thread {
     {
         //gives the inputDirection
         String temp=data.substring(0, length);
-        gameEngine.setInputDirPlayer1(Integer.parseInt(temp));
+        gameEngine.setInputDirPlayer2(Integer.parseInt(temp));
       
     }
    
     @Override
     public void run()
     { 
+      while(isRunning.get())
+      {
     	 try {
-         while(isRunning.get())
-         {
+         
            receivePacket = new DatagramPacket(receiveData, receiveData.length); 
          
 			serverSocket.receive(receivePacket);
@@ -72,10 +73,13 @@ public class ServerReceiving extends Thread {
            //flag to let start gameEngine, it means client sends their first data
            this.ready=true;
     
-         }
+         
     	 } catch (IOException e) {
- 			e.printStackTrace();
- 		 }   
+ 			//e.printStackTrace();
+ 		 }
+      }
+      
+      System.out.println("out in RECEIVING SERVER");
     }  
 }
 

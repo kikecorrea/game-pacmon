@@ -32,13 +32,21 @@ public class ServerThread extends Thread{
     }
     
     public void killSendingReceiving()
-    {
-    	receiveThread.isRunning.set(false);
+    {	
+    	try {
+			this.sleep(400);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+ 
     	sendThread.isRunning.set(false);
+    	sendThread.DestroySocket();
+     	receiveThread.isRunning.set(false);
+    	
     	serverDiscovery.DestroySocket();
     	dispatchReceiver.DestroySocket();
     	receiveThread.DestroySocket();
-    	sendThread.DestroySocket();
+    	   
     }
     
     public void run()
@@ -86,12 +94,13 @@ public class ServerThread extends Thread{
          sendThread.start();
 
          //wait for thread to die
-         try {
-             sendThread.join();
-             receiveThread.join();
-             
-         } catch (InterruptedException ex) {
-             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
-         }
+//         try {
+//             sendThread.join();
+//             receiveThread.join();
+//             
+//         } catch (InterruptedException ex) {
+//             Logger.getLogger(ServerThread.class.getName()).log(Level.SEVERE, null, ex);
+//             System.out.println("FINISHSHFSDFSLKDGJE");
+//         }
     }
 }

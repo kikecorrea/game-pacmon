@@ -6,9 +6,11 @@ import java.util.logging.Logger;
 public class CircularQue {
 	
 	private ModelData que[];
-        volatile public int readPointer=0;
-        volatile public int writePointer=0;
+        volatile private int readPointer=0;
+        volatile private int writePointer=0;
         volatile public int QueSize;
+    private int defaultData[]={-1,-2,-3};
+    public int x[]=new int[3];
 	
 	public CircularQue(int size)
 	{
@@ -21,17 +23,28 @@ public class CircularQue {
         
         public void write(int x, int y, int z)
         {
+//            que[writePointer].setData(x, y, z);
+//        	
+//        	//check if at the end of list, if true we move pointer to the beginning of que
+//           if(writePointer%QueSize==0 && writePointer!=0)
+//               writePointer=0;
+//           else
+//               writePointer++;      
+        	
             //check if readPOinter is front of me,
-            if(writePointer==(readPointer-1))
+            if(writePointer==(readPointer-1) || (readPointer==0 && writePointer%QueSize==0))
             {
+            	//move the read pointer 
             	if(readPointer%QueSize==0 && readPointer!=0)
             		readPointer=1;
-            	else
+            	else{
             		readPointer+=1;
-                que[writePointer]=new ModelData(x,y,z);
+            	}
+            	
+             que[writePointer].setData(x, y, z);
             }
             else{
-            que[writePointer]=new ModelData(x,y,z);     
+            que[writePointer].setData(x, y, z);   
             }
             
             //check if at the end of list, if true we move pointer to the beginning of que
@@ -46,8 +59,7 @@ public class CircularQue {
             if(readPointer==writePointer)
             {
             	//default values is -1,-2, -3 so gameView just render old values
-            	int x[]={-1,-2,-3};
-            	return x;
+            	return defaultData;
             }
 
             if(readPointer%QueSize==0 && readPointer!=0)
@@ -55,10 +67,13 @@ public class CircularQue {
             else
                 readPointer++;
             
-            ModelData temp=que[readPointer];
-            int x[]={temp.x, temp.y, temp.z};
+             x[0]=que[readPointer].x;
+             x[1]=que[readPointer].y;
+             x[2]=que[readPointer].z;
         return x;
         }
+        
+        
         
 }
 
@@ -72,10 +87,10 @@ class ModelData
 	public ModelData(){
 		
 	}
-	
-    public ModelData(int x, int y, int z)
+ 
+    public void setData(int x, int y, int z)
     {
-        this.x=x;
+    	this.x=x;
         this.y=y;
         this.z=z;
     }

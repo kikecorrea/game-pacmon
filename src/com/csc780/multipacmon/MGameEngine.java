@@ -10,16 +10,14 @@ import com.csc780.pacmon.Monster;
 import com.csc780.pacmon.Pacmon;
 import com.csc780.pacmon.SoundEngine;
 
-
-// direction notes: 1 = up, 2 = down, 3 = right, 4 = left
-/*
+/* direction notes: 1 = up, 2 = down, 3 = right, 4 = left
+ *
  * GameEngine class is the controller of the game. GameEngine oversees updates 
- * 		models(maze, pacmon, monster) as well as call drawing.
- * 		
+ * 		models(maze, pacmon, monster) as well as call drawing.	
  */
 
 public class MGameEngine  {
-	private final static int    MAX_FPS = 40;
+	private final static int    MAX_FPS = 30;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -37,7 +35,7 @@ public class MGameEngine  {
 	//int playerScore, playerScore2;
 	int timer; int timerCount;
 	int lives, lives2;
-	private int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
+	public volatile int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
         //use by sending and receiving server
 	volatile int inputDirection, inputDirection2;
@@ -61,11 +59,12 @@ public class MGameEngine  {
 	
 	private int pacCounter=0;
 	
-	private Receiver receiver;
-	private Sender sending;
-	private ClientConnectionSetUp clientDispatcher;
+	public Receiver receiver;
+	public Sender sending;
+	private ClientConnectionSetUp clientSetup;
 	
 	volatile private int totalScores=0;
+	private volatile int tempCountDown;
 	
 	
 	//timer
@@ -76,19 +75,25 @@ public class MGameEngine  {
 	
 	private long readyCountDown;
 	
-	private SoundEngine soundEngine;
+	public SoundEngine soundEngine;
 	
 	public AutoDiscoverer clientDiscoverer;
 	
 	//for dialog progress
 	protected AtomicBoolean serverReady;
 	
+	//use in eatfood
+	private int tempX, boxX, boxY,tempX2, boxX2, boxY2;
+	
+	//use for updating pacmon,pacmon2
+	private int p1[]=new int[3], p2[]=new int[3], g[];
+	
 	//Constructor create players, ghosts and Maze
-	public MGameEngine(SoundEngine soundEngine, AtomicBoolean ready){
+	public MGameEngine(SoundEngine soundEngine, String ip){
 		
 		this.soundEngine = soundEngine;
-		serverReady = ready;
-		
+		soundEngine.playReady();
+
 		pacmon = new Pacmon();  // new pacmon
 		pacmon2 = new Pacmon();
 	
@@ -107,10 +112,11 @@ public class MGameEngine  {
 		//playerScore = 0;
 		timer = 90;
 		timerCount = 0;
-		gameState = 5;
+		gameState = READY;
 		
 		ghosts = new ArrayList<Monster>();
 		
+		ghosts.add(new Monster());
 		ghosts.add(new Monster());
 		ghosts.add(new Monster());
 		ghosts.add(new Monster());
@@ -124,82 +130,96 @@ public class MGameEngine  {
 		ghostArray = maze.getGhostArray();
 		
 		isRunning = true;
+		
+		clientSetup = new ClientConnectionSetUp(ip);
+		receiver = new Receiver();
+		//send receiving port to server, so server knows where to send date
+		clientSetup.connectToServer(receiver.getPortReceive());
+		
+		sending = new Sender(clientSetup.sendPort, ip);
 
-	   //initialize clientDiscoverer and start discovery
-	   clientDiscoverer = new AutoDiscoverer();
-	   clientDiscoverer.start();
-
-	}
-	
-	public void callDispatcher()
-	{
-		String ip=clientDiscoverer.getipAddress();
-		
-		receiver=new Receiver();
-		///gets the receiver port, then needs to send to server
-		int port=receiver.getPortReceive();
-		
-		
-		clientDispatcher=new ClientConnectionSetUp(ip);
-		clientDispatcher.connectToServer(port);
-		
-		//returns port for sending to server
-		//clientDispatcher.connectToServer(port);
-		int sendPort=clientDispatcher.sendPort;
-		int id=clientDispatcher.id;
-		
-		receiver.setID(id);   ///########################### need to remove, this didn't use it at all
-	
-		sending=new Sender(sendPort, ip);
-		
 		sending.start();
 		receiver.start();
+
+	}
+//	
+//	// loop through ready if gameState is READY
+//		private void updateReady(){
+//			beginTime = System.currentTimeMillis();
+//
+//			readyCountDown = 3L - timeDiff/1000;		
+//			sleepTime = (int) (FRAME_PERIOD - timeDiff);
+//
+//			if (sleepTime > 0) {
+//				// if sleepTime > 0 we're OK
+//				try {
+//					// send the thread to sleep for a short period
+//					// very useful for battery saving
+//					Thread.sleep(sleepTime);
+//				} catch (InterruptedException e) {
+//				}
+//			}
+//			
+//			timeDiff += System.currentTimeMillis() - beginTime;
+//			if(timeDiff >= 3000)
+//				gameState = RUNNING;
+//			
+//		}
+//	
 	
+	public void closeConnection()
+	{
+		this.receiver.closeSocket();
+		this.sending.closeSocket();
 	}
 	
-	
-	// loop through ready if gameState is READY
-		private void updateReady(){
-			beginTime = System.currentTimeMillis();
-
-			readyCountDown = 3L - timeDiff/1000;		
-			sleepTime = (int) (FRAME_PERIOD - timeDiff);
-
-			if (sleepTime > 0) {
-				// if sleepTime > 0 we're OK
-				try {
-					// send the thread to sleep for a short period
-					// very useful for battery saving
-					Thread.sleep(sleepTime);
-				} catch (InterruptedException e) {
-				}
-			}
-			
-			timeDiff += System.currentTimeMillis() - beginTime;
-			if(timeDiff >= 3000)
-				gameState = RUNNING;
-			
+	public void updateDataFromServer()
+	{
+		this.gameState = receiver.status;
+		
+		int z = receiver.mazeData1.read();
+		if(z!=-1){
+			tempX = z;
 		}
-	
-	
+		z=receiver.mazeData2.read();
+		if(z!=-1){
+			tempX2=z;;
+		}
+
+		
+		this.eatFoodPower();
+		this.eatFoodPower2();
+		
+		setxyp1();
+		setxyp2();
+		
+		setxyGhost(0);
+		setxyGhost(1);
+		setxyGhost(2);
+		setxyGhost(3);
+		
+		checkLives();
+	}
 	
 	// eat food ==> score and power ==> speed
-	public void eatFoodPower() {
+	public void eatFoodPower() {	
+		//tempX=receiver.mazeData1;
 		
-		int x=receiver.mazeData1;
-		
-		
-		int boxX = x%100, boxY= x/100;
+		boxX = tempX%100;
+		boxY= tempX/100;
 		
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
 			
 			soundEngine.playEatCherry();
-			
+		
 			//playerScore++;   // increase score
 			//if ( (playerScore + playerScore2)== maze.getFoodCount())
 			if ( this.totalScores== maze.getFoodCount())
+			{
 				gameState = WON;
+				soundEngine.stopMusic();
+			}
 			//maze.clearFood(boxX, boxY);
 		}
 		
@@ -210,29 +230,33 @@ public class MGameEngine  {
 	}
         // eat food ==> score and power ==> speed
 	public void eatFoodPower2() {
-		int x=receiver.mazeData2;
+		//tempX2=receiver.mazeData2;
 		
-		int boxX = x%100, boxY= x/100;
+		boxX2 = tempX2%100;
+		boxY2= tempX2/100;
 		
-		if (mazeArray[boxY][boxX] == 1){
-			mazeArray[boxY][boxX] = 5;
+		if (mazeArray[boxY2][boxX2] == 1){
+			mazeArray[boxY2][boxX2] = 5;
+			
+			soundEngine.playEatCherry();
 			//playerScore2++;   // increase score
 			//if ( (playerScore  + playerScore2)== maze.getFoodCount())
-			if ( this.totalScores== maze.getFoodCount())
+			if ( this.totalScores== maze.getFoodCount()){
 				gameState = WON;
+				soundEngine.stopMusic();
+			}
 			//maze.clearFood(boxX, boxY);
 		}
 		
-		if (mazeArray[boxY][boxX] == 2){
-			mazeArray[boxY][boxX] = 5; // blank
+		if (mazeArray[boxY2][boxX2] == 2){
+			mazeArray[boxY2][boxX2] = 5; // blank
 			this.powerMode2 = 5;
 		}
 	}
-        
+       
 	
 	// using accelerometer to set direction of player
 	public void setInputDir(int dir){
-
 		this.inputDirection = dir;
 		
 		sending.data=String.valueOf(dir);
@@ -255,18 +279,6 @@ public class MGameEngine  {
 	public int getMazeColumn() {
 		return this.mazeColumn;
 	}
-
-//	public String getTimer() {
-//		return "Time: " + timer;
-//	}
-
-//	public String getLives() {
-//		return "Life remaining: " + lives;
-//	}
-
-//	public String getPlayerScore() {
-//		return "Score: " + playerScore;
-//	}
 	
 	public int getGameState(){
 		return gameState;
@@ -281,6 +293,11 @@ public class MGameEngine  {
 		this.gameState=state;
 	}
 	
+//	public void setGameStateFromServer()
+//	{
+//		this.gameState = receiver.status;
+//
+//	}
 
 	
 	public void setxyp1()
@@ -288,7 +305,7 @@ public class MGameEngine  {
 		//if(!receiver.checkListEmpty())
 			{
 				  //int xy[]=receiver.getReceiveData();
-				   int p1[]=receiver.deQueP1();
+				  p1=receiver.pac1que.read();
 				
 				  if(p1[0]!=-1 && p1[1]!=-2)
 				  {
@@ -303,7 +320,7 @@ public class MGameEngine  {
 		//if(!receiver.checkListEmpty())
 			{
 				  //int xy[]=receiver.getReceiveData();
-				   int p2[]=receiver.deQueP2();
+				   p2=receiver.pac2que2.read();
 				
 				 //x and y will be set -1,2 if readPointer=writePointer
 				 //so just set pacmon's x,y will use old values
@@ -315,24 +332,23 @@ public class MGameEngine  {
 				  pacmon2.setDir(p2[2]);
 				  
 				 }
-
-				 
+	 
 			}
 	}
 	
 	//for ghost
 	public void setxyGhost(int i)
 	{
-		int g[];
-	
 		if(i==0)
-		   g=receiver.deQueG1();
+		   g=receiver.ghost1Que.read();
 		else if(i==1)
-		   g=receiver.deQueG2();
+		   g=receiver.ghost2Que.read();
+		else if(i==2)
+		   g=receiver.ghost3Que.read();
 		else
-		   g=receiver.deQueG3();
+		   g=receiver.ghost4Que.read();
 		
-		//x and y will be set -1,2 if readPointer=writePointer
+		 //x and y will be set -1,2 if readPointer=writePointer
 		 //so just set ghost's x,y to old values
 		 if(g[0]!=-1 && g[1]!=-2)
 		 {
@@ -343,32 +359,30 @@ public class MGameEngine  {
 
 	}
 	
-	public String[] checkLives()
+	public void checkLives()
 	{
-		if(receiver.pacmonLives[0]==0 || receiver.pacmonLives[1]==0 || receiver.timer<0 )
+		lives=receiver.p1life;
+		lives2=receiver.p2life;
+		
+		if(lives==0 || lives2==0 || receiver.timer<0 )
 		{
 			gameState=GAMEOVER;
-			
 			receiver.isRunning=false;
 			sending.isRunning=false;
 			
 		}
-		
-		String x[]={"P1 lives:" + String.valueOf(receiver.pacmonLives[0]), "P2 lives:"+String.valueOf(receiver.pacmonLives[1]) };
-		return x;
 	}
 	
 	public int getCountDown()
 	{
-		int x=receiver.countDown;
-
-		if(x>80)
+	
+		if(receiver.countDown>80)
 			return 3;
-		else if(x<=80 && x>=40)
+		else if(receiver.countDown<=80 && receiver.countDown>=40)
 		{
 			return 2;
 		}
-		else if(x<40 && x>30)
+		else if(receiver.countDown<40 && receiver.countDown>1)
 			return 1;
 			
 		else
@@ -376,17 +390,26 @@ public class MGameEngine  {
 	
 	}
 	
-	public String[] getScores()
-	{
-		int y[]=receiver.pacmonScores;
-		String x[]={"Score:" +String.valueOf(y[0]), "Score:"+String.valueOf(y[1])};
-		
-		this.totalScores=y[0] + y[1];
-		return x;
-	}
+//	public String[] getScores()
+//	{
+//		int y[]=receiver.pacmonScores;
+//		String x[]={"Score:" +String.valueOf(y[0]), "Score:"+String.valueOf(y[1])};
+//		
+//		this.totalScores=y[0] + y[1];
+//		return x;
+//	}
 	
-	public String getTimer()
-	{ return "Time:" + receiver.timer;}
+//	public int getp1score()
+//	{
+//		return receiver.p1score;
+//	}
+//	public int getp2score()
+//	{
+//		return receiver.p2score;
+//	}
+	
+//	public String getTimer()
+//	{ return "Time:" + receiver.timer;}
 	
 	public void killAllThread()
 	{

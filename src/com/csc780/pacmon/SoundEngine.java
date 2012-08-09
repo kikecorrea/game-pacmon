@@ -17,6 +17,7 @@ public class SoundEngine {
 	private HashMap<Integer, Integer> soundsMap;
 	private MediaPlayer music;
 	private Context context;
+	private AudioManager mgr;
 
 	public SoundEngine(Context context) {
 		this.context = context;
@@ -30,6 +31,8 @@ public class SoundEngine {
 		soundsMap.put(READY, sounds.load(context, R.raw.pacman_opening_song,1));
 		soundsMap.put(GAMEOVER, sounds.load(context, R.raw.pacman_opening_song, 1));
 		soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacman_eating_cherry, 1));
+		
+		AudioManager mgr = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		
 	    // the music that is played at the beginning
 	    music = MediaPlayer.create(context, R.raw.level_music);
@@ -77,6 +80,8 @@ public class SoundEngine {
 	}
 	
 	public void endMusic(){
+		sounds.release();
+		
 		music.release();
 	}
 	

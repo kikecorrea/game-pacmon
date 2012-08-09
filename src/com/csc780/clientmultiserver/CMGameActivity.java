@@ -74,7 +74,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	       multicastLock.acquire();
 	       
 	       
-        gameEngine = new CMGameEngine();
+        gameEngine = new CMGameEngine(soundEngine);
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
         int height = display.getHeight();
@@ -111,10 +111,10 @@ public class CMGameActivity extends Activity implements SensorEventListener{
                 		public void run()
                 		{
                 			try {
-								Thread.sleep(700);
+								Thread.sleep(300);
 							} catch (InterruptedException e) {
 								e.printStackTrace();
-							}
+							} 
                 			CMGameActivity.this.connectedDialog.dismiss();
                 		}
                 	}).start();
@@ -152,7 +152,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
         	mProgressDialog = new ProgressDialog(this);
 
           //  mProgressDialog.setIcon(R.drawable.alert_dialog_icon);
-            mProgressDialog.setTitle("Server started");
+            mProgressDialog.setTitle("server started");
             mProgressDialog.setMessage("Waiting for client...");
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -197,7 +197,6 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	
 	@Override
 	protected void onDestroy() {
-		
 		// stop receiving and sending thread
 		serverThread.killSendingReceiving();
 		//mgameView.pause();
@@ -205,6 +204,17 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		//gameView.pause();
 		
 	}
+	
+	
+	
+	@Override
+	public void finish() {
+
+		soundEngine.endMusic();
+	
+		super.finish();
+	}
+
 
 	@Override
 	public void onBackPressed() {
@@ -212,7 +222,10 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		builder.setMessage("Do you want to quit?").setCancelable(false)
 				.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						CMGameActivity.this.finish();
+						//set gamestate to disconnected
+						CMGameActivity.this.gameEngine.gameState=6;
+						
+						CMGameActivity.this.finish();	
 					}
 				})
 				.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
@@ -244,21 +257,21 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		//float z = event.values[2];
 		
 		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
-			gameEngine.setInputDirPlayer2(UP);
+			gameEngine.setInputDirPlayer1(UP);
 			//gameView.setDir(1);
 		}
 		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
-			gameEngine.setInputDirPlayer2(DOWN);
+			gameEngine.setInputDirPlayer1(DOWN);
 			//gameView.setDir(2);
 		}
 		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// right
-			gameEngine.setInputDirPlayer2(RIGHT);
+			gameEngine.setInputDirPlayer1(RIGHT);
 			//gameView.setDir(3);
 		}
 		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
 																	// left
-			gameEngine.setInputDirPlayer2(LEFT);
+			gameEngine.setInputDirPlayer1(LEFT);
 			//gameView.setDir(4);
 		}
 	}

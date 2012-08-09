@@ -50,7 +50,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	private Maze maze;
 	
-	private Paint paint, paint2;
+	private Paint paint, paint2, paint3;
 	
 	private Context mContext;
 	
@@ -139,6 +139,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint2.setColor(Color.WHITE);
 		paint2.setTextSize(50);
 		
+		paint3 = new Paint();
+		paint3.setAntiAlias(true);
+		paint3.setColor(Color.WHITE);
+		paint3.setTextSize(40);
+		
 	}
 	
 	private void initSprite(){
@@ -180,7 +185,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			canvas = null;
 			if (gameEngine.getGameState() == READY){
 				if (isPlayOn){
-					soundEngine.play(4);
+				//	soundEngine.play(4);
 					isPlayOn = false;
 				}
 				updateReady(canvas);
@@ -215,8 +220,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawScore(canvas);
 					
 					//long time = 5L - timeDiff/1000;
-					canvas.drawText("Ready in " + gameEngine.getReadyCountDown(),
-									screenWidth/4 , screenHeight/2 , paint2);
+					canvas.drawText("ready go",
+									screenWidth/4+15 , screenHeight/2  -10 , paint2);
 					
 					try {
 						Thread.sleep(25);
@@ -324,8 +329,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateGameOver(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("GAME OVER", 125, 350, paint2);
-		canvas.drawText(gameEngine.getPlayerScore(), 150, 420, paint2);
+		canvas.drawText("GAME OVER", 100, 350, paint2);
+		canvas.drawText(gameEngine.getPlayerScore(), 140, 420, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -341,9 +346,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Congratulations!", screenWidth/3 , screenHeight/2 - 50, paint2);
-		canvas.drawText("You won", screenWidth/3 , screenHeight/2 , paint2);
-		canvas.drawText(gameEngine.getPlayerScore(), screenWidth/3 , screenHeight/2 + 50, paint2);
+		canvas.drawText("congratulations!", screenWidth/4-50 , screenHeight/2 - 50, paint2);
+		canvas.drawText("you unlock next level", screenWidth/4 -58, screenHeight/2 , paint3);
+		canvas.drawText(gameEngine.getPlayerScore(), screenWidth/3 , screenHeight/2 + 50, paint3);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -352,6 +357,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		
 		((Activity) mContext).finish();
 	}
@@ -392,7 +398,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
 		else 	srcRect = pSrcLeft[currentFrame];	
-		
+	
 		int pX = Math.round(pacmon.getpX() * scaleFactor);
 		int pY = Math.round(pacmon.getpY() * scaleFactor);
 		
@@ -404,9 +410,10 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	// draw score
 	public void drawScore(Canvas canvas){
-		canvas.drawText(gameEngine.getPlayerScore(), 20, blockSize * 23, paint);
-		canvas.drawText(gameEngine.getLives(), screenWidth/2, blockSize * 23, paint);
-		canvas.drawText(gameEngine.getTimer(), screenWidth/2, blockSize * 23 + 25, paint);
+		canvas.drawText(gameEngine.getLives(), 40, blockSize * 23, paint);
+		
+		canvas.drawText(gameEngine.getPlayerScore(), 40, blockSize * 23 +25, paint);
+		canvas.drawText(gameEngine.getTimer(), screenWidth/2 + 70, blockSize * 23 + 15, paint);
 	}
 	
 

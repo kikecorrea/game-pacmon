@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 
+import com.csc780.pacmon.SoundEngine;
+
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
 /*
  * CMGameEngine class is the controller of the game. GameEngine oversees updates 
@@ -11,28 +13,28 @@ import java.util.Random;
  * This class is similar to GameEngine in the pacmon package but with minor modification to work with server
  * 		
  */
-public class CMGameEngine implements Runnable {
+public class CMGameEngine implements Runnable { 
 
-    private final static int MAX_FPS = 40;
+    private final static int MAX_FPS = 50;
     // maximum number of frames to be skipped
     private final static int MAX_FRAME_SKIPS = 5;
     // the frame period
     private final static int FRAME_PERIOD = 1000 / MAX_FPS;
     static final int RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
     static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
-    private final static int READY = 0, RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5;;
+    private final static int READY = 0, RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
     private CMMaze maze;
     private Thread mThread;
     public CMPacmon pacmon, pacmon2;
     ArrayList<CMMonster> ghosts;
-    private volatile int playerScore, playerScore2;
+    public volatile int playerScore, playerScore2;
     private volatile int totalScore;
     
     
     volatile int timer;
     int timerCount;
     volatile int lives, lives2;
-    private int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
+    public int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
     //use by sending and receiving server
     volatile int inputDirection, inputDirection2;
     volatile int pX, pY, pX2, pY2;
@@ -48,20 +50,33 @@ public class CMGameEngine implements Runnable {
     private int pacCounter = 0;
     volatile protected int tickCounter = -120;
     //maze data
-    private int mazeData1, mazeData2;
+    public int mazeData1, mazeData2;
     //timer
     private long beginTime; // the time when the cycle begun
     private long timeDiff; // the time it took for the cycle to execute
     private int sleepTime; // ms to sleep (<0 if we're behind)
     private int framesSkipped; // number of frames being skipped
     volatile protected long readyCountDown;
+    
+    public int powerMode1, powerMode2;	
+    int pPowerSpeed, pNormalSpeed;
+    
+    public SoundEngine soundEngine;
 
     //Constructor create players, ghosts and Maze
-    public CMGameEngine() {
+    public CMGameEngine(SoundEngine se) {
+    	
+    	soundEngine = se;
+    	soundEngine.playReady();
+    	
         pacmon = new CMPacmon(32, 32);  // new pacmon
         pacmon2 = new CMPacmon(416, 640);
         lives = pacmon.getpLives();
         lives2 = pacmon2.getpLives();
+        
+        pNormalSpeed = pacmon.getpNormalSpeed();
+		pPowerSpeed = pacmon.getpPowerSpeed();
+		
 
         playerScore = 0;
         playerScore2 = 0;
@@ -73,6 +88,7 @@ public class CMGameEngine implements Runnable {
 
         ghosts = new ArrayList<CMMonster>();
 
+        ghosts.add(new CMMonster());
         ghosts.add(new CMMonster());
         ghosts.add(new CMMonster());
         ghosts.add(new CMMonster());
@@ -110,7 +126,7 @@ public class CMGameEngine implements Runnable {
     }
 
     public void updatePac2() {
-        int pNormalSpeed = pacmon2.getpNormalSpeed();
+    
         int XmodW, YmodH;
         int boxX, boxY;
         pX2 = pacmon2.getpX();
@@ -210,25 +226,44 @@ public class CMGameEngine implements Runnable {
             }
 
         }
+        
+    	if( movable){
+			if (newDirection2 == UP) { // up
+				if (powerMode2 > 0) 		pY2 = pY2 - pPowerSpeed; // in power mode
+				else			pY2 = pY2 - pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection2 == DOWN){  // down
+				if (powerMode2 > 0) 		pY2 = pY2 + pPowerSpeed; // power mode
+				else			pY2 = pY2 + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection2 == RIGHT){ // right
+				if (powerMode2 > 0) 		pX2 = pX2 + pPowerSpeed; // power mode
+				else			pX2 = pX2 + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection2 == LEFT) {// left
+				if (powerMode2 > 0) 		pX2 = pX2 - pPowerSpeed;	// power mode
+				else			pX2 = pX2 - pNormalSpeed;			// normal mode
+			}
+		}
 
-        if (movable) {
-            if (newDirection2 == UP) // up
-            {
-                pY2 = pY2 - pNormalSpeed;
-            }
-            if (newDirection2 == DOWN) // down
-            {
-                pY2 = pY2 + pNormalSpeed;
-            }
-            if (newDirection2 == RIGHT) // right
-            {
-                pX2 = pX2 + pNormalSpeed;
-            }
-            if (newDirection2 == LEFT) // left
-            {
-                pX2 = pX2 - pNormalSpeed;
-            }
-        }
+//        if (movable) {
+//            if (newDirection2 == UP) // up
+//            {
+//                pY2 = pY2 - pNormalSpeed;
+//            }
+//            if (newDirection2 == DOWN) // down
+//            {
+//                pY2 = pY2 + pNormalSpeed;
+//            }
+//            if (newDirection2 == RIGHT) // right
+//            {
+//                pX2 = pX2 + pNormalSpeed;
+//            }
+//            if (newDirection2 == LEFT) // left
+//            {
+//                pX2 = pX2 - pNormalSpeed;
+//            }
+//        }
         
         // for pass through wall
         if(pX2 == 448)
@@ -243,7 +278,6 @@ public class CMGameEngine implements Runnable {
     }
 
     public void updatePac() {
-        int pNormalSpeed = pacmon.getpNormalSpeed();
         int XmodW, YmodH;
         int boxX, boxY;
         pX = pacmon.getpX();
@@ -343,31 +377,49 @@ public class CMGameEngine implements Runnable {
             }
 
         }
+        
+    	if(movable){
+			if (newDirection == UP) { // up
+				if (powerMode1 > 0) 		pY = pY - pPowerSpeed; // in power mode
+				else			pY = pY - pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == DOWN){  // down
+				if (powerMode1 > 0) 		pY = pY + pPowerSpeed; // power mode
+				else			pY = pY + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == RIGHT){ // right
+				if (powerMode1 > 0) 		pX = pX + pPowerSpeed; // power mode
+				else			pX = pX + pNormalSpeed;		   // normal mode
+			}
+			else if (newDirection == LEFT) {// left
+				if (powerMode1 > 0) 		pX = pX - pPowerSpeed;	// power mode
+				else			pX = pX - pNormalSpeed;			// normal mode
+			}
+		}
 
-        if (movable) {
-            if (newDirection == UP) // up
-            {
-                pY = pY - pNormalSpeed;
-            }
-            if (newDirection == DOWN) // down
-            {
-                pY = pY + pNormalSpeed;
-            }
-            if (newDirection == RIGHT) // right
-            {
-                pX = pX + pNormalSpeed;
-            }
-            if (newDirection == LEFT) // left
-            {
-                pX = pX - pNormalSpeed;
-            }
-        }
+//        if (movable) {
+//            if (newDirection == UP) // up
+//            {
+//                pY = pY - pNormalSpeed;
+//            }
+//            if (newDirection == DOWN) // down
+//            {
+//                pY = pY + pNormalSpeed;
+//            }
+//            if (newDirection == RIGHT) // right
+//            {
+//                pX = pX + pNormalSpeed;
+//            }
+//            if (newDirection == LEFT) // left
+//            {
+//                pX = pX - pNormalSpeed;
+//            }
+//        }
         
         if(pX == 448)
             pX = 4;
         if(pX == 0)
             pX = 444;
-
 
         pacmon.setpX(pX);
         pacmon.setpY(pY);
@@ -381,8 +433,8 @@ public class CMGameEngine implements Runnable {
         int boxX, boxY;
         int gX, gY;
 
-
-        for (int i = 0; i < ghosts.size(); i++) {
+        //for pacmon 1
+        for (int i = 0; i < ghosts.size()/2; i++) {
             gX = ghosts.get(i).getX();
             gY = ghosts.get(i).getY();
             XmodW = gX % blockSize;
@@ -398,7 +450,7 @@ public class CMGameEngine implements Runnable {
                 //check if at crossing using directional maze and update new direction
                 crossing = directionMaze[boxY][boxX];
                 if (crossing > 0) {
-                    if (timer % 4 == i) {
+                    if (timer % 4 != i) {
                         if (crossing == 1) {
                             moveGhostSmart(RD, ghosts.get(i));
                         }
@@ -431,30 +483,138 @@ public class CMGameEngine implements Runnable {
                             moveGhostRandom(RD, ghosts.get(i));
                         }
                         if (crossing == 2) {
-                            moveGhostRandom(LD, ghosts.get(i));
+                        	moveGhostRandom(LD, ghosts.get(i));
                         }
                         if (crossing == 3) {
-                            moveGhostRandom(RU, ghosts.get(i));
+                        	moveGhostRandom(RU, ghosts.get(i));
                         }
                         if (crossing == 4) {
-                            moveGhostRandom(LU, ghosts.get(i));
+                        	moveGhostRandom(LU, ghosts.get(i));
                         }
                         if (crossing == 5) {
-                            moveGhostRandom(RDU, ghosts.get(i));
+                        	moveGhostRandom(RDU, ghosts.get(i));
                         }
                         if (crossing == 6) {
-                            moveGhostRandom(LDU, ghosts.get(i));
+                        	moveGhostRandom(LDU, ghosts.get(i));
                         }
                         if (crossing == 7) {
-                            moveGhostRandom(RLD, ghosts.get(i));
+                        	moveGhostRandom(RLD, ghosts.get(i));
                         }
                         if (crossing == 8) {
-                            moveGhostRandom(RLU, ghosts.get(i));
+                        	moveGhostRandom(RLU, ghosts.get(i));
                         }
                         if (crossing == 9) {
-                            moveGhostRandom(RLUD, ghosts.get(i));
+                        	moveGhostRandom(RLUD, ghosts.get(i));
                         }
 
+                    }
+                }
+            }
+
+            //get direction after calculate
+            int ghostCurDir = ghosts.get(i).getDir();
+
+            if (ghostCurDir == UP) // up
+            {
+                gY = gY - gNormalSpeed;
+            }
+            if (ghostCurDir == DOWN) // down
+            {
+                gY = gY + gNormalSpeed;
+            }
+            if (ghostCurDir == RIGHT) // right
+            {
+                gX = gX + gNormalSpeed;
+            }
+            if (ghostCurDir == LEFT) // left
+            {
+                gX = gX - gNormalSpeed;
+            }
+
+            // set new location of ghost after moving
+            ghosts.get(i).setX(gX);
+            ghosts.get(i).setY(gY);
+
+            //check collision for pacmon
+            checkCollision(gX, gY);
+            //check other collision for pacmon2
+            checkCollision2(gX, gY);
+
+        }
+        
+        //for pacmon 2
+        for (int i = ghosts.size()/2; i < ghosts.size(); i++) {
+            gX = ghosts.get(i).getX();
+            gY = ghosts.get(i).getY();
+            XmodW = gX % blockSize;
+            YmodH = gY % blockSize;
+
+
+            // check direction and change if it is allowed
+            if (XmodW == 0 && YmodH == 0) {
+                int crossing;
+                boxX = gX / blockSize;
+                boxY = gY / blockSize;
+
+                //check if at crossing using directional maze and update new direction
+                crossing = directionMaze[boxY][boxX];
+                if (crossing > 0) {
+                    if (timer % 4 != i) {
+                        if (crossing == 1) {
+                            moveGhostSmart2(RD, ghosts.get(i));
+                        }
+                        if (crossing == 2) {
+                            moveGhostSmart2(LD, ghosts.get(i));
+                        }
+                        if (crossing == 3) {
+                            moveGhostSmart2(RU, ghosts.get(i));
+                        }
+                        if (crossing == 4) {
+                            moveGhostSmart2(LU, ghosts.get(i));
+                        }
+                        if (crossing == 5) {
+                            moveGhostSmart2(RDU, ghosts.get(i));
+                        }
+                        if (crossing == 6) {
+                            moveGhostSmart2(LDU, ghosts.get(i));
+                        }
+                        if (crossing == 7) {
+                            moveGhostSmart2(RLD, ghosts.get(i));
+                        }
+                        if (crossing == 8) {
+                            moveGhostSmart2(RLU, ghosts.get(i));
+                        }
+                        if (crossing == 9) {
+                            moveGhostSmart2(RLUD, ghosts.get(i));
+                        }
+                    } else {
+                        if (crossing == 1) {
+                            moveGhostRandom(RD, ghosts.get(i));
+                        }
+                        if (crossing == 2) {
+                        	moveGhostRandom(LD, ghosts.get(i));
+                        }
+                        if (crossing == 3) {
+                        	moveGhostRandom(RU, ghosts.get(i));
+                        }
+                        if (crossing == 4) {
+                        	moveGhostRandom(LU, ghosts.get(i));
+                        }
+                        if (crossing == 5) {
+                        	moveGhostRandom(RDU, ghosts.get(i));
+                        }
+                        if (crossing == 6) {
+                        	moveGhostRandom(LDU, ghosts.get(i));
+                        }
+                        if (crossing == 7) {
+                        	moveGhostRandom(RLD, ghosts.get(i));
+                        }
+                        if (crossing == 8) {
+                        	moveGhostRandom(RLU, ghosts.get(i));
+                        }
+                        if (crossing == 9) {
+                        	moveGhostRandom(RLUD, ghosts.get(i));
+                        }
                     }
                 }
             }
@@ -565,23 +725,29 @@ public class CMGameEngine implements Runnable {
     //when ghost touches player, pacmon dies
     private void diePacmon() {
         lives--;
-        gameState = READY;
+        gameState = DIE;
+//        tickCounter = -120;
         pacmon.reset(32, 32);
         
         for (int i = 0; i < ghosts.size(); i++) {
             ghosts.get(i).reset();
         }
+        
+        soundEngine.stopMusic();
+		soundEngine.playDie();
 
         if (lives == 0) {
             gameState = GAMEOVER;
+            //soundEngine.endMusic();
+			soundEngine.playGameOver();
         }
 
     }
 
     private void diePacmon2() {
         lives2--;
-        gameState = READY;
-
+        gameState = DIE;
+//        tickCounter = -120;
         pacmon2.reset(416, 640);
 
 
@@ -591,50 +757,90 @@ public class CMGameEngine implements Runnable {
 
         if (lives2 == 0) {
             gameState = GAMEOVER;
+            //soundEngine.endMusic();
+         			soundEngine.playGameOver();
         }
 
     }
 
     // eat food ==> score and power ==> speed
     private void eatFoodPower(int boxX, int boxY) {
-        if (mazeArray[boxY][boxX] == 1) {
-
-            mazeData1 = (boxY * 100) + boxX;
-
-            mazeArray[boxY][boxX] = 5;
-            playerScore++;   // increase score
-            if (playerScore + playerScore2 == maze.getFoodCount()) {
-                gameState = WON;
-            }
-            //maze.clearFood(boxX, boxY);
-        }
-
-        else if (mazeArray[boxY][boxX] == 2) {
-            
-            mazeData1 = (boxY * 100) + boxX;
-            mazeArray[boxY][boxX] = 5; // blank
-        }
+//        if (mazeArray[boxY][boxX] == 1) {
+//
+//            mazeData1 = (boxY * 100) + boxX;
+//
+//            mazeArray[boxY][boxX] = 5;
+//            playerScore++;   // increase score
+//            if (playerScore + playerScore2 == maze.getFoodCount()) {
+//                gameState = WON;
+//            }
+//            //maze.clearFood(boxX, boxY);
+//        }
+//
+//        else if (mazeArray[boxY][boxX] == 2) {
+//            
+//            mazeData1 = (boxY * 100) + boxX;
+//            mazeArray[boxY][boxX] = 5; // blank
+//        }
+    	
+    	if (mazeArray[boxY][boxX] == 1){
+    		mazeData1 = (boxY * 100) + boxX;
+			mazeArray[boxY][boxX] = 5;
+			playerScore++;   // increase score
+			
+			soundEngine.playEatCherry();
+				
+			if (playerScore == maze.getFoodCount()){
+				gameState = WON;
+				soundEngine.stopMusic();
+			}	
+		}
+		
+		// eat power
+		if (mazeArray[boxY][boxX] == 2){
+			mazeData1 = (boxY * 100) + boxX;
+			mazeArray[boxY][boxX] = 5;
+			this.powerMode1 = 5;// blank
+		}
     }
     // eat food ==> score and power ==> speed
 
     private void eatFoodPower2(int boxX, int boxY) {
-        if (mazeArray[boxY][boxX] == 1) {
-
-            mazeData2 = (boxY * 100) + boxX;
-
-            mazeArray[boxY][boxX] = 5;
-            playerScore2++;   // increase score
-            if (playerScore2 + playerScore == maze.getFoodCount()) {
-                gameState = WON;
-            }
-            //maze.clearFood(boxX, boxY);
-        }
-
-        else if (mazeArray[boxY][boxX] == 2) {
-            
-            mazeData2 = (boxY * 100) + boxX;
-            mazeArray[boxY][boxX] = 5; // blank
-        }
+//        if (mazeArray[boxY][boxX] == 1) {
+//
+//            mazeData2 = (boxY * 100) + boxX;
+//
+//            mazeArray[boxY][boxX] = 5;
+//            playerScore2++;   // increase score
+//            if (playerScore2 + playerScore == maze.getFoodCount()) {
+//                gameState = WON;
+//            }
+//            //maze.clearFood(boxX, boxY);
+//        }
+//
+//        else if (mazeArray[boxY][boxX] == 2) {
+//            
+//            mazeData2 = (boxY * 100) + boxX;
+//            mazeArray[boxY][boxX] = 5; // blank
+//        }
+    	if (mazeArray[boxY][boxX] == 1){
+    		mazeData2 = (boxY * 100) + boxX;
+			mazeArray[boxY][boxX] = 5;
+			playerScore2++;   // increase score
+			
+			//soundEngine.playEatCherry();		
+			if (playerScore2 == maze.getFoodCount()){
+				gameState = WON;
+				//soundEngine.stopMusic();
+			}	
+		}
+		
+		// eat power
+		if (mazeArray[boxY][boxX] == 2){
+			mazeData2 = (boxY * 100) + boxX;
+			mazeArray[boxY][boxX] = 5;
+			this.powerMode2 = 5;// blank
+		}
     }
 
     // count down timer once per MAX_FPS
@@ -642,10 +848,14 @@ public class CMGameEngine implements Runnable {
         timerCount++;
         if (timerCount % 40 == 0) {
             timer--;
+            powerMode1--;
+            powerMode2--;
             timerCount = 0;
         }
         if (timer == -1) {
             gameState = GAMEOVER;  // LOST
+            soundEngine.stopMusic();
+			soundEngine.playGameOver();
         }
     }
 
@@ -666,9 +876,64 @@ public class CMGameEngine implements Runnable {
             if(gameState == SEARCHING) {
             	updateSearching();
             }
+            if(gameState == DISCONNECTED) {
+            	updateDisconnected();
+            }
+            if(gameState == DIE) {
+            	updateDie();
+            }
 
         }
     }
+    
+    public void updateDie() {
+		beginTime = System.currentTimeMillis();
+	
+		sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+		if (sleepTime > 0) {
+			// if sleepTime > 0 we're OK
+			try {
+				// send the thread to sleep for a short period
+				// very useful for battery saving
+				Thread.sleep(sleepTime);
+			} catch (InterruptedException e) {
+			}
+		}
+		
+		timeDiff += System.currentTimeMillis() - beginTime;
+		//wait for 1.2 second
+		if(timeDiff >= 1000){
+			soundEngine.playMusic();
+			gameState = RUNNING;
+		}
+	}
+    
+    private void updateDisconnected(){
+    	  beginTime = System.currentTimeMillis();
+          framesSkipped = 0; // resetting the frames skipped
+
+          update();
+          isRunning=false;
+//          // calculate how long did the cycle take
+//          timeDiff = System.currentTimeMillis() - beginTime;
+//          // calculate sleep time
+//          sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+//          if (sleepTime > 0) {
+//              // if sleepTime > 0 we're OK
+//              try {
+//                  // send the thread to sleep for a short period
+//                  // very useful for battery saving
+//                  Thread.sleep(sleepTime);
+//              } catch (InterruptedException e) {
+//              }
+//          }
+    
+    	
+    }
+    
+    
     
     private void updateSearching(){
     	
@@ -690,7 +955,6 @@ public class CMGameEngine implements Runnable {
 
         if (sleepTime > 0) {
 
-            System.out.println("INSIDE SLEEPING");
             // if sleepTime > 0 we're OK
             try {
                 // send the thread to sleep for a short period
@@ -708,6 +972,8 @@ public class CMGameEngine implements Runnable {
         } catch (InterruptedException e) {
         }
 
+        
+        soundEngine.playMusic();
         if (this.tickCounter >= 0) {
 
 //			try {
@@ -716,11 +982,11 @@ public class CMGameEngine implements Runnable {
 //				// TODO Auto-generated catch block
 //				e.printStackTrace();
 //			}
+        	
             gameState = RUNNING;
             //   System.out.println("GO AWAY");
 
         }
-        System.out.println("GG:"+tickCounter);
 
         this.tickCounter++;
         //System.out.println("THIS IS TICK updatREADY::"+ this.tickCounter);
@@ -774,6 +1040,11 @@ public class CMGameEngine implements Runnable {
     }
 
     public void setInputDirPlayer2(int dir) {
+    	
+    	if(dir==-99)
+    	{
+    		this.gameState=DISCONNECTED;
+    	}
         this.inputDirection2 = dir;
     }
 

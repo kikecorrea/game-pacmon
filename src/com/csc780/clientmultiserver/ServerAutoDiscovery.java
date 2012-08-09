@@ -105,8 +105,8 @@ public class ServerAutoDiscovery extends Thread {
         }
       }
       catch (SocketException ex) {
-        System.out.println("UDP Port 9876 is occupied.");
-        System.exit(1);
+        System.out.println("Socket exception occured in ServerAutoDiscovery.java");
+        //System.exit(1);
       }catch (UnknownHostException ex) {
                         Logger.getLogger(ServerAutoDiscovery.class.getName()).log(Level.SEVERE, null, ex);
       }catch (IOException ex) {
