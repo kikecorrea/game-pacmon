@@ -120,11 +120,15 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initBitmap(){
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inScaled = false;
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
 		power = BitmapFactory.decodeResource(getResources(), R.drawable.power);
 		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite_green);
+		Log.d("pac imag width", "width " + pac_img.getWidth());
+		Log.d("pac imag height", "heigth " + pac_img.getHeight());
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
@@ -147,37 +151,33 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initSprite(){
-		int scale = (int) blockSize;
-		pSrcUp[0] = new Rect(0, 0, scale, scale);
-		pSrcUp[1] = new Rect(scale, 0, scale*2, scale);
-		pSrcUp[2] = new Rect(scale*2, 0, scale*3, scale);
+		pSrcUp[0] = new Rect(0, 0, 32, 32);
+		pSrcUp[1] = new Rect(32, 0, 64, 32);
+		pSrcUp[2] = new Rect(64, 0, 96, 32);
 		
-		Log.d("scale value", scale + " " + scale*2 + " " + scale*3 + " " + scale*4);
-		Log.d("screen width", "screenWidth is " + screenWidth + "  screenHeight is" + screenHeight);
+		pSrcDown[0] = new Rect(0, 32, 32, 64);
+		pSrcDown[1] = new Rect(32, 32, 64, 64);
+		pSrcDown[2] = new Rect(64, 32, 96, 64);
 		
-		pSrcDown[0] = new Rect(0, scale, scale, scale*2);
-		pSrcDown[1] = new Rect(scale, scale, scale*2, scale*2);
-		pSrcDown[2] = new Rect(scale*2, scale, scale*3, scale*2);
+		pSrcRight[0] = new Rect(0, 64, 32, 96);
+		pSrcRight[1] = new Rect(32, 64, 64, 96);
+		pSrcRight[2] = new Rect(64, 64, 96, 96);
 		
-		pSrcRight[0] = new Rect(0, scale*2, scale, scale*3);
-		pSrcRight[1] = new Rect(scale, scale*2, scale*2, scale*3);
-		pSrcRight[2] = new Rect(scale*2, scale*2, scale*3, scale*3);
+		pSrcLeft[0] = new Rect(0, 96, 32, 128);
+		pSrcLeft[1] = new Rect(32, 96, 64, 128);
+		pSrcLeft[2] = new Rect(64, 96, 96, 128);
 		
-		pSrcLeft[0] = new Rect(0, scale*3, scale, scale*4);
-		pSrcLeft[1] = new Rect(scale, scale*3, scale*2, scale*4);
-		pSrcLeft[2] = new Rect(scale*2, scale*3, scale*3, scale*4);
+		gSrcUp[0] = new Rect(0, 0, 32, 32);
+		gSrcUp[1] = new Rect(32, 0, 64, 32);
 		
-		gSrcUp[0] = new Rect(0, 0, scale, scale);
-		gSrcUp[1] = new Rect(scale, 0, scale*2, scale);
+		gSrcDown[0] = new Rect(0, 32, 32, 64);
+		gSrcDown[1] = new Rect(32, 32, 64, 64);
 		
-		gSrcDown[0] = new Rect(0, scale, scale, scale*2);
-		gSrcDown[1] = new Rect(scale, scale, scale*2, scale*2);
+		gSrcRight[0] = new Rect(0, 64, 32, 96);
+		gSrcRight[1] = new Rect(32, 64, 64, 96);
 		
-		gSrcRight[0] = new Rect(0, scale*2, scale, scale*3);
-		gSrcRight[1] = new Rect(scale, scale*2, scale*2, scale*3);;
-		
-		gSrcLeft[0] = new Rect(0, scale*3, scale, scale*4);
-		gSrcLeft[1] = new Rect(scale, scale*3, scale*2, scale*4);
+		gSrcLeft[0] = new Rect(0, 96, 32, 128);
+		gSrcLeft[1] = new Rect(32, 96, 64, 128);
 		
 	}
 	
@@ -426,9 +426,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		int pX = Math.round(pacmon.getpX() * blockScaleFactor);
 		int pY = Math.round(pacmon.getpY() * blockScaleFactor);
 
-		
 		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
-		
 		canvas.drawBitmap(pac_img, srcRect, dst, null);
 		
 	}
