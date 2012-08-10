@@ -120,15 +120,11 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initBitmap(){
-		BitmapFactory.Options opts = new BitmapFactory.Options();
-		opts.inScaled = false;
 		wall = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
 		door = BitmapFactory.decodeResource(getResources(), R.drawable.ghost_door);
 		food = BitmapFactory.decodeResource(getResources(), R.drawable.food);
 		power = BitmapFactory.decodeResource(getResources(), R.drawable.power);
 		pac_img = BitmapFactory.decodeResource(getResources(), R.drawable.pacmon_sprite_green);
-		Log.d("pac imag width", "width " + pac_img.getWidth());
-		Log.d("pac imag height", "heigth " + pac_img.getHeight());
 		bluey_img = BitmapFactory.decodeResource(getResources(), R.drawable.bluey_sprite);
 		redy_img = BitmapFactory.decodeResource(getResources(), R.drawable.redy_sprite);
 		yellowy_img = BitmapFactory.decodeResource(getResources(), R.drawable.yellowy_sprite);
@@ -399,10 +395,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			int gY = Math.round(ghosts.get(i).getY() * blockScaleFactor);
 			
 			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
-			
-//			if (i == 0)
-//				Log.d("ghost 1 dst rect", "gX: " + gX + "  gY: " + gY + "  gXX: " + (int)(gX + blockSize) + "   gYY: " + (int) (gY + blockSize));
-//			
+				
 			if (i == 0)
 				canvas.drawBitmap(bluey_img, srcRect, dst, null);
 			else if (i == 1)

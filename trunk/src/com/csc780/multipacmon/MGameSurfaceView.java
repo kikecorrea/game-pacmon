@@ -36,6 +36,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
+	private final static String textOver = "GAME OVER", textCongrats = "Congratulations"
+			, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -58,13 +60,16 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	//maze info
 	private int[][] mazeArray;
 	private int mazeRow, mazeColumn;
-	private int blockSize;
+	private float blockSize;
 	
 	private Paint paint, paint2, paint3;
 	
 	private Context mContext;
 	
-	//private int gameState;
+	private float screenWidth;
+	private float screenHeight;
+	private float blockScaleFactor;
+	private float sentenceWidth, drawTextStartingX;
 	
 	// draw timing data
 	private long beginTime; // the time when the cycle begun
@@ -97,12 +102,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	int soundState;
 	
 
-	public MGameSurfaceView(Context context, MGameEngine gameEngine, int width, int height) {
+	public MGameSurfaceView(Context context, MGameEngine gameEngine, int sWidth, int sHeight) {
 		super(context);
 		this.pacmon = gameEngine.pacmon;
 		this.pacmon2 = gameEngine.pacmon2;
 		this.mgameEngine = gameEngine;
-		
 		
 		//gameState = READY;  //never used, this was use in single player
 		mContext = context;
@@ -110,7 +114,12 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		soundEngine = gameEngine.soundEngine;
 		isPlayOn = true;
 		
-		blockSize = 32;  // size of block
+		screenWidth = sWidth;
+		screenHeight = sHeight;
+		
+		blockSize = screenWidth / 15.f;  // size of block
+		blockScaleFactor = blockSize / 32.f;  // scale factor for block
+		
 		mazeArray = gameEngine.getMazeArray();
 		mazeRow = gameEngine.getMazeRow();
 		mazeColumn = gameEngine.getMazeColumn();
@@ -141,12 +150,12 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize(24);
+		paint.setTextSize((int)(blockSize/(1.5)));  // make smaller than 1.5 size of block
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
-		paint2.setTextSize(45);
+		paint2.setTextSize(blockSize*2); // 2 times the size of block width
 		
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
@@ -178,7 +187,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		gSrcDown[1] = new Rect(32, 32, 64, 64);
 		
 		gSrcRight[0] = new Rect(0, 64, 32, 96);
-		gSrcRight[1] = new Rect(32, 64, 64, 96);;
+		gSrcRight[1] = new Rect(32, 64, 64, 96);
 		
 		gSrcLeft[0] = new Rect(0, 96, 32, 128);
 		gSrcLeft[1] = new Rect(32, 96, 64, 128);
@@ -349,8 +358,10 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas);
 					drawScore(canvas);
 					
- 					canvas.drawText("ready in " + mgameEngine.getCountDown(), 130, 350, paint2);	
- 				
+ 					sentenceWidth = paint2.measureText("ready in " + mgameEngine.getCountDown());
+ 				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+ 					canvas.drawText("Ready in " + mgameEngine.getCountDown(), drawTextStartingX, screenHeight/2, paint2);
+ 					
  					if(mgameEngine.getCountDown()==0)
 					{  
  						mgameEngine.setGameState(RUNNING); }
@@ -446,9 +457,19 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			whoWon="you lose";
 			whoDied="you died";
 		}
-		canvas.drawText("GAME OVER", 110, 350, paint2);
-		canvas.drawText(whoWon, 140, 400, paint2);
-		canvas.drawText(whoDied, 140, 450, paint3);
+		
+		//measure the text then draw it at center
+		sentenceWidth = paint2.measureText(textOver);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(textOver, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		
+		sentenceWidth = paint2.measureText(whoWon);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoWon, drawTextStartingX, screenHeight/2, paint2);
+		
+		sentenceWidth = paint2.measureText(whoDied);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoDied, drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -473,9 +494,17 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			whoWon="You Lose";
 		}
 		
-		canvas.drawText(whoWon, 150, 350, paint2);		
-		canvas.drawText("score(you):" + mgameEngine.receiver.p1score, 100, 400, paint3);
-		canvas.drawText("score(enemy):" + mgameEngine.receiver.p2score, 92, 450, paint3);
+		sentenceWidth = paint2.measureText(whoWon);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		
+		sentenceWidth = paint2.measureText("score(you):" + mgameEngine.receiver.p1score);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("score(you):" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2, paint2);
+		
+		sentenceWidth = paint2.measureText("score(enemy):" + mgameEngine.receiver.p1score);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("score(enemy):" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
 		
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
@@ -491,8 +520,9 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateDisconnected(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Connection Error", 50, 350, paint2);
-	
+		sentenceWidth = paint2.measureText("Connection Error");
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint2);
 	
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -506,46 +536,17 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 	// draw current location of ghosts
 	private void drawGhost(Canvas canvas) {
-//		mCurrentFrame = ++mCurrentFrame % 2;
-//		for (int i = 0; i < mgameEngine.ghosts.size(); i++) {
-//			int direction = ghosts.get(i).getDir();
-//			int n;
-//			if (direction == UP)	n = 0;
-//			else if (direction == DOWN)		n = 1;
-//			else if (direction == RIGHT)		n = 2;
-//			else 		n = 3;
-//			
-//			int srcY = n * blockSize;
-//			int srcX = mCurrentFrame * blockSize;
-//			
-//			mgameEngine.setxyGhost(i);
-//			
-//			int gX = ghosts.get(i).getX();
-//			int gY = ghosts.get(i).getY();
-//			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-//			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
-//			
-//			if (i == 0)
-//				canvas.drawBitmap(bluey_img, src, dst, null);
-//			else if (i == 1)
-//				canvas.drawBitmap(redy_img, src, dst, null);
-//			else if (i == 2)
-//				canvas.drawBitmap(yellowy_img, src, dst, null);
-//		}
 		
 		mCurrentFrame = ++mCurrentFrame % 2;
 		for (int i = 0; i < mgameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
-			int n;
 			if (direction == UP)	srcRect = gSrcUp[mCurrentFrame];
 			else if (direction == DOWN)		srcRect = gSrcDown[mCurrentFrame];
 			else if (direction == RIGHT)		srcRect = gSrcRight[mCurrentFrame];
 			else 	srcRect = gSrcLeft[mCurrentFrame];	
 			
-//			int gX = Math.round(ghosts.get(i).getX() * scaleFactor);
-//			int gY = Math.round(ghosts.get(i).getY() * scaleFactor);
-			int gX = ghosts.get(i).getX();
-			int gY = ghosts.get(i).getY();
+			int gX = Math.round(ghosts.get(i).getX() * blockScaleFactor);
+			int gY = Math.round(ghosts.get(i).getY() * blockScaleFactor);
 			
 			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
@@ -583,18 +584,18 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 //		canvas.drawBitmap(pac_img, src, dst, null);
 		
 		currentFrame = ++currentFrame % 3;
+		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
 		if (direction == UP)	srcRect = pSrcUp[currentFrame];
 		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
 		else 	srcRect = pSrcLeft[currentFrame];	
-		
-		int pX = pacmon.getpX();
-		int pY = pacmon.getpY();
-		
+	
+		int pX = Math.round(pacmon.getpX() * blockScaleFactor);
+		int pY = Math.round(pacmon.getpY() * blockScaleFactor);
+
 		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
-		
 		canvas.drawBitmap(pac_img, srcRect, dst, null);
 		
 	}
@@ -619,19 +620,18 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 //		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
 //		canvas.drawBitmap(pac_img2, src, dst, null);
 		currentFrame = ++currentFrame % 3;
+		
 		int direction = pacmon2.getDir(); // get current direction of pacmon
 		
 		if (direction == UP)	srcRect = pSrcUp[currentFrame];
 		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
 		else 	srcRect = pSrcLeft[currentFrame];	
-		
+	
+		int pX = Math.round(pacmon2.getpX() * blockScaleFactor);
+		int pY = Math.round(pacmon2.getpY() * blockScaleFactor);
 
-		int pX = pacmon2.getpX();
-		int pY = pacmon2.getpY();
-		
 		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
-		
 		canvas.drawBitmap(pac_img2, srcRect, dst, null);
 		
 	}
@@ -641,13 +641,13 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 //		String x[]=mgameEngine.getScores();
 //		String  lives[]=mgameEngine.checkLives();
 		
-		canvas.drawText("you:", 20, 736, paint);
-		canvas.drawText("enemy:", 20, 760, paint);
-		canvas.drawText("score:" + mgameEngine.receiver.p2score, 120, 736, paint);
-		canvas.drawText("score:" + mgameEngine.receiver.p1score, 120, 760, paint);
-		canvas.drawText("lives:" + mgameEngine.lives2, 230, 736, paint);
-		canvas.drawText("lives:" + mgameEngine.lives, 230, 760, paint);
-		canvas.drawText("Time:"+String.valueOf(mgameEngine.receiver.timer), 350, 749, paint);
+		canvas.drawText("you:", blockSize, blockSize*24, paint);
+		canvas.drawText("enemy:", blockSize, blockSize*25, paint);
+		canvas.drawText("score:" + mgameEngine.receiver.p2score, blockSize*3, blockSize*24, paint);
+		canvas.drawText("score:" + mgameEngine.receiver.p1score, blockSize*3, blockSize*25, paint);
+		canvas.drawText("lives:" + mgameEngine.lives2, blockSize*7, blockSize*24, paint);
+		canvas.drawText("lives:" + mgameEngine.lives, blockSize*7, blockSize*25, paint);
+		canvas.drawText("Time:"+String.valueOf(mgameEngine.receiver.timer), blockSize*13, blockSize*24, paint);
 		
 //		canvas.drawText(x[0], 20, 736, paint);
 //		canvas.drawText(lives[0], 150, 736, paint);
