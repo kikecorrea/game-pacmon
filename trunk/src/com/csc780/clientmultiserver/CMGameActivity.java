@@ -50,6 +50,9 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     private volatile boolean progressStatus=false;
     private AtomicBoolean clientReady;
     
+    //use in handlerThreadServer() method
+    private boolean htsKill=false;
+    
     //dialog for client connected message
     AlertDialog connectedDialog;
     
@@ -131,16 +134,21 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     	{
     		public void run()
     		{
-    			while(!clientReady.get())
+    			while(!clientReady.get() )
     			{
     				try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+    				if(htsKill)
+    					return;
     			}
+    			
+    			if(clientReady.get()){
     			progressStatus=true;
     			mProgressHandler.sendEmptyMessage(0);
+    			}
     		}
     	});
     	t.start();
@@ -198,7 +206,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		// stop receiving and sending thread
-		serverThread.killSendingReceiving();
+		
 		//mgameView.pause();
 		super.onDestroy();
 		//gameView.pause();
@@ -209,9 +217,9 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	
 	@Override
 	public void finish() {
-
+		this.htsKill = true;
 		soundEngine.endMusic();
-	
+		serverThread.killSendingReceiving();
 		super.finish();
 	}
 
@@ -256,7 +264,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < -0.5F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			gameEngine.setInputDirPlayer1(UP);
 			//gameView.setDir(1);
 		}

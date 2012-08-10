@@ -15,6 +15,8 @@ public class ServerThread extends Thread{
     private ServerConnectionInfo dispatchReceiver;
     private ServerAutoDiscovery serverDiscovery;
     private AtomicBoolean clientReady;
+    
+    private boolean isThreadDead=false;
 
     public ServerThread(CMGameEngine game, AtomicBoolean ready)
     {
@@ -34,10 +36,12 @@ public class ServerThread extends Thread{
     public void killSendingReceiving()
     {	
     	try {
-			this.sleep(400);
+			this.sleep(300);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+    	
+    	isThreadDead=true;
  
     	sendThread.isRunning.set(false);
     	sendThread.DestroySocket();
@@ -66,8 +70,8 @@ public class ServerThread extends Thread{
          //start receive server
          receiveThread.start();
 
-         //waiting for two players to be ready before starting game engine
-         while(!receiveThread.ready)
+         //waiting for client players to be ready before starting game engine
+         while(!receiveThread.ready )
          {  	
          	try {
  				Thread.sleep(10);
@@ -75,23 +79,30 @@ public class ServerThread extends Thread{
  				// TODO Auto-generated catch block
  				e.printStackTrace();
  			}
+         	
+         	if(isThreadDead)
+         		return;
          }
          
-         //this variable is used for CMGameActivity, to dismiss progress dialog
-         this.clientReady.set(true);
+         if(receiveThread.ready)
+         {
+        	 //this variable is used for CMGameActivity, to dismiss progress dialog
+        	 this.clientReady.set(true);
          
-         //put a sleep here because clientReady dialog box will show for 1500ms
-         //so we don't want to start gameEngine right away
-         try {
+         	//put a sleep here because clientReady dialog box will show for 1500ms
+         	//so we don't want to start gameEngine right away
+         	try {
 			Thread.sleep(2000);
-		} catch (InterruptedException e) {
+         	} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+			}
         
-         //remem gameEngine has its own thread running
-         ges.startTheEngine();
-         sendThread.start();
+         	//remem gameEngine has its own thread running
+            ges.startTheEngine();
+            sendThread.start();
+         
+         }
 
          //wait for thread to die
 //         try {
