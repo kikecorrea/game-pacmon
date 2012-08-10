@@ -177,7 +177,7 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
 			
 		case R.id.bLevel3: //finish the activity
 			Intent sGame3 = new Intent("com.csc780.pacmon.GAMEACTIVITY");
-			sGame3.putExtra("level", 2);
+			sGame3.putExtra("level", 3);
 			startActivityForResult(sGame3, 0);
 			break;
 		

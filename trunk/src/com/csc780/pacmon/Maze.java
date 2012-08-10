@@ -108,6 +108,56 @@ public class Maze {
 			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 	};
 	
+	private int maze3[][] = {
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},  //row 1
+	        {5,1,1,1,1,0,0,0,0,0,1,1,1,1,5},
+	        {0,0,1,0,1,0,1,1,1,0,1,0,1,0,0},
+	        {0,0,1,1,1,1,1,0,1,1,1,1,1,0,0},
+	        {0,0,1,0,0,0,1,2,1,0,0,0,1,0,0}, 
+	        {0,1,1,1,1,1,1,0,1,1,1,1,1,1,0},  //row 6
+	        {0,1,0,0,0,1,0,0,0,1,0,0,0,1,0},
+	        {0,1,1,5,5,5,5,2,5,5,5,5,1,1,0},  //row 8
+	        {0,1,0,0,5,0,0,0,0,0,5,0,0,1,0},
+	        {0,1,0,0,5,0,6,6,6,0,5,0,0,1,0},  //row 10 monster cage
+	        {0,1,0,0,5,0,0,3,0,0,5,0,0,1,0},
+	        {0,1,1,5,5,5,5,5,5,5,5,5,1,1,0},  // door step
+	        {0,0,1,0,0,1,0,5,0,1,0,0,1,0,0},
+	        {0,0,1,1,1,1,1,2,1,1,1,1,1,0,0},  //row 14
+	        {0,0,1,0,0,0,0,1,0,0,0,0,1,0,0},
+	        {0,0,1,0,1,1,1,1,1,1,1,0,1,0,0},  // row 16
+	        {5,1,1,1,1,0,1,0,1,0,1,1,1,1,5},
+	        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},  // row 18
+	        {0,1,1,1,1,1,1,0,1,1,1,1,1,1,0},
+	        {0,0,1,0,1,0,1,2,1,0,1,0,1,0,0},  // row 20
+	        {5,1,1,1,1,0,0,0,0,0,1,1,1,1,5},
+	        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+	};
+	
+	private int directionMaze3[][] = {
+		   	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // row 1
+			{0,0,1,0,2,0,0,0,0,0,1,0,2,0,0},
+			{0,0,0,0,0,0,1,0,2,0,0,0,0,0,0},  
+			{0,0,5,0,8,0,6,0,5,0,8,0,6,0,0},
+			{0,0,0,0,0,0,5,0,6,0,0,0,0,0,0},  
+			{0,1,0,0,0,7,4,0,3,7,0,0,0,2,0}, // row 6
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,5,0,0,7,8,0,0,0,8,7,0,0,6,0}, // row 8
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, //row 10 ghost cage
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,3,7,0,8,7,0,7,0,7,8,0,7,4,0}, // monster door step row 12
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,5,0,0,8,0,7,0,8,0,0,6,0,0}, // row 14
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+			{0,0,0,0,1,0,7,8,7,0,2,0,0,0,0}, // row 16
+			{0,1,8,0,4,0,0,0,0,0,3,0,8,2,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, // row 18
+			{0,3,7,0,7,0,6,0,5,0,7,0,7,4,0},
+			{0,0,0,0,0,0,3,0,4,0,0,0,0,0,0}, // row 20
+			{0,0,3,0,4,0,0,0,0,0,3,0,4,0,0},
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+	};
+	
   // t1[0]= 0;
   // t1[1]= 9; // rd (right and down)
   // t1[2]=10; // ld
@@ -140,10 +190,10 @@ public class Maze {
 	}
 */
 	
-	private ArrayList<Integer> t2[] = new ArrayList[16];
+	private ArrayList<Integer> bitVectorArray[] = new ArrayList[16];
 	private int foodCount = 125;
 	
-	
+	//constructor
 	public Maze() {
 		mazeMaxRow = 22;
 		mazeMaxColumn = 15;
@@ -155,6 +205,7 @@ public class Maze {
 	public int[][] getMaze(int i) {
 		if (i == 1) return maze1;
 		if (i == 2) return maze2;
+		if (i == 3) return maze3;
 		return null;
 	}
 	
@@ -177,34 +228,37 @@ public class Maze {
 	public int[][] getDirectionMaze(int i){
 		if (i == 1) return directionMaze1;
 		if (i == 2) return directionMaze2;
+		if (i == 3) return directionMaze3;
 		return null;
 	}
 	
 	public ArrayList<Integer>[] getGhostArray(){
-		return t2;
+		return bitVectorArray;
 	}
 	
+	
+	//init the array for directions
 	private void initArray(){
 		for (int i = 0; i < 16; i++){
-			t2[i] = new ArrayList<Integer>();
+			bitVectorArray[i] = new ArrayList<Integer>();
 		}
 		
-		t2[1].add(1);
-	    t2[4].add(4);
-	    t2[8].add(8);
-	    t2[3].add(1); t2[3].add(2);
-	    t2[9].add(1); t2[9].add(8);
-	    t2[10].add(2); t2[10].add(8);
-	    t2[12].add(4); t2[12].add(8);
-	    t2[5].add(1); t2[5].add(4);
-	    t2[6].add(2); t2[6].add(4);
+		bitVectorArray[1].add(1);
+	    bitVectorArray[4].add(4);
+	    bitVectorArray[8].add(8);
+	    bitVectorArray[3].add(1); bitVectorArray[3].add(2);
+	    bitVectorArray[9].add(1); bitVectorArray[9].add(8);
+	    bitVectorArray[10].add(2); bitVectorArray[10].add(8);
+	    bitVectorArray[12].add(4); bitVectorArray[12].add(8);
+	    bitVectorArray[5].add(1); bitVectorArray[5].add(4);
+	    bitVectorArray[6].add(2); bitVectorArray[6].add(4);
 	    
-	    t2[7].add(1); t2[7].add(2); t2[7].add(4);
-	    t2[11].add(1); t2[11].add(2); t2[11].add(8);
-	    t2[13].add(1); t2[13].add(4); t2[13].add(8);
-	    t2[14].add(2); t2[14].add(4); t2[14].add(8);
+	    bitVectorArray[7].add(1); bitVectorArray[7].add(2); bitVectorArray[7].add(4);
+	    bitVectorArray[11].add(1); bitVectorArray[11].add(2); bitVectorArray[11].add(8);
+	    bitVectorArray[13].add(1); bitVectorArray[13].add(4); bitVectorArray[13].add(8);
+	    bitVectorArray[14].add(2); bitVectorArray[14].add(4); bitVectorArray[14].add(8);
 	    
-	    t2[15].add(1); t2[15].add(2); t2[15].add(4); t2[15].add(8);
+	    bitVectorArray[15].add(1); bitVectorArray[15].add(2); bitVectorArray[15].add(4); bitVectorArray[15].add(8);
 	}
 
 	public int getGhostSpawnLocX() {
@@ -220,28 +274,7 @@ public class Maze {
 
 
 
-/*Maze layout
-		{"WWWWWWWWWWWWWWW"}, //1
-		{"W....W...W....W"}, //2
-		{"WoWW.WW.WW.WWoW"}, //3
-		{"W.............W"},
-		{"WW.WWWW.WWWW.WW"}, //5
-		{"WW.....o.....WW"},
-		{"WW.WW.WWW.WW.WW"},
-		{"W..---------..W"},
-		{"W.WW-WWWWW-WW.W"},
-		{"W.WW-WGGGW-WW.W"}, //10
-		{"W.WW-WWDWW-WW.W"},
-		{"W..---------..W"},
-		{"WW.WW.WWW.WW.WW"},
-		{"WW.....o.....WW"},
-		{"WW.WWWW.WWWW.WW"}, //15
-		{"WW.W.......W.WW"},
-		{"W....WW.WW....W"},
-		{"W.WWWWW.WWWWW.W"},
-		{"W.............W"},
-		{"WoWW.WW.WW.WWoW"}, //20
-		{"WWWWWWWWWWWWWWW"}
+/* Maze layout
 		
 		
 		maze 2
@@ -312,5 +345,106 @@ public class Maze {
 		{0,1,1,1,1,1,1,1,1,1,1,1,1,1,0},
 		{0,2,0,0,1,0,0,1,0,0,1,0,0,2,0},
 		{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+		
+		
+		
+		
+		maze 3
+		   {WWWWWWWWWWWWWWW}  //row 1
+           {-....WWWWW....-}
+           {WW.W.W...W.W.WW}
+           {WW.....W.....WW}
+           {WW.WWW.o.WWW.WW}  
+           {W......W......W}  //row 6
+           {W.WWW.WWW.WWW.W}
+           {W..----o----..W}  //row 8
+           {W.WW-WWWWW-WW.W}
+           {W.WW-W666W-WW.W}  //row 10 monster cage
+           {W.WW-WW3WW-WW.W}
+           {W..---------..W}  // door step
+           {WW.WW.W-W.WW.WW}
+           {WW.....o.....WW}  //row 14
+           {WW.WWWW.WWWW.WW}
+           {WW.W.......W.WW}  // row 16
+           {-....W.W.W....-}
+           {W.WWWW.W.WWWW.W}  // row 18
+           {W......W......W}
+           {WW.W.W.o.W.W.WW}  // row 20
+           {-....WWWWW....-}
+           {WWWWWWWWWWWWWWW}
+		   
+		   
+		   	{000000000000000} // row 1
+			{001020000010200}
+			{000000102000000}   
+			{005080605080600}
+			{000000506000000}  
+			{010007403700020} // row 6
+			{000000000000000}
+			{050078000870060} // row 8
+			{000000000000000}
+			{000000000000000} //row 10 ghost cage
+			{000000000000000}
+			{037087070780740} //monster door step row 12
+			{000000000000000}
+			{005008070800600} // row 14
+			{000000000000000}
+			{000010787020000} // row 16
+			{018040000030820}
+			{000000000000000} // row 18
+			{037070605070740}
+			{000000304000000} // row 20
+			{003040000030400}
+			{000000000000000}
+		
+		   {W,W,W,W,W,W,W,W,W,W,W,W,W,W,W}  //row 1
+           {-,.,.,.,.,W,W,W,W,W,.,.,.,.,-}
+           {W,W,.,W,.,W,.,.,.,W,.,W,.,W,W}
+           {W,W,.,.,.,.,.,W,.,.,.,.,.,W,W}
+           {W,W,.,W,W,W,.,o,.,W,W,W,.,W,W}  
+           {W,.,.,.,.,.,.,W,.,.,.,.,.,.,W}  //row 6
+           {W,.,W,W,W,.,W,W,W,.,W,W,W,.,W}
+           {W,.,.,-,-,-,-,o,-,-,-,-,.,.,W}  //row 8
+           {W,.,W,W,-,W,W,W,W,W,-,W,W,.,W}
+           {W,.,W,W,-,W,6,6,6,W,-,W,W,.,W}  //row 10 monster cage
+           {W,.,W,W,-,W,W,3,W,W,-,W,W,.,W}
+           {W,.,.,-,-,-,-,-,-,-,-,-,.,.,W}  // door step
+           {W,W,.,W,W,.,W,-,W,.,W,W,.,W,W}
+           {W,W,.,.,.,.,.,o,.,.,.,.,.,W,W}  //row 14
+           {W,W,.,W,W,W,W,.,W,W,W,W,.,W,W}
+           {W,W,.,W,.,.,.,.,.,.,.,W,.,W,W}  // row 16
+           {-,.,.,.,.,W,.,W,.,W,.,.,.,.,-}
+           {W,.,W,W,W,W,.,W,.,W,W,W,W,.,W}  // row 18
+           {W,.,.,.,.,.,.,W,.,.,.,.,.,.,W}
+           {W,W,.,W,.,W,.,o,.,W,.,W,.,W,W}  // row 20
+           {-,.,.,.,.,W,W,W,W,W,.,.,.,.,-}
+           {W,W,W,W,W,W,W,W,W,W,W,W,W,W,W}
+		   
+		   
+		   	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} // row 1
+			{0,0,1,0,2,0,0,0,0,0,1,0,2,0,0}
+			{0,0,0,0,0,0,1,0,2,0,0,0,0,0,0}   
+			{0,0,5,0,8,0,6,0,5,0,8,0,6,0,0}
+			{0,0,0,0,0,0,5,0,6,0,0,0,0,0,0}  
+			{0,1,0,0,0,7,4,0,3,7,0,0,0,2,0} // row 6
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,5,0,0,7,8,0,0,0,8,7,0,0,6,0} // row 8
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} //row 10 ghost cage
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,3,7,0,8,7,0,7,0,7,8,0,7,4,0} //monster door step row 12
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,0,5,0,0,8,0,7,0,8,0,0,6,0,0} // row 14
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+			{0,0,0,0,1,0,7,8,7,0,2,0,0,0,0} // row 16
+			{0,1,8,0,4,0,0,0,0,0,3,0,8,2,0}
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0} // row 18
+			{0,3,7,0,7,0,6,0,5,0,7,0,7,4,0}
+			{0,0,0,0,0,0,3,0,4,0,0,0,0,0,0} // row 20
+			{0,0,3,0,4,0,0,0,0,0,3,0,4,0,0}
+			{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+		
+		
+		
 */
 
