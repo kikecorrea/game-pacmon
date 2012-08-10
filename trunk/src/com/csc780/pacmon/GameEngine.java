@@ -518,6 +518,7 @@ public class GameEngine implements Runnable {
 	}
 	
 	public void pause() {
+
 		isRunning = false;
 	}
 	

@@ -25,6 +25,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
+	private final static String textOver = "GAME OVER", textCongrats = "Congratulations"
+								, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -80,7 +82,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	private float screenWidth;
 	private float screenHeight;
-	private float scaleFactor;
+	private float blockScaleFactor;
+	private float sentenceWidth, drawTextStartingX;
 	
 	public GameSurfaceView(Context context, GameEngine gameEngine, int sWidth, int sHeight) {
 		
@@ -99,24 +102,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		screenHeight = sHeight;
 		
 		blockSize = screenWidth / 15.f;  // size of block
-		scaleFactor = blockSize / 32.f;  // scale factor for block
-		
+		blockScaleFactor = blockSize / 32.f;  // scale factor for block
 		
 		maze = gameEngine.getMaze();
 		mazeArray = gameEngine.getMazeArray();
 		mazeRow = maze.getMazeRow();
 		mazeColumn = maze.getMazeColumn();
 
-		
 		initBitmap();  // init all Bitmap and its components
-		initSprite();
+		initSprite();  // init spite
 		
 		ghosts = gameEngine.ghosts;
 		
 		surfaceHolder = getHolder();
 		isRunning = true;
 		setKeepScreenOn(true);
-		
 	}
 	
 	private void initBitmap(){
@@ -132,12 +132,12 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize(24);
+		paint.setTextSize((int)(blockSize/(1.5)));
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
-		paint2.setTextSize(50);
+		paint2.setTextSize(blockSize*2); // 2 times the size of block width
 		
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
@@ -147,33 +147,37 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	}
 	
 	private void initSprite(){
-		pSrcUp[0] = new Rect(0, 0, 32, 32);
-		pSrcUp[1] = new Rect(32, 0, 64, 32);
-		pSrcUp[2] = new Rect(64, 0, 96, 32);
+		int scale = (int) blockSize;
+		pSrcUp[0] = new Rect(0, 0, scale, scale);
+		pSrcUp[1] = new Rect(scale, 0, scale*2, scale);
+		pSrcUp[2] = new Rect(scale*2, 0, scale*3, scale);
 		
-		pSrcDown[0] = new Rect(0, 32, 32, 64);
-		pSrcDown[1] = new Rect(32, 32, 64, 64);
-		pSrcDown[2] = new Rect(64, 32, 96, 64);
+		Log.d("scale value", scale + " " + scale*2 + " " + scale*3 + " " + scale*4);
+		Log.d("screen width", "screenWidth is " + screenWidth + "  screenHeight is" + screenHeight);
 		
-		pSrcRight[0] = new Rect(0, 64, 32, 96);
-		pSrcRight[1] = new Rect(32, 64, 64, 96);
-		pSrcRight[2] = new Rect(64, 64, 96, 96);
+		pSrcDown[0] = new Rect(0, scale, scale, scale*2);
+		pSrcDown[1] = new Rect(scale, scale, scale*2, scale*2);
+		pSrcDown[2] = new Rect(scale*2, scale, scale*3, scale*2);
 		
-		pSrcLeft[0] = new Rect(0, 96, 32, 128);
-		pSrcLeft[1] = new Rect(32, 96, 64, 128);
-		pSrcLeft[2] = new Rect(64, 96, 96, 128);
+		pSrcRight[0] = new Rect(0, scale*2, scale, scale*3);
+		pSrcRight[1] = new Rect(scale, scale*2, scale*2, scale*3);
+		pSrcRight[2] = new Rect(scale*2, scale*2, scale*3, scale*3);
 		
-		gSrcUp[0] = new Rect(0, 0, 32, 32);
-		gSrcUp[1] = new Rect(32, 0, 64, 32);
+		pSrcLeft[0] = new Rect(0, scale*3, scale, scale*4);
+		pSrcLeft[1] = new Rect(scale, scale*3, scale*2, scale*4);
+		pSrcLeft[2] = new Rect(scale*2, scale*3, scale*3, scale*4);
 		
-		gSrcDown[0] = new Rect(0, 32, 32, 64);
-		gSrcDown[1] = new Rect(32, 32, 64, 64);
+		gSrcUp[0] = new Rect(0, 0, scale, scale);
+		gSrcUp[1] = new Rect(scale, 0, scale*2, scale);
 		
-		gSrcRight[0] = new Rect(0, 64, 32, 96);
-		gSrcRight[1] = new Rect(32, 64, 64, 96);;
+		gSrcDown[0] = new Rect(0, scale, scale, scale*2);
+		gSrcDown[1] = new Rect(scale, scale, scale*2, scale*2);
 		
-		gSrcLeft[0] = new Rect(0, 96, 32, 128);
-		gSrcLeft[1] = new Rect(32, 96, 64, 128);
+		gSrcRight[0] = new Rect(0, scale*2, scale, scale*3);
+		gSrcRight[1] = new Rect(scale, scale*2, scale*2, scale*3);;
+		
+		gSrcLeft[0] = new Rect(0, scale*3, scale, scale*4);
+		gSrcLeft[1] = new Rect(scale, scale*3, scale*2, scale*4);
 		
 	}
 	
@@ -206,7 +210,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				surfaceHolder = getHolder();
@@ -220,13 +223,15 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					drawScore(canvas);
 					
 					//long time = 5L - timeDiff/1000;
-					canvas.drawText("ready go",
-									screenWidth/4+15 , screenHeight/2  -10 , paint2);
+
+					//measure the text then draw it at center
+					sentenceWidth = paint2.measureText(textReady);
+				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+					canvas.drawText(textReady, drawTextStartingX , screenHeight/2, paint2);
 					
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 
@@ -249,7 +254,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				surfaceHolder = getHolder();
@@ -290,6 +294,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		}
 	}
 	
+	//dead animation
 	private void updateDie(Canvas canvas){
 		try {
 			canvas = surfaceHolder.lockCanvas();
@@ -297,7 +302,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				surfaceHolder = getHolder();
@@ -312,7 +316,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
+
 						e.printStackTrace();
 					}
 				}
@@ -329,14 +333,21 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateGameOver(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("GAME OVER", 100, 350, paint2);
-		canvas.drawText(gameEngine.getPlayerScore(), 140, 420, paint2);
+		
+		//measure the text then draw it at center
+		sentenceWidth = paint2.measureText(textOver);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(textOver, drawTextStartingX , screenHeight/2 - blockSize*2, paint2);
+		
+		sentenceWidth = paint2.measureText(gameEngine.getPlayerScore());
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(gameEngine.getPlayerScore(), drawTextStartingX, screenHeight/2 + blockSize*2, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		
@@ -346,15 +357,25 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("congratulations!", screenWidth/4-50 , screenHeight/2 - 50, paint2);
-		canvas.drawText("you unlock next level", screenWidth/4 -58, screenHeight/2 , paint3);
-		canvas.drawText(gameEngine.getPlayerScore(), screenWidth/3 , screenHeight/2 + 50, paint3);
+		
+		//measure the text then draw it at center
+		sentenceWidth = paint2.measureText(textCongrats);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		
+		sentenceWidth = paint2.measureText(textNextLevel);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(textNextLevel, drawTextStartingX, screenHeight/2 , paint2);
+		
+		sentenceWidth = paint2.measureText(gameEngine.getPlayerScore());
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(gameEngine.getPlayerScore(), drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
 			Thread.sleep(4000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+
 			e.printStackTrace();
 		}
 		
@@ -368,17 +389,20 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		mCurrentFrame = ++mCurrentFrame % 2;
 		for (int i = 0; i < gameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
-			int n;
+
 			if (direction == UP)	srcRect = gSrcUp[mCurrentFrame];
 			else if (direction == DOWN)		srcRect = gSrcDown[mCurrentFrame];
 			else if (direction == RIGHT)		srcRect = gSrcRight[mCurrentFrame];
 			else 	srcRect = gSrcLeft[mCurrentFrame];	
 			
-			int gX = Math.round(ghosts.get(i).getX() * scaleFactor);
-			int gY = Math.round(ghosts.get(i).getY() * scaleFactor);
+			int gX = Math.round(ghosts.get(i).getX() * blockScaleFactor);
+			int gY = Math.round(ghosts.get(i).getY() * blockScaleFactor);
 			
 			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
+//			if (i == 0)
+//				Log.d("ghost 1 dst rect", "gX: " + gX + "  gY: " + gY + "  gXX: " + (int)(gX + blockSize) + "   gYY: " + (int) (gY + blockSize));
+//			
 			if (i == 0)
 				canvas.drawBitmap(bluey_img, srcRect, dst, null);
 			else if (i == 1)
@@ -399,8 +423,9 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
 		else 	srcRect = pSrcLeft[currentFrame];	
 	
-		int pX = Math.round(pacmon.getpX() * scaleFactor);
-		int pY = Math.round(pacmon.getpY() * scaleFactor);
+		int pX = Math.round(pacmon.getpX() * blockScaleFactor);
+		int pY = Math.round(pacmon.getpY() * blockScaleFactor);
+
 		
 		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
 		
@@ -412,8 +437,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	public void drawScore(Canvas canvas){
 		canvas.drawText(gameEngine.getLives(), 40, blockSize * 23, paint);
 		
-		canvas.drawText(gameEngine.getPlayerScore(), 40, blockSize * 23 +25, paint);
-		canvas.drawText(gameEngine.getTimer(), screenWidth/2 + 70, blockSize * 23 + 15, paint);
+		canvas.drawText(gameEngine.getPlayerScore(), 40, blockSize * 24 , paint);
+		canvas.drawText(gameEngine.getTimer(), screenWidth/2, blockSize * 23, paint);
 	}
 	
 
@@ -423,7 +448,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 			try {
 				surfaceThread.join();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+
 				e.printStackTrace();
 			}
 			break;
@@ -441,7 +466,6 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	
 	@Override
 	public void draw(Canvas canvas) {
-		// TODO Auto-generated method stub
 
 	}
 	
