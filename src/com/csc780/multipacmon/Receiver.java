@@ -27,15 +27,15 @@ public class Receiver extends Thread {
 	private InetAddress IPAddress;
 	private byte[] receiveData;
 	
-	public CircularQue pac1que=new CircularQue(3);
-	public CircularQue pac2que2=new CircularQue(3);
-	public CircularQue ghost1Que=new CircularQue(3);
-	public CircularQue ghost2Que=new CircularQue(3);
-	public CircularQue ghost3Que=new CircularQue(3);
-	public CircularQue ghost4Que=new CircularQue(3);
+	public CircularQue pac1que=new CircularQue(6);
+	public CircularQue pac2que2=new CircularQue(6);
+	public CircularQue ghost1Que=new CircularQue(6);
+	public CircularQue ghost2Que=new CircularQue(6);
+	public CircularQue ghost3Que=new CircularQue(6);
+	public CircularQue ghost4Que=new CircularQue(6);
 	
-	public CircularQue2 mazeData1=new CircularQue2(3);
-	public CircularQue2 mazeData2=new CircularQue2(3);
+	public CircularQue2 mazeData1=new CircularQue2(6);
+	public CircularQue2 mazeData2=new CircularQue2(6);
 	
 	//store the lives of pacmon
 //	public volatile int pacmonLives[]=new int [2];

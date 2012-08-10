@@ -32,6 +32,9 @@ public class Searching extends Activity {
     public ClientConnectionSetUp clientSetup;
     private Receiver receiving;
     private Sender sending;
+    
+    //use in handelThreadClient() method
+    private boolean isThreadDead=false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +100,16 @@ public class Searching extends Activity {
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
+	    				
+	    				if(isThreadDead)
+	    					return;
+	    				
 	    			}
 	    			
-	    			progressStatus=true;
-	    			mProgressHandler.sendEmptyMessage(0);
+	    			if(clientDiscoverer.isFinish){
+	    				progressStatus=true;
+	    				mProgressHandler.sendEmptyMessage(0);
+	    			}
 	    		}
 	    	});
 	    	t.start();
@@ -158,7 +167,18 @@ public class Searching extends Activity {
 	    }
 	 
 	 @Override
+	 public void finish()
+	 {
+		 isThreadDead=true;
+		 clientDiscoverer.closeSockset();
+		 super.finish();
+		 
+	 }
+	 
+	 @Override
 		public void onBackPressed() {
+		    clientDiscoverer.closeSockset();
+		    
 			this.finish();
 		}
 

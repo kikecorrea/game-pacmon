@@ -19,6 +19,7 @@ public class AutoDiscoverer extends Thread{
 	private int port;
 	private String ipAddress;
 	
+	public boolean isRunning=true;
 	public volatile boolean isFinish=false;
 	
 	public AutoDiscoverer()
@@ -35,6 +36,12 @@ public class AutoDiscoverer extends Thread{
 	
 	public String getipAddress()
 	{  return ipAddress; } 
+	
+	public void closeSockset()
+	{
+		clientSocket.close();
+		isRunning = false;
+	}
 	
 	public void run()
 	{
@@ -92,16 +99,18 @@ public class AutoDiscoverer extends Thread{
 					}
 	 		           //this variable is used in MGameSurfaceView in updateSearching
 	 		           isFinish=true;
-	 		           isRunning=false;     
+	 		           isRunning=false; 
+	 		           clientSocket.close(); 
 	        	   }   
 	           }
 	          }
 	        catch (SocketTimeoutException ste)
 	        {
 	           System.out.println ("Timeout Occurred: Packet assumed lost, AutoDiscovery.java multipacmon");
+	           System.out.println("Socket exception occured");
 	        } 
 	      }
-	   clientSocket.close(); 
+	   
 	   }
 	   catch (UnknownHostException ex) { 
 	     System.err.println(ex);

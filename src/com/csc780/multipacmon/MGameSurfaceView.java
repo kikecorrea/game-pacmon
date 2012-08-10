@@ -29,7 +29,7 @@ import android.view.SurfaceView;
  */
 public class MGameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS =60;
+	private final static int    MAX_FPS =50;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -549,14 +549,14 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			
 			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
-			if (i == 0)
-				canvas.drawBitmap(bluey_img, srcRect, dst, null);
+			if (i == 3)
+				canvas.drawBitmap(violet_img, srcRect, dst, null);
 			else if (i == 1)
 				canvas.drawBitmap(redy_img, srcRect, dst, null);
 			else if (i == 2)
 				canvas.drawBitmap(yellowy_img, srcRect, dst, null);
-			else if ( i==3 )
-				canvas.drawBitmap(violet_img, srcRect, dst, null);
+			else if ( i==0 )
+				canvas.drawBitmap(bluey_img, srcRect, dst, null);
 		}
 	}
 
