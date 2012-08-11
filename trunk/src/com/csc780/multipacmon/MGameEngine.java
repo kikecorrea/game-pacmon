@@ -16,7 +16,7 @@ import com.csc780.pacmon.SoundEngine;
  * 		models(maze, pacmon, monster) as well as call drawing.	
  */
 
-public class MGameEngine  {
+public class MGameEngine extends Thread  {
 	private final static int    MAX_FPS = 30;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
@@ -88,9 +88,12 @@ public class MGameEngine  {
 	//use for updating pacmon,pacmon2
 	private int p1[]=new int[3], p2[]=new int[3], g[];
 	
+	private String ip;
+	
 	//Constructor create players, ghosts and Maze
 	public MGameEngine(SoundEngine soundEngine, String ip){
 		
+		this.ip = ip;
 		this.soundEngine = soundEngine;
 		soundEngine.playReady();
 
@@ -133,15 +136,30 @@ public class MGameEngine  {
 		
 		clientSetup = new ClientConnectionSetUp(ip);
 		receiver = new Receiver();
-		//send receiving port to server, so server knows where to send date
-		clientSetup.connectToServer(receiver.getPortReceive());
 		
-		sending = new Sender(clientSetup.sendPort, ip);
-
-		sending.start();
-		receiver.start();
+//		//send receiving port to server, so server knows where to send date
+//		clientSetup.connectToServer(receiver.getPortReceive());
+//		
+//		sending = new Sender(clientSetup.sendPort, ip);
+//
+//		sending.start();
+//		receiver.start();
 
 	}
+	
+	public void run()
+	{
+		//send receiving port to server, so server knows where to send date
+				clientSetup.connectToServer(receiver.getPortReceive());
+				
+				sending = new Sender(clientSetup.sendPort, ip);
+
+				sending.start();
+				receiver.start();
+	
+	}
+	
+	
 //	
 //	// loop through ready if gameState is READY
 //		private void updateReady(){
