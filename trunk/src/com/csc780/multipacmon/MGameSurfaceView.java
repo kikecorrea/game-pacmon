@@ -641,13 +641,13 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 //		String x[]=mgameEngine.getScores();
 //		String  lives[]=mgameEngine.checkLives();
 		
-		canvas.drawText("you:", blockSize, blockSize*24, paint);
-		canvas.drawText("enemy:", blockSize, blockSize*25, paint);
-		canvas.drawText("score:" + mgameEngine.receiver.p2score, blockSize*3, blockSize*24, paint);
-		canvas.drawText("score:" + mgameEngine.receiver.p1score, blockSize*3, blockSize*25, paint);
-		canvas.drawText("lives:" + mgameEngine.lives2, blockSize*7, blockSize*24, paint);
-		canvas.drawText("lives:" + mgameEngine.lives, blockSize*7, blockSize*25, paint);
-		canvas.drawText("Time:"+String.valueOf(mgameEngine.receiver.timer), blockSize*13, blockSize*24, paint);
+		canvas.drawText("you:", blockSize, blockSize*23 + 1, paint);
+		canvas.drawText("enemy:", blockSize, blockSize*24 + 5, paint);
+		canvas.drawText("score:" + mgameEngine.receiver.p2score, blockSize*3, blockSize*23 + 1, paint);
+		canvas.drawText("score:" + mgameEngine.receiver.p1score, blockSize*3, blockSize*24 + 5, paint);
+		canvas.drawText("lives:" + mgameEngine.lives2, blockSize*6, blockSize*23 + 1, paint);
+		canvas.drawText("lives:" + mgameEngine.lives, blockSize*6, blockSize*24 + 5, paint);
+		canvas.drawText("Time:"+String.valueOf(mgameEngine.receiver.timer), blockSize*9, blockSize*23 + 1, paint);
 		
 //		canvas.drawText(x[0], 20, 736, paint);
 //		canvas.drawText(lives[0], 150, 736, paint);
