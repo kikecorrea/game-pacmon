@@ -112,10 +112,10 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     		try{
     			cv = new ContentValues();
     			cv.put("id", i);
-    			cv.put("stage", i);
-    			cv.put("finish", 0); 
-    			//levelDB.update("level", cv, "id=" + i, null);
-    			levelDB.insertOrThrow("level", null, cv);
+    			//cv.put("stage", i);
+    			cv.put("finish", 1); 
+    			levelDB.update("level", cv, "id=" + i, null);
+    			//levelDB.insertOrThrow("level", null, cv);
     		}catch(SQLException e){
     			//e.printStackTrace();
     		}
