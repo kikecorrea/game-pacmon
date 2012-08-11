@@ -64,6 +64,8 @@ public class MGameActivity extends Activity implements SensorEventListener{
         
 	       
         mgameEngine = new MGameEngine(soundEngine, ip);
+        mgameEngine.start();
+        
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
         int height = display.getHeight();
