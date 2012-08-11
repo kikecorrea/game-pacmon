@@ -3,6 +3,7 @@ package com.csc780.clientmultiserver;
 import java.util.ArrayList;
 
 import com.csc780.pacmon.R;
+import com.csc780.pacmon.SoundEngine;
 import com.csc780.pacmon.R.drawable;
 
 import android.app.Activity;
@@ -36,6 +37,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
+	private final static String textOver = "GAME OVER", textCongrats = "Congratulations"
+			, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
 	
 	
 	private SurfaceHolder surfaceHolder;
@@ -59,11 +62,33 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	//maze info
 	private int[][] mazeArray;
 	private int mazeRow, mazeColumn;
-	private int blockSize;
+	private float blockSize;
 	
 	private Paint paint, paint2, paint3;
 	
 	private Context mContext;
+	
+	private SoundEngine soundEngine; // sound manager
+	private boolean isPlayOn;
+	private Rect[] pSrcUp = new Rect[3];
+	private Rect[] pSrcDown = new Rect[3];
+	private Rect[] pSrcLeft = new Rect[3];
+	private Rect[] pSrcRight = new Rect[3];
+	private Rect[] pDst = new Rect[12];
+	
+	private Rect[] gSrcUp = new Rect[2];
+	private Rect[] gSrcDown = new Rect[2];
+	private Rect[] gSrcLeft = new Rect[2];
+	private Rect[] gSrcRight = new Rect[2];
+	private Rect[] gDst = new Rect[8];
+	private Rect srcRect;
+	private Rect dstRect;
+	
+	
+	private float screenWidth;
+	private float screenHeight;
+	private float blockScaleFactor;
+	private float sentenceWidth, drawTextStartingX;
 	
 	//private int gameState;
 	
@@ -77,7 +102,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 
 	
-	public CMGameSurfaceView(Context context, CMGameEngine gameEngine, int width, int height) {
+	public CMGameSurfaceView(Context context, CMGameEngine gameEngine, int sWidth, int sHeight) {
 		super(context);
 		
 		this.cmgameEngine = gameEngine;
@@ -90,7 +115,11 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		
 		mContext = context;
 		
-		blockSize = 32;  // size of block
+		screenWidth = sWidth;
+		screenHeight = sHeight;
+		
+		blockSize = screenWidth / 15.f;  // size of block
+		blockScaleFactor = blockSize / 32.f;  // scale factor for block
 		
 		mazeArray = gameEngine.getMazeArray();
 		mazeRow = gameEngine.getMazeRow();
@@ -98,6 +127,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 		
 		initBitmap();  // init all Bitmap and its components
+		initSprite();
 
 		ghosts = gameEngine.ghosts;
 		
@@ -122,18 +152,49 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize(24);
+		paint.setTextSize((int)(blockSize/(1.5)));  // make smaller than 1.5 size of block
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
 		paint2.setColor(Color.WHITE);
-		paint2.setTextSize(45);
+		paint2.setTextSize(blockSize*2); // 2 times the size of block width
 		
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
 		paint3.setColor(Color.WHITE);
 		paint3.setTextSize(40);
 			
+	}
+	
+	private void initSprite(){
+		pSrcUp[0] = new Rect(0, 0, 32, 32);
+		pSrcUp[1] = new Rect(32, 0, 64, 32);
+		pSrcUp[2] = new Rect(64, 0, 96, 32);
+		
+		pSrcDown[0] = new Rect(0, 32, 32, 64);
+		pSrcDown[1] = new Rect(32, 32, 64, 64);
+		pSrcDown[2] = new Rect(64, 32, 96, 64);
+		
+		pSrcRight[0] = new Rect(0, 64, 32, 96);
+		pSrcRight[1] = new Rect(32, 64, 64, 96);
+		pSrcRight[2] = new Rect(64, 64, 96, 96);
+		
+		pSrcLeft[0] = new Rect(0, 96, 32, 128);
+		pSrcLeft[1] = new Rect(32, 96, 64, 128);
+		pSrcLeft[2] = new Rect(64, 96, 96, 128);
+		
+		gSrcUp[0] = new Rect(0, 0, 32, 32);
+		gSrcUp[1] = new Rect(32, 0, 64, 32);
+		
+		gSrcDown[0] = new Rect(0, 32, 32, 64);
+		gSrcDown[1] = new Rect(32, 32, 64, 64);
+		
+		gSrcRight[0] = new Rect(0, 64, 32, 96);
+		gSrcRight[1] = new Rect(32, 64, 64, 96);
+		
+		gSrcLeft[0] = new Rect(0, 96, 32, 128);
+		gSrcLeft[1] = new Rect(32, 96, 64, 128);
+		
 	}
 	
 	//thread to update and draw. Game loop
@@ -224,8 +285,9 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateDisconnected(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		canvas.drawText("Connection Error", 50, 350, paint2);
-		
+		sentenceWidth = paint2.measureText("Connection Error");
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint2);
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
 			Thread.sleep(4000);
@@ -260,8 +322,9 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas);
 					drawScore(canvas);
 			
- 					canvas.drawText("ready in " + cmgameEngine.getReadyCountDown(), 130, 350, paint2);	
-	
+ 					sentenceWidth = paint2.measureText("ready in " + cmgameEngine.getReadyCountDown());
+ 				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+ 					canvas.drawText("Ready in " + cmgameEngine.getReadyCountDown(), drawTextStartingX, screenHeight/2, paint2);
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
@@ -348,11 +411,18 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 			whoDied="you died";
 		}
 		
-		String [] scores=cmgameEngine.getScores();
-		canvas.drawText("GAME OVER", 110, 350, paint2);
-		canvas.drawText(whoWon, 140, 400, paint2);
-		canvas.drawText(whoDied, 140, 450, paint3);
-
+		//measure the text then draw it at center
+		sentenceWidth = paint2.measureText(textOver);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(textOver, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		
+		sentenceWidth = paint2.measureText(whoWon);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoWon, drawTextStartingX, screenHeight/2, paint2);
+		
+		sentenceWidth = paint2.measureText(whoDied);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoDied, drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -378,8 +448,17 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	
 		String [] scores=cmgameEngine.getScores();
 		
-		canvas.drawText("score(you):" + cmgameEngine.playerScore, 100, 400, paint3);
-		canvas.drawText("score(enemy):" + cmgameEngine.playerScore2, 92, 450, paint3);
+		sentenceWidth = paint2.measureText(whoWon);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		
+		sentenceWidth = paint2.measureText("score(you):" + cmgameEngine.playerScore);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("score(you):" + cmgameEngine.playerScore, drawTextStartingX , screenHeight/2, paint2);
+		
+		sentenceWidth = paint2.measureText("score(enemy):" + cmgameEngine.playerScore2);
+	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+		canvas.drawText("score(enemy):" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -398,85 +477,76 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		mCurrentFrame = ++mCurrentFrame % 2;
 		for (int i = 0; i < cmgameEngine.ghosts.size(); i++) {
 			int direction = ghosts.get(i).getDir();
-			int n;
-			if (direction == UP)	n = 0;
-			else if (direction == DOWN)		n = 1;
-			else if (direction == RIGHT)		n = 2;
-			else 		n = 3;
+			if (direction == UP)	srcRect = gSrcUp[mCurrentFrame];
+			else if (direction == DOWN)		srcRect = gSrcDown[mCurrentFrame];
+			else if (direction == RIGHT)		srcRect = gSrcRight[mCurrentFrame];
+			else 	srcRect = gSrcLeft[mCurrentFrame];	
 			
-			int srcY = n * blockSize;
-			int srcX = mCurrentFrame * blockSize;
+			int gX = Math.round(ghosts.get(i).getX() * blockScaleFactor);
+			int gY = Math.round(ghosts.get(i).getY() * blockScaleFactor);
 			
-			int gX = ghosts.get(i).getX();
-			int gY = ghosts.get(i).getY();
-			Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-			Rect dst = new Rect(gX, gY, gX + blockSize, gY + blockSize);
+			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
-			if (i == 0)
-				canvas.drawBitmap(bluey_img, src, dst, null);
+			if (i == 3)
+				canvas.drawBitmap(violet_img, srcRect, dst, null);
 			else if (i == 1)
-				canvas.drawBitmap(redy_img, src, dst, null);
+				canvas.drawBitmap(redy_img, srcRect, dst, null);
 			else if (i == 2)
-				canvas.drawBitmap(yellowy_img, src, dst, null);
-			else if (i==3)
-				canvas.drawBitmap(violet_img, src, dst, null);
+				canvas.drawBitmap(yellowy_img, srcRect, dst, null);
+			else if ( i==0 )
+				canvas.drawBitmap(bluey_img, srcRect, dst, null);
 		}
 	}
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas) {
 		currentFrame = ++currentFrame % 3;
-		int n;
+		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
-		if (direction == UP)	n = 0;
-		else if (direction == DOWN)		n = 1;
-		else if (direction == RIGHT)		n = 2;
-		else 		n = 3;
-		
-		int srcY = n * blockSize;
-		int srcX = currentFrame * blockSize;
-		int pX = pacmon.getpX();
-		int pY = pacmon.getpY();
-		
-		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-		canvas.drawBitmap(pac_img, src, dst, null);
+		if (direction == UP)	srcRect = pSrcUp[currentFrame];
+		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
+		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
+		else 	srcRect = pSrcLeft[currentFrame];	
+	
+		int pX = Math.round(pacmon.getpX() * blockScaleFactor);
+		int pY = Math.round(pacmon.getpY() * blockScaleFactor);
+
+		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
+		canvas.drawBitmap(pac_img, srcRect, dst, null);
 		
 	}
 	private void drawPacmon2(Canvas canvas) {
 		currentFrame = ++currentFrame % 3;
-		int n;
+		
 		int direction = pacmon2.getDir(); // get current direction of pacmon
 		
-		if (direction == UP)	n = 0;
-		else if (direction == DOWN)		n = 1;
-		else if (direction == RIGHT)		n = 2;
-		else 		n = 3;
+		if (direction == UP)	srcRect = pSrcUp[currentFrame];
+		else if (direction == DOWN)		srcRect = pSrcDown[currentFrame];
+		else if (direction == RIGHT)		srcRect = pSrcRight[currentFrame];
+		else 	srcRect = pSrcLeft[currentFrame];	
+	
+		int pX = Math.round(pacmon2.getpX() * blockScaleFactor);
+		int pY = Math.round(pacmon2.getpY() * blockScaleFactor);
 
-		int srcY = n * blockSize;
-		int srcX = currentFrame * blockSize;
-		int pX = pacmon2.getpX();
-		int pY = pacmon2.getpY();
+		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
+		canvas.drawBitmap(pac_img2, srcRect, dst, null);
 		
-		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-		canvas.drawBitmap(pac_img2, src, dst, null);
 		
 	}
 	
 	// draw score
 	public void drawScore(Canvas canvas){
 
-		String  lives[]=cmgameEngine.getLives();
-		canvas.drawText("you:", 20, 736, paint);
-		canvas.drawText("enemy:", 20, 760, paint);
-		canvas.drawText("score:" +String.valueOf(cmgameEngine.playerScore), 120, 736, paint);
-		canvas.drawText("score:"+String.valueOf(cmgameEngine.playerScore2), 120, 760, paint);
-		canvas.drawText("lives:" + String.valueOf(cmgameEngine.lives), 230, 736, paint);
-		canvas.drawText("lives:" + String.valueOf(cmgameEngine.lives2), 230, 760, paint);
-		canvas.drawText("Time:" + cmgameEngine.getTimer(), 350, 749, paint);
-		
+		String  lives[]= cmgameEngine.getLives();
+
+		canvas.drawText("you:", blockSize, blockSize*23 + 1, paint);
+		canvas.drawText("enemy:", blockSize, blockSize*24 + 5, paint);
+		canvas.drawText("score:" + cmgameEngine.playerScore, blockSize*3, blockSize*23 + 1, paint);
+		canvas.drawText("score:" + cmgameEngine.playerScore2, blockSize*3, blockSize*24 + 5, paint);
+		canvas.drawText("lives:" + cmgameEngine.lives, blockSize*6, blockSize*23 + 1, paint);
+		canvas.drawText("lives:" + cmgameEngine.lives2, blockSize*6, blockSize*24 + 5, paint);
+		canvas.drawText("Time:"+String.valueOf(cmgameEngine.getTimer()), blockSize*9, blockSize*23 + 1, paint);
 	}
 	
 
