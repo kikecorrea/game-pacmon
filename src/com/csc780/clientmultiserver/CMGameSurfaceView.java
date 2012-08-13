@@ -89,6 +89,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private float screenHeight;
 	private float blockScaleFactor;
 	private float sentenceWidth, drawTextStartingX;
+	private String drawS;
 	
 	//private int gameState;
 	
@@ -152,7 +153,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		paint = new Paint();
 		paint.setAntiAlias(true);
 		paint.setColor(Color.WHITE);
-		paint.setTextSize((int)(blockSize/(1.5)));  // make smaller than 1.5 size of block
+		paint.setTextSize((int)(blockSize * .6));  // make smaller than 1.5 size of block
 		
 		paint2 = new Paint();
 		paint2.setAntiAlias(true);
@@ -403,12 +404,12 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		String whoWon="";
 		String whoDied="";
 		if(cmgameEngine.lives > cmgameEngine.lives2){
-			whoWon="you Won";
-			whoDied="enemy died";
+			whoWon="You won";
+			whoDied="Enemy lost";
 		}
 		else{
-			whoWon="you lose";
-			whoDied="you died";
+			whoWon="You lost";
+			whoDied="Enemy won";
 		}
 		
 		//measure the text then draw it at center
@@ -445,20 +446,18 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 			whoWon="You Lose";
 		
 		canvas.drawText(whoWon, 130, 350, paint2);
-	
-		String [] scores=cmgameEngine.getScores();
-		
+			
 		sentenceWidth = paint2.measureText(whoWon);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
 		
 		sentenceWidth = paint2.measureText("score(you):" + cmgameEngine.playerScore);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("score(you):" + cmgameEngine.playerScore, drawTextStartingX , screenHeight/2, paint2);
+		canvas.drawText("your score:" + cmgameEngine.playerScore, drawTextStartingX , screenHeight/2, paint2);
 		
 		sentenceWidth = paint2.measureText("score(enemy):" + cmgameEngine.playerScore2);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("score(enemy):" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
+		canvas.drawText("enemy's score:" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -485,16 +484,16 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 			int gX = Math.round(ghosts.get(i).getX() * blockScaleFactor);
 			int gY = Math.round(ghosts.get(i).getY() * blockScaleFactor);
 			
-			Rect dst = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
+			dstRect = new Rect(gX, gY, (int)(gX + blockSize), (int) (gY + blockSize));
 			
 			if (i == 3)
-				canvas.drawBitmap(violet_img, srcRect, dst, null);
+				canvas.drawBitmap(violet_img, srcRect, dstRect, null);
 			else if (i == 1)
-				canvas.drawBitmap(redy_img, srcRect, dst, null);
+				canvas.drawBitmap(redy_img, srcRect, dstRect, null);
 			else if (i == 2)
-				canvas.drawBitmap(yellowy_img, srcRect, dst, null);
+				canvas.drawBitmap(yellowy_img, srcRect, dstRect, null);
 			else if ( i==0 )
-				canvas.drawBitmap(bluey_img, srcRect, dst, null);
+				canvas.drawBitmap(bluey_img, srcRect, dstRect, null);
 		}
 	}
 
@@ -512,8 +511,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		int pX = Math.round(pacmon.getpX() * blockScaleFactor);
 		int pY = Math.round(pacmon.getpY() * blockScaleFactor);
 
-		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
-		canvas.drawBitmap(pac_img, srcRect, dst, null);
+		dstRect = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
+		canvas.drawBitmap(pac_img, srcRect, dstRect, null);
 		
 	}
 	private void drawPacmon2(Canvas canvas) {
@@ -529,8 +528,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		int pX = Math.round(pacmon2.getpX() * blockScaleFactor);
 		int pY = Math.round(pacmon2.getpY() * blockScaleFactor);
 
-		Rect dst = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
-		canvas.drawBitmap(pac_img2, srcRect, dst, null);
+		dstRect = new Rect(pX, pY, (int)(pX + blockSize), (int) (pY + blockSize));
+		canvas.drawBitmap(pac_img2, srcRect, dstRect, null);
 		
 		
 	}
@@ -540,12 +539,10 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 		String  lives[]= cmgameEngine.getLives();
 
-		canvas.drawText("you:", blockSize, blockSize*23 + 1, paint);
-		canvas.drawText("enemy:", blockSize, blockSize*24 + 5, paint);
-		canvas.drawText("score:" + cmgameEngine.playerScore, blockSize*3, blockSize*23 + 1, paint);
-		canvas.drawText("score:" + cmgameEngine.playerScore2, blockSize*3, blockSize*24 + 5, paint);
-		canvas.drawText("lives:" + cmgameEngine.lives, blockSize*6, blockSize*23 + 1, paint);
-		canvas.drawText("lives:" + cmgameEngine.lives2, blockSize*6, blockSize*24 + 5, paint);
+		drawS = "Your score:    " + cmgameEngine.playerScore + " Lives:" + cmgameEngine.lives;
+		canvas.drawText(drawS, blockSize, blockSize*23 + 1, paint);
+		drawS = "Enemy's score: " + cmgameEngine.playerScore2 + " Lives:" + cmgameEngine.lives2;
+		canvas.drawText(drawS, blockSize, blockSize*24 + 5, paint);
 		canvas.drawText("Time:"+String.valueOf(cmgameEngine.getTimer()), blockSize*9, blockSize*23 + 1, paint);
 	}
 	
