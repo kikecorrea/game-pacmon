@@ -556,10 +556,10 @@ public class CMGameEngine implements Runnable {
                 boxX = gX / blockSize;
                 boxY = gY / blockSize;
 
-                //check if at crossing using directional maze and update new direction
+                //check if at crossing using directional maze and update new direction smart
                 crossing = directionMaze[boxY][boxX];
                 if (crossing > 0) {
-                    if (timer % 4 != i) {
+                    if (timer % 9 == 0) {
                         if (crossing == 1) {
                             moveGhostSmart2(RD, ghosts.get(i));
                         }
