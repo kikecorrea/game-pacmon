@@ -904,6 +904,7 @@ public class CMGameEngine implements Runnable {
 			}
 		}
 		
+		this.tickCounter++;
 		timeDiff += System.currentTimeMillis() - beginTime;
 		//wait for 1.2 second
 		if(timeDiff >= 1000){

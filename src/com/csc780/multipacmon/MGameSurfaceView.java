@@ -637,11 +637,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	public void drawScore(Canvas canvas){
 //		String x[]=mgameEngine.getScores();
 //		String  lives[]=mgameEngine.checkLives();
-		drawS = "Your score:    " + mgameEngine.receiver.p2score + " Lives:" + mgameEngine.lives;
+		drawS = "Your score        :" + mgameEngine.receiver.p2score + " Lives:" + mgameEngine.lives2;
 		canvas.drawText(drawS, blockSize, blockSize*23 + 1, paint);
-		drawS = "Enemy's score: " + mgameEngine.receiver.p1score + " Lives:" + mgameEngine.lives2;
+		drawS = "Enemy's score  :" + mgameEngine.receiver.p1score + " Lives:" + mgameEngine.lives;
 		canvas.drawText(drawS, blockSize, blockSize*24 + 5, paint);
-		canvas.drawText("Time: "+String.valueOf(mgameEngine.receiver.timer), blockSize*9, blockSize*23 + 1, paint);
+		canvas.drawText("Time: "+String.valueOf(mgameEngine.receiver.timer), blockSize*9+5, blockSize*23 + 1, paint);
 			
 	}
 	
