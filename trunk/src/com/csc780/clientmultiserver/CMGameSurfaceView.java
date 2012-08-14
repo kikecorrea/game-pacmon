@@ -539,11 +539,11 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 		String  lives[]= cmgameEngine.getLives();
 
-		drawS = "Your score:    " + cmgameEngine.playerScore + " Lives:" + cmgameEngine.lives;
+		drawS = "Your score        :" + cmgameEngine.playerScore + " Lives:" + cmgameEngine.lives;
 		canvas.drawText(drawS, blockSize, blockSize*23 + 1, paint);
-		drawS = "Enemy's score: " + cmgameEngine.playerScore2 + " Lives:" + cmgameEngine.lives2;
+		drawS = "Enemy's score  :" + cmgameEngine.playerScore2 + " Lives:" + cmgameEngine.lives2;
 		canvas.drawText(drawS, blockSize, blockSize*24 + 5, paint);
-		canvas.drawText("Time:"+String.valueOf(cmgameEngine.getTimer()), blockSize*9, blockSize*23 + 1, paint);
+		canvas.drawText("Time:"+String.valueOf(cmgameEngine.getTimer()), blockSize*9+5, blockSize*23 + 1, paint);
 	}
 	
 
