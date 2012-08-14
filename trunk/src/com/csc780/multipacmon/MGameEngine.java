@@ -134,9 +134,9 @@ public class MGameEngine extends Thread  {
 		
 		isRunning = true;
 		
-		clientSetup = new ClientConnectionSetUp(ip);
-		receiver = new Receiver();
-		
+//		clientSetup = new ClientConnectionSetUp(ip);
+//		receiver = new Receiver();
+//		
 //		//send receiving port to server, so server knows where to send date
 //		clientSetup.connectToServer(receiver.getPortReceive());
 //		
@@ -149,14 +149,27 @@ public class MGameEngine extends Thread  {
 	
 	public void run()
 	{
+		clientSetup = new ClientConnectionSetUp(ip);
+		receiver = new Receiver();
+		
 		//send receiving port to server, so server knows where to send date
-				clientSetup.connectToServer(receiver.getPortReceive());
+		clientSetup.connectToServer(receiver.getPortReceive());
 				
-				sending = new Sender(clientSetup.sendPort, ip);
+		sending = new Sender(clientSetup.sendPort, ip);
 
-				sending.start();
-				receiver.start();
-	
+		sending.start();
+		receiver.start();
+		
+		//wait for thread to die
+        try {
+			sending.join();
+		    receiver.join();
+		    
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       
 	}
 	
 	
@@ -391,22 +404,31 @@ public class MGameEngine extends Thread  {
 		}
 	}
 	
-	public int getCountDown()
-	{
-	
-		if(receiver.countDown>80)
-			return 3;
-		else if(receiver.countDown<=80 && receiver.countDown>=40)
-		{
-			return 2;
-		}
-		else if(receiver.countDown<40 && receiver.countDown>1)
-			return 1;
-			
-		else
-			return 0;
-	
-	}
+//	public int getCountDown()
+//	{
+//		
+//		if(receiver.status==READY)
+//		{
+//			
+//		}
+//		else if(receiver.status==RUNNING)
+//		{
+//			
+//		}
+//	
+////		if(receiver.countDown>80)
+////			return 3;
+////		else if(receiver.countDown<=80 && receiver.countDown>=40)
+////		{
+////			return 2;
+////		}
+////		else if(receiver.countDown<40 && receiver.countDown>1)
+////			return 1;
+////			
+////		else
+////			return 0;
+//	
+//	}
 	
 //	public String[] getScores()
 //	{

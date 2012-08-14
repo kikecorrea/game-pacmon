@@ -62,7 +62,6 @@ public class MGameActivity extends Activity implements SensorEventListener{
 //	       multicastLock.acquire();
         
         
-	       
         mgameEngine = new MGameEngine(soundEngine, ip);
         mgameEngine.start();
         

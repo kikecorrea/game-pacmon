@@ -230,9 +230,11 @@ public class Receiver extends Thread {
 		{
 			try {
 				receivePacket = new DatagramPacket(receiveData, receiveData.length);    
-				clientSocket.setSoTimeout(10000);
+			//	clientSocket.setSoTimeout(10000);
+			
 				try {
-			          clientSocket.receive(receivePacket); 
+			          clientSocket.receive(receivePacket);
+		
 			          
 			          bais=new ByteArrayInputStream(receivePacket.getData());
 			          //String receiveData =   new String(receivePacket.getData()); 

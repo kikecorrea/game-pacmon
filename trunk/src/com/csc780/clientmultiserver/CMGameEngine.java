@@ -48,7 +48,7 @@ public class CMGameEngine implements Runnable {
     private int checkCounter = 0;
     //private ClientConnection client=new ClientConnection();
     private int pacCounter = 0;
-    volatile protected int tickCounter = -120;
+    volatile protected int tickCounter = -60;
     //maze data
     public int mazeData1, mazeData2;
     //timer
@@ -754,6 +754,9 @@ public class CMGameEngine implements Runnable {
         for (int i = 0; i < ghosts.size(); i++) {
             ghosts.get(i).reset();
         }
+        
+        soundEngine.stopMusic();
+		soundEngine.playDie();
 
         if (lives2 == 0) {
             gameState = GAMEOVER;
