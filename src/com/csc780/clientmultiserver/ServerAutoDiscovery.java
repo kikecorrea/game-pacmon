@@ -57,6 +57,7 @@ public class ServerAutoDiscovery extends Thread {
       String ipAddr="";
       boolean isRunning=true;
       int i=0;
+     // serverSocket.setSoTimeout(2000);
      
       while(i<1) 
         { 

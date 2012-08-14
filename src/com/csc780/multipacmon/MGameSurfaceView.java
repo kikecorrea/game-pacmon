@@ -355,11 +355,11 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas);
 					drawScore(canvas);
 					
- 					sentenceWidth = paint2.measureText("ready in " + mgameEngine.getCountDown());
+ 					sentenceWidth = paint2.measureText("Get ready" );
  				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
- 					canvas.drawText("Ready in " + mgameEngine.getCountDown(), drawTextStartingX, screenHeight/2, paint2);
+ 					canvas.drawText("Get ready", drawTextStartingX, screenHeight/2, paint2);
  					
- 					if(mgameEngine.getCountDown()==0)
+ 					if(mgameEngine.receiver.status==RUNNING)
 					{  
  						mgameEngine.setGameState(RUNNING); }
 //					try {

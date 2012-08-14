@@ -323,9 +323,9 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 					drawGhost(canvas);
 					drawScore(canvas);
 			
- 					sentenceWidth = paint2.measureText("ready in " + cmgameEngine.getReadyCountDown());
+ 					sentenceWidth = paint2.measureText("Get ready");
  				    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
- 					canvas.drawText("Ready in " + cmgameEngine.getReadyCountDown(), drawTextStartingX, screenHeight/2, paint2);
+ 					canvas.drawText("Get ready", drawTextStartingX, screenHeight/2, paint2);
 					try {
 						Thread.sleep(25);
 					} catch (InterruptedException e) {
