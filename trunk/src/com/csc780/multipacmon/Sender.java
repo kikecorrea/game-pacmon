@@ -91,7 +91,7 @@ public class Sender extends Thread {
 		      try {
 				clientSocket.send(sendPacket);
 			} catch (IOException e) {
-				System.out.println("Error in sending socket:: Sender.java, multipacmon");
+//				System.out.println("Error in sending socket:: Sender.java, multipacmon");
 				e.printStackTrace();
 			}
 		

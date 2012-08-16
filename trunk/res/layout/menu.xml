@@ -16,7 +16,7 @@
         />
 
     <Button
-        android:paddingTop="20px"
+        android:paddingTop="10px"
         android:id="@+id/bSingle"
         style="@style/menu_button"
         android:text="@string/singleplayer"

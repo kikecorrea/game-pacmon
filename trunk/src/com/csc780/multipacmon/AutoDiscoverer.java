@@ -106,8 +106,8 @@ public class AutoDiscoverer extends Thread{
 	          }
 	        catch (SocketTimeoutException ste)
 	        {
-	           System.out.println ("Timeout Occurred: Packet assumed lost, AutoDiscovery.java multipacmon");
-	           System.out.println("Socket exception occured");
+//	           System.out.println ("Timeout Occurred: Packet assumed lost, AutoDiscovery.java multipacmon");
+//	           System.out.println("Socket exception occured");
 	        } 
 	      }
 	   

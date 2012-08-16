@@ -153,6 +153,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	@Override
 	public void finish() {
 		// TODO Auto-generated method stub
+		mySensorManager.unregisterListener(this);
 		soundEngine.endMusic();
 		super.finish();
 	}

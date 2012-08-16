@@ -385,7 +385,6 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 					}
 				}
 				
-			//	System.out.println("finish drawing");
 			}
 		} finally {
 			// in case of an exception the surface is not left in
@@ -400,6 +399,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
 		
+		drawScore(canvas); // draw score and lives
 		
 		String whoWon="";
 		String whoDied="";
@@ -425,6 +425,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText(whoDied, drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
 		
+		
+		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
 			Thread.sleep(6000);
@@ -438,6 +440,9 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
+		
+		drawScore(canvas); // draw score and lives
+		
 		isRunning = false;
 		String whoWon="";
 		if(cmgameEngine.playerScore > cmgameEngine.playerScore2)
@@ -456,6 +461,8 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		sentenceWidth = paint3.measureText("enemy's score:" + cmgameEngine.playerScore2);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText("enemy's score:" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*2, paint3);
+		
+	
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -537,9 +544,9 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 		String  lives[]= cmgameEngine.getLives();
 
-		drawS = "Your score        :" + cmgameEngine.playerScore + " Lives:" + cmgameEngine.lives;
+		drawS = "Your score        :" + cmgameEngine.playerScore + "   Lives:" + cmgameEngine.lives;
 		canvas.drawText(drawS, blockSize, blockSize*23 + 1, paint);
-		drawS = "Enemy's score  :" + cmgameEngine.playerScore2 + " Lives:" + cmgameEngine.lives2;
+		drawS = "Enemy's score  :" + cmgameEngine.playerScore2 + "   Lives:" + cmgameEngine.lives2;
 		canvas.drawText(drawS, blockSize, blockSize*24 + 5, paint);
 		canvas.drawText("Time:"+String.valueOf(cmgameEngine.getTimer()), blockSize*9+5, blockSize*23 + 1, paint);
 	}

@@ -126,7 +126,6 @@ public class GameEngine implements Runnable {
 		pX = pacmon.getpX();
 		pY = pacmon.getpY();
 		
-		System.out.println("PX::" + pX + "  PY::" + pY);
 		XmodW = pX % blockSize;
 		YmodH = pY % blockSize;
 		boolean movable = true;

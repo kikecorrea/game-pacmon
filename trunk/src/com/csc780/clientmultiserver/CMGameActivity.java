@@ -188,6 +188,7 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	
 	@Override
 	public void finish() {
+		mySensorManager.unregisterListener(this);
 		this.htsKill = true;
 		soundEngine.endMusic();
 
