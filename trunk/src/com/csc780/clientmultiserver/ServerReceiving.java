@@ -41,6 +41,8 @@ public class ServerReceiving extends Thread {
     public void DestroySocket()
     {
     	serverSocket.close();
+    	receiveData=null;
+    	receivePacket=null;
     }
     
     //sets the IPadress of the client

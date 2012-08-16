@@ -105,6 +105,10 @@ public class Receiver extends Thread {
 	{
 		this.isRunning=false;
 		this.clientSocket.close();
+		receivePacket=null;
+		bais=null;
+		dais=null;
+		receiveData=null;
 	}
 	
 	public void addQue(DataInputStream dais, int length)
