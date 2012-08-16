@@ -6,6 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,8 +44,14 @@ public class ServerReceiving extends Thread {
     }
     
     //sets the IPadress of the client
-    public void setPlayer(InetAddress address)
-    {  player1Address=address;   }
+    public void setPlayer(String address)
+    {  try {
+		player1Address=InetAddress.getByName(address);
+	   } catch (UnknownHostException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	   }   
+    }
 
     //sets the inpuDirection in gameEngine
     public void setDirection(String data, int length)

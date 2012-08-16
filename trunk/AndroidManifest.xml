@@ -88,6 +88,16 @@
             </intent-filter>
         </activity>
         
+          <activity
+            android:name="com.csc780.clientmultiserver.ServerStarted"
+            android:screenOrientation="portrait"
+            android:label="ServerStarted" >
+            <intent-filter>
+                <action android:name="com.csc780.clientmultiserver.SERVERSTARTED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
         <activity
             android:name=".AboutActivity"
             android:screenOrientation="portrait"

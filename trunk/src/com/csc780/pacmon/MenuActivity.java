@@ -13,7 +13,6 @@ public class MenuActivity extends Activity implements OnClickListener{
 	
 	private Button singlePlayButton;
 	private Button multiPlayButton;
-	private Button optionsButton;
 	private Button aboutButton;
 	private Button exitButton;
 	
@@ -28,7 +27,7 @@ public class MenuActivity extends Activity implements OnClickListener{
 		
 		singlePlayButton = (Button) findViewById(R.id.bSingle);
 		multiPlayButton = (Button) findViewById(R.id.bMulti);
-		optionsButton = (Button) findViewById(R.id.bOptions);
+	//	optionsButton = (Button) findViewById(R.id.bOptions);
 		aboutButton = (Button) findViewById(R.id.bAbout);
 		exitButton = (Button) findViewById(R.id.bExit);
 /*		
@@ -40,7 +39,7 @@ public class MenuActivity extends Activity implements OnClickListener{
 */	
 		singlePlayButton.setOnClickListener(this);
 		multiPlayButton.setOnClickListener(this);
-		optionsButton.setOnClickListener(this);
+//		optionsButton.setOnClickListener(this);
 		aboutButton.setOnClickListener(this);
 		exitButton.setOnClickListener(this);
 		
@@ -64,10 +63,10 @@ public class MenuActivity extends Activity implements OnClickListener{
 			startActivity(cmGame);
 			break;
 			
-		case R.id.bOptions:
-//			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
-//			startActivity(cmGame);
-			break;
+//		case R.id.bOptions:
+////			Intent cmGame = new Intent("com.csc780.pacmon.CLIENTORSERVER");
+////			startActivity(cmGame);
+//			break;
 			
 		case R.id.bAbout:
 			Intent iAbout = new Intent("com.csc780.pacmon.ABOUTACTIVITY");

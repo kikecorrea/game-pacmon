@@ -35,7 +35,7 @@ public class ClientOrServer extends Activity {
     		builder.setMessage("Choose to be Server or Client...").setCancelable(false)
     				.setPositiveButton("Server", new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int which) {
-    						Intent cmGame = new Intent("com.csc780.clientmultiserver.CMGAMEACTIVITY");
+    						Intent cmGame = new Intent("com.csc780.clientmultiserver.SERVERSTARTED");
     						startActivityForResult(cmGame,0);
     					}
     				})

@@ -1,5 +1,6 @@
 package com.csc780.clientmultiserver;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -15,7 +16,7 @@ import com.csc780.pacmon.SoundEngine;
  */
 public class CMGameEngine implements Runnable { 
 
-    private final static int MAX_FPS = 50;
+    private final static int MAX_FPS = 55;
     // maximum number of frames to be skipped
     private final static int MAX_FRAME_SKIPS = 5;
     // the frame period
@@ -62,9 +63,17 @@ public class CMGameEngine implements Runnable {
     int pPowerSpeed, pNormalSpeed;
     
     public SoundEngine soundEngine;
-
+    
+    //data for maze
+    volatile int p2eatcherry=0;
+    public MazeDataCompressor mazeDataCompressor;
+    
+    int key,value;
+    
     //Constructor create players, ghosts and Maze
     public CMGameEngine(SoundEngine se) {
+    	
+    	mazeDataCompressor = new MazeDataCompressor();
     	
     	soundEngine = se;
     	soundEngine.playReady();
@@ -450,7 +459,7 @@ public class CMGameEngine implements Runnable {
                 //check if at crossing using directional maze and update new direction
                 crossing = directionMaze[boxY][boxX];
                 if (crossing > 0) {
-                    if (timer % 4 != i) {
+                    if (timer % 9 == 0) {
                         if (crossing == 1) {
                             moveGhostSmart(RD, ghosts.get(i));
                         }
@@ -767,33 +776,25 @@ public class CMGameEngine implements Runnable {
     }
 
     // eat food ==> score and power ==> speed
-    private void eatFoodPower(int boxX, int boxY) {
-//        if (mazeArray[boxY][boxX] == 1) {
-//
-//            mazeData1 = (boxY * 100) + boxX;
-//
-//            mazeArray[boxY][boxX] = 5;
-//            playerScore++;   // increase score
-//            if (playerScore + playerScore2 == maze.getFoodCount()) {
-//                gameState = WON;
-//            }
-//            //maze.clearFood(boxX, boxY);
-//        }
-//
-//        else if (mazeArray[boxY][boxX] == 2) {
-//            
-//            mazeData1 = (boxY * 100) + boxX;
-//            mazeArray[boxY][boxX] = 5; // blank
-//        }
+    private synchronized void eatFoodPower(int boxX, int boxY) {
     	
     	if (mazeArray[boxY][boxX] == 1){
+    		key = (boxX*100) + boxY;
+    		
+    		//the hex value of the cherry eaten
+    		value = mazeDataCompressor.mazeMap.get(key);
+    		
+    		//the hex value of the number cherry in the row
+    		int temp = mazeDataCompressor.rowMap.get(boxY) & value;
+    		mazeDataCompressor.rowMap.put(boxY, temp);
+    		
     		mazeData1 = (boxY * 100) + boxX;
 			mazeArray[boxY][boxX] = 5;
 			playerScore++;   // increase score
 			
 			soundEngine.playEatCherry();
 				
-			if (playerScore == maze.getFoodCount()){
+			if (playerScore + playerScore2 == maze.getFoodCount()){
 				gameState = WON;
 				soundEngine.stopMusic();
 			}	
@@ -801,6 +802,16 @@ public class CMGameEngine implements Runnable {
 		
 		// eat power
 		if (mazeArray[boxY][boxX] == 2){
+			key = (boxX*100) + boxY;
+    		
+    		//the hex value of the cherry eaten
+    		value = mazeDataCompressor.mazeMap.get(key);
+    		
+    		//the hex value of the number cherry in the row
+    		int temp = mazeDataCompressor.rowMap.get(boxY) & value;
+    		mazeDataCompressor.rowMap.put(boxY, temp);
+    		
+			
 			mazeData1 = (boxY * 100) + boxX;
 			mazeArray[boxY][boxX] = 5;
 			this.powerMode1 = 5;// blank
@@ -808,31 +819,26 @@ public class CMGameEngine implements Runnable {
     }
     // eat food ==> score and power ==> speed
 
-    private void eatFoodPower2(int boxX, int boxY) {
-//        if (mazeArray[boxY][boxX] == 1) {
-//
-//            mazeData2 = (boxY * 100) + boxX;
-//
-//            mazeArray[boxY][boxX] = 5;
-//            playerScore2++;   // increase score
-//            if (playerScore2 + playerScore == maze.getFoodCount()) {
-//                gameState = WON;
-//            }
-//            //maze.clearFood(boxX, boxY);
-//        }
-//
-//        else if (mazeArray[boxY][boxX] == 2) {
-//            
-//            mazeData2 = (boxY * 100) + boxX;
-//            mazeArray[boxY][boxX] = 5; // blank
-//        }
+    private synchronized void eatFoodPower2(int boxX, int boxY) {
+
     	if (mazeArray[boxY][boxX] == 1){
+    		key = (boxX*100) + boxY;
+    		
+    		//the hex value of the cherry eaten
+    		value = mazeDataCompressor.mazeMap.get(key);
+    		
+    		//the hex value of the number cherry in the row
+    		int temp = mazeDataCompressor.rowMap.get(boxY) & value;
+    		mazeDataCompressor.rowMap.put(boxY, temp);
+    		
     		mazeData2 = (boxY * 100) + boxX;
 			mazeArray[boxY][boxX] = 5;
 			playerScore2++;   // increase score
 			
+			p2eatcherry=1;
+			
 			//soundEngine.playEatCherry();		
-			if (playerScore2 == maze.getFoodCount()){
+			if (playerScore2 + playerScore == maze.getFoodCount()){
 				gameState = WON;
 				//soundEngine.stopMusic();
 			}	
@@ -840,6 +846,16 @@ public class CMGameEngine implements Runnable {
 		
 		// eat power
 		if (mazeArray[boxY][boxX] == 2){
+			key = (boxX*100) + boxY;
+    		
+    		//the hex value of the cherry eaten
+    		value = mazeDataCompressor.mazeMap.get(key);
+    		
+    		//the hex value of the number cherry in the row
+    		int temp = mazeDataCompressor.rowMap.get(boxY) & value;
+    		mazeDataCompressor.rowMap.put(boxY, temp);
+    		
+    		
 			mazeData2 = (boxY * 100) + boxX;
 			mazeArray[boxY][boxX] = 5;
 			this.powerMode2 = 5;// blank

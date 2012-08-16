@@ -128,7 +128,7 @@ public class GameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -0.5F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < -1.0F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			gameEngine.setInputDir(UP);
 			//gameView.setDir(1);
 		}

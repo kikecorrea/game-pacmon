@@ -16,11 +16,11 @@ import android.widget.Button;
 
 
 public class LevelSelectActivity extends Activity implements OnClickListener{
-	private final int levelCount=3;
+	private final int levelCount=5;
 	private Button []btnlevel =new Button[levelCount];
 	private Button level2;
     private SQLiteDatabase levelDB;
-    private int [] levelStatus ={-5,-5,-5,-5};
+    private int [] levelStatus ={-5,-5,-5,-5,-5};
 	
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +31,14 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
 		btnlevel[0] = (Button) findViewById(R.id.bLevel1);
 		btnlevel[1] = (Button) findViewById(R.id.bLevel2);
 		btnlevel[2] = (Button) findViewById(R.id.bLevel3);
+		btnlevel[3] = (Button) findViewById(R.id.bLevel4);
+		btnlevel[4] = (Button) findViewById(R.id.bLevel5);
 		
 		btnlevel[0].setOnClickListener(this);
 		btnlevel[1].setOnClickListener(this);
 		btnlevel[2].setOnClickListener(this);
+		btnlevel[3].setOnClickListener(this);
+		btnlevel[4].setOnClickListener(this);
 		
 		btnlevel[0].setText("level ");
 		btnlevel[0].setTextColor(Color.GREEN);
@@ -42,6 +46,10 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
 		btnlevel[1].setTextColor(Color.GREEN);
 		btnlevel[2].setText("level ");
 		btnlevel[2].setTextColor(Color.GREEN);
+		btnlevel[3].setText("level ");
+		btnlevel[3].setTextColor(Color.GREEN);
+		btnlevel[4].setText("level ");
+		btnlevel[4].setTextColor(Color.GREEN);
 
 	}
     
@@ -65,6 +73,7 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
             if(status!=-1)
             {
             this.updateDB(level, status);
+     
             }
            
         }
@@ -89,8 +98,6 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     @Override
     protected void onResume()
     {
-    	super.onResume();
-   
     	levelDB = openOrCreateDatabase("level.db",SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE, null);
     	
     	levelDB.execSQL("create table if not exists level (id int primary key, stage int, finish int);");
@@ -112,10 +119,10 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     		try{
     			cv = new ContentValues();
     			cv.put("id", i);
-    			//cv.put("stage", i);
-    			cv.put("finish", 1); 
-    			levelDB.update("level", cv, "id=" + i, null);
-    			//levelDB.insertOrThrow("level", null, cv);
+    			cv.put("stage", i);
+    			cv.put("finish", 0); 
+    			//levelDB.update("level", cv, "id=" + i, null);
+    			levelDB.insertOrThrow("level", null, cv);
     		}catch(SQLException e){
     			//e.printStackTrace();
     		}
@@ -128,7 +135,7 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     		int id = c.getInt(0);
     		int level = c.getInt(1);
     		int finish = c.getInt(2);
-    		System.out.println("id::" + id + "  level::" +level + "  status::" + finish);
+    		//System.out.println("id::" + id + "  level::" +level + "  status::" + finish);
     		levelStatus[level-1] = finish;
     	}
     	c.close();
@@ -137,6 +144,8 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
      	levelDB.close();
      	
      	this.setLevel();
+     	
+    	super.onResume();
     }
     
     private void setLevel()
@@ -148,6 +157,7 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     			int temp=i+1;
     			btnlevel[i].setText("level " + temp);
     			btnlevel[i].setTextColor(Color.GREEN);
+    			btnlevel[i].setEnabled(true);
     		}
     		else{
 
@@ -181,6 +191,17 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
 			startActivityForResult(sGame3, 0);
 			break;
 		
+		case R.id.bLevel4: //finish the activity
+			Intent sGame4 = new Intent("com.csc780.pacmon.GAMEACTIVITY");
+			sGame4.putExtra("level", 4);
+			startActivityForResult(sGame4, 0);
+			break;
+			
+		case R.id.bLevel5: //finish the activity
+			Intent sGame5 = new Intent("com.csc780.pacmon.GAMEACTIVITY");
+			sGame5.putExtra("level", 5);
+			startActivityForResult(sGame5, 0);
+			break;
 		}
 	}
 

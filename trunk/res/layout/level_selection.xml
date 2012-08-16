@@ -28,5 +28,17 @@
         style="@style/menu_button"
 
         android:textColor="@drawable/button_text_color" />
+    
+     <Button
+        android:id="@+id/bLevel4"
+        style="@style/menu_button"
+
+        android:textColor="@drawable/button_text_color" />
+     
+          <Button
+        android:id="@+id/bLevel5"
+        style="@style/menu_button"
+
+        android:textColor="@drawable/button_text_color" />
 
 </LinearLayout>

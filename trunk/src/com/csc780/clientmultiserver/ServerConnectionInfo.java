@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,7 @@ public class ServerConnectionInfo {
     private boolean playerSet=false;
     public int firstPlayerData;
     public InetAddress firstIPAddress;
+    public AtomicBoolean clientReady;
     
     public void DestroySocket()
     {
@@ -31,8 +33,9 @@ public class ServerConnectionInfo {
     }
     
     //Constructor
-    public ServerConnectionInfo()
+    public ServerConnectionInfo(AtomicBoolean cr)
     {   
+       this.clientReady = cr;
        receiveData = new byte[24]; 
        sendData = new byte[24]; 
         
@@ -54,7 +57,8 @@ public class ServerConnectionInfo {
 
         firstPlayerData=x;
         this.firstIPAddress=receivePacket.getAddress();
-        return "1:9876";   //returns player1 idand port
+        
+        return "1:9876";   //returns player1 id and port
       
     }
 
@@ -79,6 +83,7 @@ public class ServerConnectionInfo {
            serverSocket.send(sendPacket);
          i++;
          }
+         clientReady.set(true);
        } catch (IOException ex) {
                 Logger.getLogger(ServerConnectionInfo.class.getName()).log(Level.SEVERE, null, ex);
        }     
