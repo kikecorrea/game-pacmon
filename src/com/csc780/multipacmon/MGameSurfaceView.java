@@ -442,6 +442,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
 		
+		drawScore(canvas); // draw score and lives
 //		String [] scores=mgameEngine.getScores();
 		
 		String whoWon="";
@@ -468,6 +469,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText(whoDied, drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
 		
+		
+
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
 			Thread.sleep(6000);
@@ -481,6 +484,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateWon(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
+		
+		drawScore(canvas); // draw score and lives
 		
 		String whoWon="";
 
@@ -503,6 +508,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText("enemy's score:" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2 + blockSize*2, paint3);
 		
+
+
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
@@ -637,9 +644,9 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	public void drawScore(Canvas canvas){
 //		String x[]=mgameEngine.getScores();
 //		String  lives[]=mgameEngine.checkLives();
-		drawS = "Your score        :" + mgameEngine.receiver.p2score + " Lives:" + mgameEngine.lives2;
+		drawS = "Your score        :" + mgameEngine.receiver.p2score + "   Lives:" + mgameEngine.lives2;
 		canvas.drawText(drawS, blockSize, blockSize*23 + 1, paint);
-		drawS = "Enemy's score  :" + mgameEngine.receiver.p1score + " Lives:" + mgameEngine.lives;
+		drawS = "Enemy's score  :" + mgameEngine.receiver.p1score + "   Lives:" + mgameEngine.lives;
 		canvas.drawText(drawS, blockSize, blockSize*24 + 5, paint);
 		canvas.drawText("Time: "+String.valueOf(mgameEngine.receiver.timer), blockSize*9+5, blockSize*23 + 1, paint);
 			

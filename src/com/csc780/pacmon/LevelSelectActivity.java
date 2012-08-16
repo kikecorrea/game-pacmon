@@ -139,7 +139,6 @@ public class LevelSelectActivity extends Activity implements OnClickListener{
     		levelStatus[level-1] = finish;
     	}
     	c.close();
-    	System.out.println("COUNT::" + c.getCount());
     	
      	levelDB.close();
      	

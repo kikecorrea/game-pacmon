@@ -1004,12 +1004,10 @@ public class CMGameEngine implements Runnable {
 //			}
         	
             gameState = RUNNING;
-            //   System.out.println("GO AWAY");
 
         }
 
         this.tickCounter++;
-        //System.out.println("THIS IS TICK updatREADY::"+ this.tickCounter);
 
     }
 

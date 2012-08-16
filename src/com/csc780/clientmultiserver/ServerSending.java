@@ -180,9 +180,7 @@ public class ServerSending extends Thread {
     		   sendData=this.baos.toByteArray();
 //    		   ByteArrayInputStream bais=new ByteArrayInputStream(sendData);
 //               DataInputStream dais=new DataInputStream(bais);
-//               System.out.println("XX::"+ dais.readInt());
-//               System.out.println("YY::"+ dais.readInt());
-//               System.out.println("ZZ::"+ dais.readInt());
+
                 sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); 
                
 			    serverSocket.send(sendPacket);
@@ -191,8 +189,7 @@ public class ServerSending extends Thread {
 				}
 
        }
-       
-       System.out.println("OUT IN SERVER SENDING");
+
     }
     
 }

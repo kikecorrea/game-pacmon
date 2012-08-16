@@ -86,7 +86,6 @@ public class ServerReceiving extends Thread {
  		 }
       }
       
-      System.out.println("out in RECEIVING SERVER");
     }  
 }
 

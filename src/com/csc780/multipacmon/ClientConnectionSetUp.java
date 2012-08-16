@@ -87,7 +87,7 @@ public class ClientConnectionSetUp {
 		 }
 		}
 		catch (IOException e) {
-			System.out.println("Error in sending socket:: ClientConnectionSetup.java");
+//			System.out.println("Error in sending socket:: ClientConnectionSetup.java");
 			e.printStackTrace();
 		}
 	}

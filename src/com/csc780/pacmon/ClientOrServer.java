@@ -32,7 +32,8 @@ public class ClientOrServer extends Activity {
         switch(id) {
         case SERVER_CLIENT:
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    		builder.setMessage("Choose to be Server or Client...").setCancelable(false)
+        	builder.setTitle("Choose as server or client...");
+    		builder.setMessage("note: both device should connected to the same WiFi").setCancelable(false)
     				.setPositiveButton("Server", new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int which) {
     						Intent cmGame = new Intent("com.csc780.clientmultiserver.SERVERSTARTED");
