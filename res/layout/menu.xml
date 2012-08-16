@@ -6,6 +6,7 @@
     android:background="@android:color/black" >
 
     <ImageView 
+              android:paddingTop="30px"
         android:contentDescription="MenuTitle"
         android:id="@+id/ivPacman"
         android:layout_gravity="center"
@@ -13,31 +14,30 @@
         android:layout_height="wrap_content"        
         android:src="@drawable/menu_title"
         />
-    <Button
-        android:id="@+id/bSingle"
-        style="@style/menu_button"
-        android:textColor="@drawable/button_text_color"
-        android:text="@string/singleplayer" />
-		
-    <Button
-        android:id="@+id/bMulti"
-        style="@style/menu_button"
-        android:textColor="@drawable/button_text_color"
-        android:text="@string/multiplayer" />
 
     <Button
-        android:id="@+id/bOptions"
+        android:paddingTop="20px"
+        android:id="@+id/bSingle"
         style="@style/menu_button"
-        android:textColor="@drawable/button_text_color"
-        android:text="@string/options" />
-    
+        android:text="@string/singleplayer"
+        android:textColor="@drawable/button_text_color" />
+
     <Button
+          android:paddingTop="10px"
+        android:id="@+id/bMulti"
+        style="@style/menu_button"
+        android:text="@string/multiplayer"
+        android:textColor="@drawable/button_text_color" />
+
+    <Button
+              android:paddingTop="10px"
         android:id="@+id/bAbout"
         style="@style/menu_button"
-        android:textColor="@drawable/button_text_color"
-        android:text="@string/about" />
+        android:text="@string/about"
+        android:textColor="@drawable/button_text_color" />
     
     <Button
+              android:paddingTop="10px"
         android:id="@+id/bExit"
         style="@style/menu_button"
         android:textColor="@drawable/button_text_color"

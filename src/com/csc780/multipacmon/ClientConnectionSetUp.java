@@ -64,7 +64,7 @@ public class ClientConnectionSetUp {
 	
 		try {
 			keepRunning=true;
-			clientSocket.setSoTimeout(2000);
+			//clientSocket.setSoTimeout(2000);
 			
 		while(keepRunning)
 		 {

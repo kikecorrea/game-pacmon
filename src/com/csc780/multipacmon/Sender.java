@@ -24,6 +24,11 @@ public class Sender extends Thread {
 	protected AtomicBoolean ready;
 	protected boolean isRunning=true;
 	public volatile String data="1";
+	
+	public Sender()
+	{
+		ready=new AtomicBoolean(true);
+	}
 
 	public Sender(int port, String ip)
 	{

@@ -125,6 +125,8 @@ public class GameEngine implements Runnable {
 		int boxX, boxY;
 		pX = pacmon.getpX();
 		pY = pacmon.getpY();
+		
+		System.out.println("PX::" + pX + "  PY::" + pY);
 		XmodW = pX % blockSize;
 		YmodH = pY % blockSize;
 		boolean movable = true;
@@ -263,7 +265,7 @@ public class GameEngine implements Runnable {
 				//check if at crossing using directional maze and update new direction with smart movement
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (timer % 6 == 0){
+					if (timer % 4 != i){
 						if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
 						if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
 						if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
@@ -369,6 +371,7 @@ public class GameEngine implements Runnable {
 	
 	// eat food ==> score and power ==> speed
 	private void eatFoodPower(int boxX, int boxY) {
+		
 		if (mazeArray[boxY][boxX] == 1){
 			mazeArray[boxY][boxX] = 5;
 			playerScore++;   // increase score

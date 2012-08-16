@@ -25,7 +25,7 @@ import android.view.SurfaceView;
  */
 public class MGameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS =50;
+	private final static int    MAX_FPS =45;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -157,7 +157,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
 		paint3.setColor(Color.WHITE);
-		paint3.setTextSize(40);
+		paint3.setTextSize((int) (blockSize * 1.5));
 	
 	}
 	private void initSprite(){
@@ -495,13 +495,13 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
 		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
 		
-		sentenceWidth = paint2.measureText("score(you):" + mgameEngine.receiver.p1score);
+		sentenceWidth = paint3.measureText("your score:" + mgameEngine.receiver.p2score);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("your score:" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2, paint2);
+		canvas.drawText("your score:" + mgameEngine.receiver.p2score, drawTextStartingX , screenHeight/2, paint3);
 		
-		sentenceWidth = paint2.measureText("score(enemy):" + mgameEngine.receiver.p1score);
+		sentenceWidth = paint3.measureText("enemy's score:" + mgameEngine.receiver.p1score);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("enemy's score:" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
+		canvas.drawText("enemy's score:" + mgameEngine.receiver.p1score, drawTextStartingX , screenHeight/2 + blockSize*2, paint3);
 		
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
@@ -517,9 +517,9 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateDisconnected(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		sentenceWidth = paint2.measureText("Connection Error");
+		sentenceWidth = paint3.measureText("Connection Error");
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint2);
+		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint3);
 	
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {

@@ -34,7 +34,7 @@ public class MGameEngine extends Thread  {
 	
 	//int playerScore, playerScore2;
 	int timer; int timerCount;
-	int lives, lives2;
+	volatile int lives, lives2;
 	public volatile int gameState;    // ready = 0; running = 1; lost == 2; won = 3;
 	
         //use by sending and receiving server
@@ -90,6 +90,22 @@ public class MGameEngine extends Thread  {
 	
 	private String ip;
 	
+	//use for maze data
+	int []bitrow ={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080,0x0100,0x0200,0x0400,0x0800,0x1000};
+//	 int b1 = 0x0001;
+//     int b2 = 0x0002;
+//     int b3 = 0x0004;
+//     int b4 = 0x0008;
+//     int b5 = 0x0010;
+//     int b6 = 0x0020;
+//     int b7 = 0x0040;
+//     int b8 = 0x0080;
+//     int b9 = 0x0100;
+//     int b10 =0x0200;
+//     int b11 =0x0400;
+//     int b12 =0x0800;
+//     int b13 =0x1000;
+	
 	//Constructor create players, ghosts and Maze
 	public MGameEngine(SoundEngine soundEngine, String ip){
 		
@@ -133,6 +149,9 @@ public class MGameEngine extends Thread  {
 		ghostArray = maze.getGhostArray();
 		
 		isRunning = true;
+		
+		receiver = new Receiver();
+		sending =new Sender();
 		
 //		clientSetup = new ClientConnectionSetUp(ip);
 //		receiver = new Receiver();
@@ -216,10 +235,10 @@ public class MGameEngine extends Thread  {
 		if(z!=-1){
 			tempX2=z;;
 		}
-
 		
-		this.eatFoodPower();
-		this.eatFoodPower2();
+		this.eatFoodUsingBits();
+		//this.eatFoodPower();
+		//this.eatFoodPower2();
 		
 		setxyp1();
 		setxyp2();
@@ -230,6 +249,27 @@ public class MGameEngine extends Thread  {
 		setxyGhost(3);
 		
 		checkLives();
+	}
+	
+	public void eatFoodUsingBits()
+	{
+	
+		int x=13;
+		for(int y=0; y<20; y++)
+		{
+		 for(int i=0; i<13; i++)
+		 {
+			int result =receiver.row[y] & bitrow[i];
+			if(result==0)
+				mazeArray[y+1][x] = 5;
+		 x--;
+		 }
+		x=13; 
+		}
+		
+		if(receiver.p2eatcherry==1)
+			soundEngine.playEatCherry();
+		
 	}
 	
 	// eat food ==> score and power ==> speed
@@ -351,7 +391,7 @@ public class MGameEngine extends Thread  {
 		//if(!receiver.checkListEmpty())
 			{
 				  //int xy[]=receiver.getReceiveData();
-				   p2=receiver.pac2que2.read();
+				   p2=receiver.pac2que.read();
 				
 				 //x and y will be set -1,2 if readPointer=writePointer
 				 //so just set pacmon's x,y will use old values

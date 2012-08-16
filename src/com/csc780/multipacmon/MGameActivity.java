@@ -55,13 +55,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
         String ip = getIntent().getStringExtra("ipaddress");
        
         soundEngine = new SoundEngine(this);
-        
-        //This is to overwrite and enable UDP broadcast on android hardware
-//        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
-//	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
-//	       multicastLock.acquire();
-        
-        
+       
         mgameEngine = new MGameEngine(soundEngine, ip);
         mgameEngine.start();
         
@@ -214,7 +208,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -0.5F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < -1.0F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			mgameEngine.setInputDir(UP);
 			//gameView.setDir(1);
 		}

@@ -8,13 +8,16 @@
     <string name="about">About</string>
     <string name="about_title">About/Help</string>
     <string name="back">Back</string>
-    <string name="howtoplay">How to play</string>
+    <string name="howtoplay">How  to  play  </string>
     
     <string name="about_game_text">
     				\n
     				ABOUT PACMON:\n
-    				This game is made by Qui Phu Lu and Hanzen Lim.\n
-    				This is a project for Mr. Puder mobile development class Spring 2012.</string>
+    				This game is made by Qui Phu Lu\n
+    				and Hanzen Lim.\n\n
+    				This is a project for mobile \n 
+    				development class in SFSU under\n
+    				the supervision of Prof. Puder</string>
 	<string name="how_to_play_text">
 					\n
 					HOW TO PLAY:\n
@@ -22,5 +25,12 @@
 					Tilt left to move Pacmon left.\n
 					Tilt right to move Pacmon right.\n
 					Tilt up to move Pacmon up.\n
-					Tilt down to move Pacmon down.</string>
+					Tilt down to move Pacmon down.\n\n
+					MultiPlayer\n
+					Two device must be connected\n
+					to WiFi inorder to play against each\n
+					other. One device should be\n
+					the server and another one should\n
+				    be the client.
+					</string>
 </resources>

@@ -49,6 +49,9 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     private Handler mProgressHandler;
     private volatile boolean progressStatus=false;
     private AtomicBoolean clientReady;
+    WifiManager wm;
+    private ServerSending sendThread;
+    private ServerReceiving receiveThread;
     
     //use in handlerThreadServer() method
     private boolean htsKill=false;
@@ -58,13 +61,18 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     
     //for server
     ServerThread serverThread;
+    
+    private boolean isThreadDead=false;
    	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        clientReady=new AtomicBoolean(false);
+        String ip = getIntent().getStringExtra("ipaddress");
+        int port = getIntent().getIntExtra("port", 0);
+        
+//        clientReady=new AtomicBoolean(false);
         
         mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         myAccelerometer = mySensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -72,11 +80,6 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 
         soundEngine = new SoundEngine(this);
         
-        WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE); 
-	       WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo"); 
-	       multicastLock.acquire();
-	       
-	       
         gameEngine = new CMGameEngine(soundEngine);
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
@@ -89,101 +92,69 @@ public class CMGameActivity extends Activity implements SensorEventListener{
     	//we will pass clientReady so that we can check if progress dialog is finish
         //we need to initialize it here bec. if killAllThread is called then it will
         //give nullPointerException, which means receiving, sending thread hasn't been initialize 
-    	serverThread=new ServerThread(gameEngine, clientReady);
-        
+//    	serverThread=new ServerThread(gameEngine, clientReady);
+//        
     	//start the server, client discoverer and dispatcher
-		serverThread.start();
-		showDialog(DIALOG_PROGRESS);
-        mProgressDialog.setProgress(0);
-        handlerThreadServer();		
-    	
-     
-        //handler for server
-        //handler is use to get message from the message pool
-        mProgressHandler = new Handler() {
-            
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (progressStatus) {
-                    mProgressDialog.dismiss();
-                    
-                    //remember to put connectedDialog.dismiss() somewhere
-                    showDialog(CLIENT_CONNECTED);       
-                    new Thread(new Runnable()
-                	{
-                		public void run()
-                		{
-                			try {
-								Thread.sleep(300);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							} 
-                			CMGameActivity.this.connectedDialog.dismiss();
-                		}
-                	}).start();
-         
-                }
-            }
-        };
+//		serverThread.start();
+        
+        
+
+        receiveThread=new ServerReceiving(gameEngine,  9876);
+        sendThread = new ServerSending();
+        
+        sendThread=new ServerSending(port, ip, gameEngine);
+        
+        //sets the ipaddress of client
+        //remember they shared the variable firstIPAddress, secondIPAddress
+        receiveThread.setPlayer(ip);
+       
+        //start receive server
+        receiveThread.start();
+
+        
+//        new Thread(new Runnable()
+//    	 {
+//    		public void run()
+//    		{
+//    			//waiting for client players to be ready before starting game engine
+//    	        while(!receiveThread.ready )
+//    	        {  	
+//    	        	try {
+//    					Thread.sleep(10);
+//    				} catch (InterruptedException e) {
+//    					// TODO Auto-generated catch block
+//    					e.printStackTrace();
+//    				}
+//    	        	
+//    	        	if(isThreadDead)
+//    	        		return;
+//    	        }
+//    	        if(receiveThread.ready)
+//    	        {
+//    	        	//put a sleep here because clientReady dialog box will show for 1500ms
+//    	        	//so we don't want to start gameEngine right away
+////    	        	try {
+////    				Thread.sleep(1000);
+////    	        	} catch (InterruptedException e) {
+////    				// TODO Auto-generated catch block
+////    				e.printStackTrace();
+////    				}
+//    	       
+//    	        	//remem gameEngine has its own thread running
+//    	           CMGameActivity.this.gameEngine.startTheEngine();
+//    	           sendThread.start();
+//    	        
+//    	        }
+//    		}
+//    	 }).start();
+        CMGameActivity.this.gameEngine.startTheEngine();
+        sendThread.start();
+        
+        
+        
         
     }
-    
-    protected void handlerThreadServer()
-    {
-    	Thread t= new Thread(new Runnable()
-    	{
-    		public void run()
-    		{
-    			while(!clientReady.get() )
-    			{
-    				try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-    				if(htsKill)
-    					return;
-    			}
-    			
-    			if(clientReady.get()){
-    			progressStatus=true;
-    			mProgressHandler.sendEmptyMessage(0);
-    			}
-    		}
-    	});
-    	t.start();
-    }
-    
-    protected Dialog onCreateDialog(int id) {
-        switch(id) {	
-        case DIALOG_PROGRESS:
-        	mProgressDialog = new ProgressDialog(this);
-
-          //  mProgressDialog.setIcon(R.drawable.alert_dialog_icon);
-            mProgressDialog.setTitle("server started");
-            mProgressDialog.setMessage("Waiting for client...");
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.setButton("CANCEL", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                	mProgressDialog.dismiss();
-                	CMGameActivity.this.finish();
-                    /* User clicked Yes so do some stuff */
-                }
-            });
-        return mProgressDialog;
-            
-        case CLIENT_CONNECTED:
-        	AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-            connectedDialog = builder2.setTitle("Get Ready")
-                .setMessage("Client has connected")
-                .create();
-            connectedDialog.show();
-        return connectedDialog;
-         
-        default:
-            return null;
-        }
-    }
+   
 
 
 	@Override
@@ -219,8 +190,17 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 	public void finish() {
 		this.htsKill = true;
 		soundEngine.endMusic();
-		serverThread.killSendingReceiving();
+
+    	sendThread.isRunning.set(false);
+    	sendThread.DestroySocket();
+     	receiveThread.isRunning.set(false);
+    	receiveThread.DestroySocket();
+		
+
 		super.finish();
+		serverThread=null;
+		soundEngine=null;
+
 	}
 
 
@@ -230,10 +210,13 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		builder.setMessage("Do you want to quit?").setCancelable(false)
 				.setPositiveButton("Quit", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
+						
+						isThreadDead=true;
+						
 						//set gamestate to disconnected
 						CMGameActivity.this.gameEngine.gameState=6;
 						
-						CMGameActivity.this.finish();	
+						//CMGameActivity.this.finish();	
 					}
 				})
 				.setNegativeButton("Resume", new DialogInterface.OnClickListener() {
@@ -264,11 +247,11 @@ public class CMGameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -0.5F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < -1.0F && yAccel*yAccel > xAccel*xAccel){ // tilt up
 			gameEngine.setInputDirPlayer1(UP);
 			//gameView.setDir(1);
 		}
-		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
+		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down"
 			gameEngine.setInputDirPlayer1(DOWN);
 			//gameView.setDir(2);
 		}

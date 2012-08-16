@@ -13,6 +13,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +37,9 @@ public class ServerSending extends Thread {
     private int portServer;
     private boolean countDown;
     public AtomicBoolean isRunning;
-    public int status=0,p1x,p1y,p1z,p2x,p2y,p2z,g1x,g1y,g1z,g2x,g2y,g2z,g3x,g3y,g3z,g4x,g4y,g4z,p1life,p2life,p1score,p2score,mazeX,mazeY;
+//    public int status=0,p1life,p2life,p1score,p2score,mazeX,mazeY;
+    public volatile int pac1,pac2,ghost1,ghost2,ghost3,ghost4, p1p2lifescore, statustimer;
+    public volatile int row1,row2,row3,row4,row5,row6,row7,row8,row9,row10,row11,row12,row13,row14,row15,row16,row17,row18,row19,row20;
     public String temp;
     
     ByteArrayOutputStream baos=new ByteArrayOutputStream();
@@ -56,15 +59,21 @@ public class ServerSending extends Thread {
     
     //Constructor
     //port is port of client
-    public ServerSending(int port, InetAddress address, CMGameEngine ges)
+    public ServerSending(int port, String address, CMGameEngine ges)
     {
     	isRunning=new AtomicBoolean(true);
     	
        this.countDown=true;
        this.gameEngine=ges;
-       sendData  = new byte[128]; 
+       sendData  = new byte[118]; 
        this.port=port;
-       this.IPAddress=address;
+       
+       try {
+		this.IPAddress=InetAddress.getByName(address);
+       } catch (UnknownHostException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+       }
        
             try {
 				serverSocket = new DatagramSocket();
@@ -80,7 +89,7 @@ public class ServerSending extends Thread {
     	serverSocket.close();
     }
         
-    public void getData()
+    public synchronized void getData()
     {
       baos=new ByteArrayOutputStream();
       daos=new DataOutputStream(baos);
@@ -90,66 +99,62 @@ public class ServerSending extends Thread {
 
       tickCounter=gameEngine.tickCounter;
       
+      pac1=(gameEngine.pacmon.getDir() * 1000000) + (gameEngine.pacmon.getpX() * 1000) + (gameEngine.pacmon.getpY());
+      pac2=(gameEngine.pacmon2.getDir() * 1000000) + (gameEngine.pacmon2.getpX() * 1000) + (gameEngine.pacmon2.getpY());
+      ghost1=(gameEngine.ghosts.get(0).getDir()* 1000000) + (gameEngine.ghosts.get(0).getX() * 1000) + (gameEngine.ghosts.get(0).getY());
+      ghost2=(gameEngine.ghosts.get(1).getDir()* 1000000) + (gameEngine.ghosts.get(1).getX() * 1000) + (gameEngine.ghosts.get(1).getY());
+      ghost3=(gameEngine.ghosts.get(2).getDir()* 1000000) + (gameEngine.ghosts.get(2).getX() * 1000) + (gameEngine.ghosts.get(2).getY());
+      ghost4=(gameEngine.ghosts.get(3).getDir()* 1000000) + (gameEngine.ghosts.get(3).getX() * 1000) + (gameEngine.ghosts.get(3).getY());
       
-      p1x=gameEngine.pacmon.getpX();
-      p1y=gameEngine.pacmon.getpY();
-      p1z=gameEngine.pacmon.getDir();
-      
-      p2x=gameEngine.pacmon2.getpX();
-      p2y=gameEngine.pacmon2.getpY();
-      p2z=gameEngine.pacmon2.getDir();
-      
-      g1x=gameEngine.ghosts.get(0).getX();
-      g1y=gameEngine.ghosts.get(0).getY();
-      g1z=gameEngine.ghosts.get(0).getDir();
-      
-      g2x=gameEngine.ghosts.get(1).getX();
-      g2y=gameEngine.ghosts.get(1).getY();
-      g2z=gameEngine.ghosts.get(1).getDir();
-      
-      g3x=gameEngine.ghosts.get(2).getX();
-      g3y=gameEngine.ghosts.get(2).getY();
-      g3z=gameEngine.ghosts.get(2).getDir();
-      
-      g4x=gameEngine.ghosts.get(3).getX();
-      g4y=gameEngine.ghosts.get(3).getY();
-      g4z=gameEngine.ghosts.get(3).getDir();
-      
-      p1life=gameEngine.lives;
-      p2life=gameEngine.lives2;
-      p1score=gameEngine.playerScore;
-      p2score=gameEngine.playerScore2;
-      
-      mazeX=gameEngine.mazeData1;
-      mazeY=gameEngine.mazeData2;
-      status = gameEngine.gameState;
-      
-//      temp=tickCounter + ":" + p1x + ":" + p1y + ":" + p1z + ":" 
-//              + p2x + ":" + p2y + ":" + p2z + ":" 
-//              + g1x + ":" + g1y + ":" + g1z + ":" 
-//              + g2x + ":" + g2y + ":" + g2z + ":" 
-//              + g3x + ":" + g3y + ":" + g3z + ":" 
-//              + p1life + ":" + p2life + ":"
-//              + p1score + ":" + p2score + ":" + gameEngine.timer + ":"
-//              + mazeX + ":" + mazeY + ":" + status;   
+
+      p1p2lifescore = (gameEngine.lives * 10000000) + (gameEngine.lives2 * 1000000) + (gameEngine.playerScore * 1000) + (gameEngine.playerScore2);
+      statustimer = (gameEngine.gameState * 1000) + gameEngine.timer;
+
+      row1=gameEngine.mazeDataCompressor.rowMap.get(1);
+      row2=gameEngine.mazeDataCompressor.rowMap.get(2);
+      row3=gameEngine.mazeDataCompressor.rowMap.get(3);
+      row4=gameEngine.mazeDataCompressor.rowMap.get(4);
+      row5=gameEngine.mazeDataCompressor.rowMap.get(5);
+      row6=gameEngine.mazeDataCompressor.rowMap.get(6);
+      row7=gameEngine.mazeDataCompressor.rowMap.get(7);
+      row8=gameEngine.mazeDataCompressor.rowMap.get(8);
+      row9=gameEngine.mazeDataCompressor.rowMap.get(9);
+      row10=gameEngine.mazeDataCompressor.rowMap.get(10);
+      row11=gameEngine.mazeDataCompressor.rowMap.get(11);
+      row12=gameEngine.mazeDataCompressor.rowMap.get(12);
+      row13=gameEngine.mazeDataCompressor.rowMap.get(13);
+      row14=gameEngine.mazeDataCompressor.rowMap.get(14);
+      row15=gameEngine.mazeDataCompressor.rowMap.get(15);
+      row16=gameEngine.mazeDataCompressor.rowMap.get(16);
+      row17=gameEngine.mazeDataCompressor.rowMap.get(17);
+      row18=gameEngine.mazeDataCompressor.rowMap.get(18);
+      row19=gameEngine.mazeDataCompressor.rowMap.get(19);
+      row20=gameEngine.mazeDataCompressor.rowMap.get(20);
+
       
       try {
-		daos.writeInt(tickCounter);
-		daos.writeInt(p1x);daos.writeInt(p1y);daos.writeInt(p1z);
-		daos.writeInt(p2x);daos.writeInt(p2y);daos.writeInt(p2z);
+		//daos.writeInt(tickCounter);
 		
-		daos.writeInt(g1x);daos.writeInt(g1y);daos.writeInt(g1z);
-		daos.writeInt(g2x);daos.writeInt(g2y);daos.writeInt(g2z);
-		daos.writeInt(g3x);daos.writeInt(g3y);daos.writeInt(g3z);
+		daos.writeInt(pac1);
+		daos.writeInt(pac2);
+		daos.writeInt(ghost1);
+		daos.writeInt(ghost2);
+		daos.writeInt(ghost3);
+		daos.writeInt(ghost4);
 		
-		daos.writeInt(p1life);daos.writeInt(p2life);
-		daos.writeInt(p1score);daos.writeInt(p2score);daos.writeInt(gameEngine.timer);
-		daos.writeInt(mazeX);daos.writeInt(mazeY);daos.writeInt(status);
-		daos.writeInt(g4x);daos.writeInt(g4y);daos.writeInt(g4z);
+		daos.writeInt(p1p2lifescore);
+		daos.writeInt(statustimer);
+		
+		daos.writeInt(row1);daos.writeInt(row2);daos.writeInt(row3);daos.writeInt(row4);daos.writeInt(row5);
+		daos.writeInt(row6);daos.writeInt(row7);daos.writeInt(row8);daos.writeInt(row9);daos.writeInt(row10);
+		daos.writeInt(row11);daos.writeInt(row12);daos.writeInt(row13);daos.writeInt(row14);daos.writeInt(row15);
+		daos.writeInt(row16);daos.writeInt(row17);daos.writeInt(row18);daos.writeInt(row19);daos.writeInt(row20);
+		
+		//signal for p2 for eating cherry
+		daos.writeInt(gameEngine.p2eatcherry);
+		gameEngine.p2eatcherry=0;
 		
 		daos.close();
-		
-		
 		
 		
 	} catch (IOException e) {
@@ -165,11 +170,7 @@ public class ServerSending extends Thread {
        //sendData  = new byte[128];  
        while(isRunning.get())
        {          
-    	   try {
-			Thread.sleep(20);
-    	   } catch (InterruptedException e1) {
-			e1.printStackTrace();
-    	   }
+
     	   try {
                // String temp;
                //temp=this.getData();

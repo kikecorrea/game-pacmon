@@ -27,15 +27,15 @@ public class Receiver extends Thread {
 	private InetAddress IPAddress;
 	private byte[] receiveData;
 	
-	public CircularQue pac1que=new CircularQue(6);
-	public CircularQue pac2que2=new CircularQue(6);
-	public CircularQue ghost1Que=new CircularQue(6);
-	public CircularQue ghost2Que=new CircularQue(6);
-	public CircularQue ghost3Que=new CircularQue(6);
-	public CircularQue ghost4Que=new CircularQue(6);
+	public CircularQue pac1que=new CircularQue(4);
+	public CircularQue pac2que=new CircularQue(4);
+	public CircularQue ghost1Que=new CircularQue(4);
+	public CircularQue ghost2Que=new CircularQue(4);
+	public CircularQue ghost3Que=new CircularQue(4);
+	public CircularQue ghost4Que=new CircularQue(4);
 	
-	public CircularQue2 mazeData1=new CircularQue2(6);
-	public CircularQue2 mazeData2=new CircularQue2(6);
+	public CircularQue2 mazeData1=new CircularQue2(4);
+	public CircularQue2 mazeData2=new CircularQue2(4);
 	
 	//store the lives of pacmon
 //	public volatile int pacmonLives[]=new int [2];
@@ -47,7 +47,7 @@ public class Receiver extends Thread {
 	public volatile int p2score;
 	
 	//timer
-	public volatile int timer;
+	public volatile int timer=180;
 	public boolean isRunning=true;
 	protected AtomicBoolean ready;
 	private String previousTick="0";
@@ -55,21 +55,25 @@ public class Receiver extends Thread {
 	private int socketPort;
 	//volatile int mazeData1, mazeData2;
 	volatile int status;
+	private volatile int counter;
 	
 	ByteArrayInputStream bais;
     DataInputStream dais;
-    public int p1x,p1y,p1z,p2x,p2y,p2z,g1x,g1y,g1z,g2x,g2y,g2z,g3x,g3y,g3z,g4x,g4y,g4z,mazeX,mazeY;
+    
+    public volatile int p1x,p1y,p1z,p2x,p2y,p2z,g1x,g1y,g1z,g2x,g2y,g2z,g3x,g3y,g3z,g4x,g4y,g4z,mazeX,mazeY;
+    public volatile int [] row= new int[20];
+    public volatile int p2eatcherry=0;
+    private int temp;
     
 	public Receiver()
 	{
+		
 		dais = new DataInputStream(bais);
 		
-		p1life=3;
-		p2life=3;
 		
 		ready=new AtomicBoolean(true);
 		serverHostname = new String ("192.168.0.199");
-		receiveData = new byte[128]; 
+		receiveData = new byte[118]; 
 		
 		try {
 			socketPort=5000+(int)(Math.random()*(6000-5000));
@@ -103,90 +107,74 @@ public class Receiver extends Thread {
 		this.clientSocket.close();
 	}
 	
-	//add data in circularQue
-//	public void addQue(String data, int length)
-//	{
-//		String temp[]=data.substring(0, length).split(":", 24); 
-//		
-//		int x=Integer.valueOf(temp[0]);
-//		
-//		if(x<=0)
-//		{
-//			this.countDown--;
-//		}
-//		else if(!temp[0].equals(previousTick))
-//		{
-//			
-//			pac1que.write(Integer.parseInt(temp[1]), Integer.parseInt(temp[2]), Integer.parseInt(temp[3]));
-//			pac2que2.write(Integer.parseInt(temp[4]), Integer.parseInt(temp[5]),Integer.parseInt(temp[6]));
-//			
-//			ghost1Que.write(Integer.parseInt(temp[7]), Integer.parseInt(temp[8]),Integer.parseInt(temp[9]));
-//			ghost2Que.write(Integer.parseInt(temp[10]), Integer.parseInt(temp[11]),Integer.parseInt(temp[12]));
-//			ghost3Que.write(Integer.parseInt(temp[13]), Integer.parseInt(temp[14]),Integer.parseInt(temp[15]));
-//			
-//			p1life=Integer.parseInt(temp[16]);
-//			p2life=Integer.parseInt(temp[17]);
-//			
-////			pacmonScores[0]=Integer.parseInt(temp[18]);
-////			pacmonScores[1]=Integer.parseInt(temp[19]);
-//			p1score=Integer.parseInt(temp[18]);
-//			p2score=Integer.parseInt(temp[19]);
-//			
-//			
-//			this.timer=Integer.parseInt(temp[20]);
-//			this.mazeData1=Integer.parseInt(temp[21]);
-//			this.mazeData2=Integer.parseInt(temp[22]);
-//			this.status=Integer.parseInt(temp[23]);
-//			previousTick=temp[0];
-//		}
-//	}
-	
 	public void addQue(DataInputStream dais, int length)
 	{
 		try {
-		int x=dais.readInt();
-		  if(x<=0)
+//		counter=dais.readInt();
+//		  if(counter<=0)
+//		  {
+//			this.countDown--;
+//		  }
+//		  else 
 		  {
-			this.countDown--;
-		  }
-		  else 
-		  {
-			  //public int status=0,p1x,p1y,p1z,p2x,p2y,p2z,g1x,g1y,g1z,g2x,g2y,g2z,g3x,g3y,g3z,p1life,p2life,p1score,p2score,mazeX,mazeY;
-			  p1x=dais.readInt();p1y=dais.readInt();  p1z=dais.readInt();
-			  p2x=dais.readInt();  p2y=dais.readInt();p2z=dais.readInt();
-			  g1x=dais.readInt();g1y=dais.readInt();  g1z=dais.readInt();
-			  g2x=dais.readInt();g2y=dais.readInt();  g2z=dais.readInt();
-			  g3x=dais.readInt();g3y=dais.readInt();  g3z=dais.readInt();
-			  p1life=dais.readInt();p2life=dais.readInt(); 
-			  p1score=dais.readInt(); p2score=dais.readInt();
+			  temp = dais.readInt();
+			  p1z=temp/1000000;
+			  p1y=temp%1000;
+			  p1x=(temp/1000) % 1000;
 			  
-				pac1que.write(p1x,p1y,p1z);
-				pac2que2.write(p2x,p2y,p2z);	
-				ghost1Que.write(g1x, g1y, g1z);
-				ghost2Que.write(g2x, g2y, g2z);
-				ghost3Que.write(g3x, g3y, g3z);
+			  
+			  temp = dais.readInt();
+			  p2z=temp/1000000;
+			  p2y=temp%1000;
+			  p2x=(temp/1000) % 1000;
+			  
+			  temp = dais.readInt();
+			  g1z=temp/1000000;
+			  g1y=temp%1000;
+			  g1x=(temp/1000) % 1000;
+
+			  temp = dais.readInt();
+			  g2z=temp/1000000;
+			  g2y=temp%1000;
+			  g2x=(temp/1000) % 1000;
+			  
+			  temp = dais.readInt();
+			  g3z=temp/1000000;
+			  g3y=temp%1000;
+			  g3x=(temp/1000) % 1000;
+			  
+			  temp = dais.readInt();
+			  g4z=temp/1000000;
+			  g4y=temp%1000;
+			  g4x=(temp/1000) % 1000;
+
+			  
+			  temp = dais.readInt();
+			  
+			  p1life = temp / 10000000;
+			  p2life = (temp / 1000000) % 10;
+			  p2score = temp % 1000;
+			  p1score =(temp / 1000) % 1000;
+			  
+			  temp = dais.readInt();
+			  this.status = temp / 1000;
+			  this.timer = temp %1000;
+			  
+			  pac1que.write(p1x, p1y, p1z);
+			  pac2que.write(p2x, p2y, p2z);
+			  ghost1Que.write(g1x, g1y, g1z);
+			  ghost2Que.write(g2x, g2y, g2z);
+			  ghost3Que.write(g3x, g3y, g3z);
+			  ghost4Que.write(g4x, g4y, g4z);
+
+			  //for maze data
+				for(int i=0; i<20; i++)
+					row[i]=dais.readInt();
 				
-				p1life=p1life;
-				p2life=p2life;
-				
-//				pacmonScores[0]=Integer.parseInt(temp[18]);
-//				pacmonScores[1]=Integer.parseInt(temp[19]);
-				p1score=p1score;
-				p2score=p2score;
+				this.p2eatcherry=dais.readInt();
 				
 				
-				this.timer=dais.readInt();
-				this.mazeData1.write(dais.readInt());
-				this.mazeData2.write(dais.readInt());
-				this.status=dais.readInt();
-				
-				//for ghost number 4
-				g4x=dais.readInt();
-				g4y=dais.readInt();
-				g4z=dais.readInt();
-				ghost4Que.write(g4x, g4y, g4z);
-				
-				previousTick=String.valueOf(x);
+				//previousTick=String.valueOf(x);
 				dais.close();
 		
 		  }
@@ -196,32 +184,7 @@ public class Receiver extends Thread {
 		
 	}
 	
-//	public int [] deQueP1()
-//	{
-//		int p1[]=pac1que.read();
-//		return p1;
-//	}
-//	public int [] deQueP2()
-//	{
-//		int p2[]=pac2que2.read();
-//		return p2;
-//	}
-//	//deQue GHOST
-//	public int [] deQueG1()
-//	{
-//		int g1[]=ghost1Que.read();
-//		return g1;
-//	}
-//	public int [] deQueG2()
-//	{
-//		int g2[]=ghost2Que.read();
-//		return g2;
-//	}
-//	public int [] deQueG3()
-//	{
-//		int g3[]=ghost3Que.read();
-//		return g3;
-//	}
+
 	
 	@Override
 	public void run()
@@ -234,7 +197,6 @@ public class Receiver extends Thread {
 			
 				try {
 			          clientSocket.receive(receivePacket);
-		
 			          
 			          bais=new ByteArrayInputStream(receivePacket.getData());
 			          //String receiveData =   new String(receivePacket.getData()); 

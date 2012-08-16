@@ -30,7 +30,7 @@ import android.view.SurfaceView;
  */
 public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS = 50;
+	private final static int    MAX_FPS = 45;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -163,7 +163,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
 		paint3.setColor(Color.WHITE);
-		paint3.setTextSize(40);
+		paint3.setTextSize((int) (blockSize *1.5));
 			
 	}
 	
@@ -286,12 +286,12 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	private void updateDisconnected(Canvas canvas){
 		canvas = surfaceHolder.lockCanvas();
 		isRunning = false;
-		sentenceWidth = paint2.measureText("Connection Error");
+		sentenceWidth = paint3.measureText("Connection Error");
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint2);
+		canvas.drawText("Connection Error", drawTextStartingX, screenHeight/2, paint3);
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
-			Thread.sleep(4000);
+			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -444,20 +444,18 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 			whoWon="You Won";
 		else
 			whoWon="You Lose";
-		
-		canvas.drawText(whoWon, 130, 350, paint2);
 			
 		sentenceWidth = paint2.measureText(whoWon);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		canvas.drawText(whoWon, drawTextStartingX , screenHeight/2 - blockSize*2, paint2);
 		
-		sentenceWidth = paint2.measureText("score(you):" + cmgameEngine.playerScore);
+		sentenceWidth = paint3.measureText("your score:" + cmgameEngine.playerScore);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("your score:" + cmgameEngine.playerScore, drawTextStartingX , screenHeight/2, paint2);
+		canvas.drawText("your score:" + cmgameEngine.playerScore, drawTextStartingX , screenHeight/2, paint3);
 		
-		sentenceWidth = paint2.measureText("score(enemy):" + cmgameEngine.playerScore2);
+		sentenceWidth = paint3.measureText("enemy's score:" + cmgameEngine.playerScore2);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText("enemy's score:" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*3, paint2);
+		canvas.drawText("enemy's score:" + cmgameEngine.playerScore2, drawTextStartingX , screenHeight/2 + blockSize*2, paint3);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {

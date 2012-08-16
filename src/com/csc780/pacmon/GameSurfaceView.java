@@ -25,7 +25,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private final static int    FRAME_PERIOD = 1000 / MAX_FPS;
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
-	private final static String textOver = "GAME OVER", textCongrats = "Congratulations"
+	private final static String textOver = "GAME OVER", textCongrats = "You Won"
 								, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
 	
 	
@@ -142,7 +142,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		paint3 = new Paint();
 		paint3.setAntiAlias(true);
 		paint3.setColor(Color.WHITE);
-		paint3.setTextSize(40);
+		paint3.setTextSize(30);
 		
 	}
 	
@@ -357,15 +357,15 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 		//measure the text then draw it at center
 		sentenceWidth = paint2.measureText(textCongrats);
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2 - blockSize*3, paint2);
+		canvas.drawText(textCongrats, drawTextStartingX , screenHeight/2 - blockSize*2, paint2);
 		
-		sentenceWidth = paint2.measureText(textNextLevel);
-	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText(textNextLevel, drawTextStartingX, screenHeight/2 , paint2);
+//		sentenceWidth = paint2.measureText(textNextLevel);
+//	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
+//		canvas.drawText(textNextLevel, drawTextStartingX, screenHeight/2 , paint2);
 		
 		sentenceWidth = paint2.measureText(gameEngine.getPlayerScore());
 	    drawTextStartingX = (screenWidth - sentenceWidth) / 2;
-		canvas.drawText(gameEngine.getPlayerScore(), drawTextStartingX, screenHeight/2 + blockSize*3, paint2);
+		canvas.drawText(gameEngine.getPlayerScore(), drawTextStartingX, screenHeight/2, paint2);
 		
 		surfaceHolder.unlockCanvasAndPost(canvas);
 		try {
