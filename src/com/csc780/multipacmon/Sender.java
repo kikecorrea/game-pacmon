@@ -59,6 +59,8 @@ public class Sender extends Thread {
 	{
 		this.isRunning=false;
 		clientSocket.close();
+		sendData=null;
+		sendPacket=null;
 	}
 	
 	@Override

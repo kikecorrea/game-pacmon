@@ -41,6 +41,7 @@ public class AutoDiscoverer extends Thread{
 	{
 		clientSocket.close();
 		isRunning = false;
+		
 	}
 	
 	public void run()

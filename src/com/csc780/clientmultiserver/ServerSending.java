@@ -86,7 +86,12 @@ public class ServerSending extends Thread {
     
     public void DestroySocket()
     {
+ 
     	serverSocket.close();
+    	baos=null;
+    	daos=null;
+    	sendData=null;
+    	sendPacket=null;
     }
         
     public synchronized void getData()
@@ -168,10 +173,10 @@ public class ServerSending extends Thread {
     public void run()
     {    
        //sendData  = new byte[128];  
-       while(isRunning.get())
-       {          
+       try {
+         while(isRunning.get())
+         {          
 
-    	   try {
                // String temp;
                //temp=this.getData();
       
@@ -184,11 +189,14 @@ public class ServerSending extends Thread {
                 sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port); 
                
 			    serverSocket.send(sendPacket);
-				} catch (IOException e) {
-					//e.printStackTrace();
-				}
+				
 
-       }
+         }
+       } catch (IOException e) {
+			//e.printStackTrace();
+		}catch(NullPointerException e){
+			
+		}
 
     }
     

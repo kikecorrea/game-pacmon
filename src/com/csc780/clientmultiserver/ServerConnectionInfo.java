@@ -30,6 +30,8 @@ public class ServerConnectionInfo {
     	serverSocket.close();
     	receivePacket=null;
     	sendPacket=null;
+    	receiveData=null;
+    	sendData=null;
     }
     
     //Constructor
