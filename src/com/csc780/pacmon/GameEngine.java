@@ -264,7 +264,7 @@ public class GameEngine implements Runnable {
 				//check if at crossing using directional maze and update new direction with smart movement
 				crossing = directionMaze[boxY][boxX];
 				if (crossing > 0){
-					if (timer % 4 != i){
+					if (timer % 10 == i){
 						if (crossing == 1) moveGhostSmart(RD, ghosts.get(i));
 						if (crossing == 2) moveGhostSmart(LD, ghosts.get(i));
 						if (crossing == 3) moveGhostSmart(RU, ghosts.get(i));
