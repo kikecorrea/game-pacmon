@@ -24,6 +24,7 @@ public class ServerConnectionInfo {
     public int firstPlayerData;
     public InetAddress firstIPAddress;
     public AtomicBoolean clientReady;
+    public AtomicBoolean autoDsignal;
     
     public void DestroySocket()
     {
@@ -35,9 +36,10 @@ public class ServerConnectionInfo {
     }
     
     //Constructor
-    public ServerConnectionInfo(AtomicBoolean cr)
+    public ServerConnectionInfo(AtomicBoolean cr, AtomicBoolean autoDiscoverySignal)
     {   
        this.clientReady = cr;
+       this.autoDsignal = autoDiscoverySignal;
        receiveData = new byte[24]; 
        sendData = new byte[24]; 
         
@@ -86,6 +88,9 @@ public class ServerConnectionInfo {
          i++;
          }
          clientReady.set(true);
+         //send signal to auto discovery to stop running
+         this.autoDsignal.set(false);
+         
        } catch (IOException ex) {
                 Logger.getLogger(ServerConnectionInfo.class.getName()).log(Level.SEVERE, null, ex);
        }     
