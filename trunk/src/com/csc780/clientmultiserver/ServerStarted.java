@@ -66,7 +66,7 @@ public class ServerStarted extends Activity {
 		     //run the server discover
 		     serverDiscovery=new ServerAutoDiscovery();
 		     //dispatcher, listens and sends the info of receivingServer to client
-		     dispatchReceiver=new ServerConnectionInfo(clientReady);   
+		     dispatchReceiver=new ServerConnectionInfo(clientReady, serverDiscovery.isRunning);   
 		     
 		     //going to start broadcasting IP address
 		     serverDiscovery.start();

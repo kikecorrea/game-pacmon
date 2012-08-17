@@ -58,7 +58,7 @@ public class AutoDiscoverer extends Thread{
 		  DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, group, port); 
 		  DatagramPacket receivePacket =  new DatagramPacket(receiveData, receiveData.length); 
 		  
-		  clientSocket.setSoTimeout(2000);
+		  //clientSocket.setSoTimeout(2000);
   
 		  boolean isRunning=true;
 		  int i=0;
@@ -66,9 +66,9 @@ public class AutoDiscoverer extends Thread{
 		  {    	 
 
 		     try {
-		       if(i%2==0)
-		          clientSocket.send(sendPacket); 
-		       i++;
+		
+		       clientSocket.send(sendPacket); 
+		  
 	           clientSocket.receive(receivePacket); 
 	           String modifiedSentence = new String(receivePacket.getData()); 
 	           

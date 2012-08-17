@@ -33,7 +33,7 @@ public class ServerSending extends Thread {
     public volatile boolean propertySet=false;
 
     private CMGameEngine gameEngine;
-    private int tickCounter=0;
+    private volatile int tickCounter=0;
     private int portServer;
     private boolean countDown;
     public AtomicBoolean isRunning;
@@ -100,7 +100,14 @@ public class ServerSending extends Thread {
       daos=new DataOutputStream(baos);
       //waits for for the next tick to occur
       while(tickCounter==gameEngine.tickCounter && isRunning.get()==true)
-      {        }
+      {           
+    	  try {
+			this.sleep(5);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+      }
 
       tickCounter=gameEngine.tickCounter;
       

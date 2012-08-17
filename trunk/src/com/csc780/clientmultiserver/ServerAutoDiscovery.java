@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,6 +23,8 @@ public class ServerAutoDiscovery extends Thread {
     private MulticastSocket serverSocket;
     private InetAddress group;
     private int port;
+    
+    public AtomicBoolean isRunning;
 
     public void DestroySocket()
     {
@@ -32,6 +35,7 @@ public class ServerAutoDiscovery extends Thread {
     public ServerAutoDiscovery()
     {
         try {
+           isRunning = new AtomicBoolean(true);
            serverSocket = new MulticastSocket(4322);
            
            //server will broadcast to this generic address then if a clients listens to this 
@@ -56,11 +60,11 @@ public class ServerAutoDiscovery extends Thread {
   
       String sentence=null;
       String ipAddr="";
-      boolean isRunning=true;
+
       int i=0;
      // serverSocket.setSoTimeout(2000);
      
-      while(i<1) 
+      while(isRunning.get()) 
         { 
           sendData  = new byte[24]; 
           receiveData = new byte[24]; 
@@ -92,7 +96,8 @@ public class ServerAutoDiscovery extends Thread {
   
                  serverSocket.send(sendPacket); 
                  sendPacket=null;
-               i++;
+//               i++;
+//                 isRunning.set(false);
             }
             else
             {
