@@ -145,6 +145,7 @@ public class MGameActivity extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
+		
 		mgameEngine.closeConnection();
 		mgameEngine.killAllThread();
 		super.onDestroy();

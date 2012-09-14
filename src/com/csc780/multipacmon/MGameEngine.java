@@ -205,11 +205,12 @@ public class MGameEngine extends Thread  {
 	            }
 	           
 	        }
-	       
-	                
+
 	        if(this.receiver.status==RUNNING || receiver.status==DIE || receiver.status ==GAMEOVER || receiver.status ==DIE
-	        		&&	receiver.status==WON )
+	        		||	receiver.status==WON ||	receiver.status==DISCONNECTED ){
+	        	
 	        		this.updateDataFromServer();
+	        }
 	   
 	        
 		}
@@ -253,6 +254,7 @@ public class MGameEngine extends Thread  {
 	
 	public void closeConnection()
 	{
+		this.isRunning = false;
 		this.receiver.closeSocket();
 		this.sending.closeSocket();
 	}

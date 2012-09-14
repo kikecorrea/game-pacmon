@@ -64,7 +64,7 @@ public class CircularQue {
 //            	 writePointer.set(writePointer.get()+1);            
         }
         
-        public int [] read()
+        public synchronized int [] read()
         {
 //            if(readPointer==writePointer)
 //            {
