@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
+import android.util.Log;
+
 import com.csc780.pacmon.SoundEngine;
 
 // direction notes: 1 = up, 2 = down, 3 = right, 4 = left
@@ -69,6 +71,8 @@ public class CMGameEngine implements Runnable {
     public MazeDataCompressor mazeDataCompressor;
     
     int key,value;
+    
+    int countForPause=0;
     
     //Constructor create players, ghosts and Maze
     public CMGameEngine(SoundEngine se) {
@@ -1032,19 +1036,32 @@ public class CMGameEngine implements Runnable {
                 Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
             }
-        }
+         }
+        	
     }
 
     private void updateGameOver() {
+    	
+    	  this.tickCounter++;
+          if (this.tickCounter >= 80) {
+              this.tickCounter = 0;
+          }
         pause();
     }
 
     private void updateWon() {
+    	  this.tickCounter++;
+          if (this.tickCounter >= 80) {
+              this.tickCounter = 0;
+          }
         pause();
     }
 
     public void pause() {
-        isRunning = false;
+    	
+    	countForPause++;
+    	if(countForPause > 200)
+    		isRunning = false;
     }
 
     public void resume() {

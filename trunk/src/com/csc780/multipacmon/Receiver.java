@@ -162,6 +162,7 @@ public class Receiver extends Thread {
 			  
 			  temp = dais.readInt();
 			  this.status = temp / 1000;
+			 
 			  this.timer = temp %1000;
 			  
 			  pac1que.write(p1x, p1y, p1z,p2x, p2y, p2z,g1x, g1y, g1z,g2x, g2y, g2z,g3x, g3y, g3z,g4x, g4y, g4z);
@@ -206,6 +207,7 @@ public class Receiver extends Thread {
 			          //String receiveData =   new String(receivePacket.getData()); 
 			          dais=new DataInputStream(bais);
 		        	  this.addQue(dais, receivePacket.getLength());
+	
 			         }
 			      catch (SocketTimeoutException ste){
 			           //System.out.println ("Timeout Occurred: Packet assumed lost");

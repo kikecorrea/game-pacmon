@@ -199,6 +199,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		while (isRunning) {
 			canvas = null;
 			
+			//Log.d("game state", String.valueOf(mgameEngine.getGameState()));
 			if(soundState != mgameEngine.getGameState())
 			{
 				isPlayOn=true;
@@ -226,7 +227,9 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 				soundEngine.playGameOver();
 				updateGameOver(canvas);
 			}
-			if (mgameEngine.getGameState() == WON)	   updateWon(canvas);
+			if (mgameEngine.getGameState() == WON)	{
+				updateWon(canvas);
+			}
 			if (mgameEngine.getGameState() == DISCONNECTED)	   updateDisconnected(canvas);
 			if (mgameEngine.getGameState() == DIE)	
 			{

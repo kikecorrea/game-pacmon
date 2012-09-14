@@ -72,7 +72,7 @@ public class Sender extends Thread {
 		 {
 
 			try {
-				this.sleep(20);
+				this.sleep(10);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
