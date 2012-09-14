@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.util.Log;
+
 import com.csc780.pacmon.Maze;
 import com.csc780.pacmon.Monster;
 import com.csc780.pacmon.Pacmon;
@@ -17,7 +19,7 @@ import com.csc780.pacmon.SoundEngine;
  */
 
 public class MGameEngine extends Thread  {
-	private final static int    MAX_FPS = 30;
+	private final static int    MAX_FPS = 50;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -25,7 +27,7 @@ public class MGameEngine extends Thread  {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	static final int RD = 9, LD = 10, RU = 5, LU = 6, RDU = 13, LDU = 14, RLD = 11, RLU = 7, RLUD = 15;
 	
-	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5;
+	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
 	
 	private Maze maze;
 	private Thread mThread;
@@ -86,7 +88,7 @@ public class MGameEngine extends Thread  {
 	private int tempX, boxX, boxY,tempX2, boxX2, boxY2;
 	
 	//use for updating pacmon,pacmon2
-	private int p1[]=new int[3], p2[]=new int[3], g[];
+	private int p1[]=new int[18], p2[]=new int[3], g[];
 	
 	private String ip;
 	
@@ -179,6 +181,38 @@ public class MGameEngine extends Thread  {
 		sending.start();
 		receiver.start();
 		
+		isRunning=true;
+		
+		while(isRunning)
+		{
+			beginTime = System.currentTimeMillis();
+	        framesSkipped = 0; // resetting the frames skipped
+	       
+	        //this.updateDataFromServer();
+	        // calculate how long did the cycle take
+	        timeDiff = System.currentTimeMillis() - beginTime;
+	        // calculate sleep time
+	        sleepTime = (int) (FRAME_PERIOD - timeDiff);
+
+	        if (sleepTime > 0) {
+	            // if sleepTime > 0 we're OK
+	            try {
+	                // send the thread to sleep for a short period
+	                // very useful for battery saving
+	        
+	                Thread.sleep(sleepTime);
+	            } catch (InterruptedException e) {
+	            }
+	           
+	        }
+	       
+	                
+	        if(this.receiver.status==RUNNING || receiver.status==DIE || receiver.status ==GAMEOVER || receiver.status ==DIE
+	        		&&	receiver.status==WON )
+	        		this.updateDataFromServer();
+	   
+	        
+		}
 		//wait for thread to die
         try {
 			sending.join();
@@ -227,26 +261,26 @@ public class MGameEngine extends Thread  {
 	{
 		this.gameState = receiver.status;
 		
-		int z = receiver.mazeData1.read();
-		if(z!=-1){
-			tempX = z;
-		}
-		z=receiver.mazeData2.read();
-		if(z!=-1){
-			tempX2=z;;
-		}
+//		int z = receiver.mazeData1.read();
+//		if(z!=-1){
+//			tempX = z;
+//		}
+//		z=receiver.mazeData2.read();
+//		if(z!=-1){
+//			tempX2=z;;
+//		}
 		
 		this.eatFoodUsingBits();
 		//this.eatFoodPower();
 		//this.eatFoodPower2();
 		
 		setxyp1();
-		setxyp2();
-		
-		setxyGhost(0);
-		setxyGhost(1);
-		setxyGhost(2);
-		setxyGhost(3);
+//		setxyp2();
+//		
+//		setxyGhost(0);
+//		setxyGhost(1);
+//		setxyGhost(2);
+//		setxyGhost(3);
 		
 		checkLives();
 	}
@@ -383,52 +417,71 @@ public class MGameEngine extends Thread  {
 				  pacmon.setpX(p1[0]);
 				  pacmon.setpY(p1[1]);		
 				  pacmon.setDir(p1[2]);
+				  pacmon2.setpX(p1[3]);
+				  pacmon2.setpY(p1[4]);
+				  pacmon2.setDir(p1[5]);
+				  
+				  ghosts.get(0).setX(p1[6]); 
+	              ghosts.get(0).setY(p1[7]); 
+	              ghosts.get(0).setDir(p1[8]);
+	              
+	              ghosts.get(1).setX(p1[9]); 
+	              ghosts.get(1).setY(p1[10]); 
+	              ghosts.get(1).setDir(p1[11]);
+	              
+	              ghosts.get(2).setX(p1[12]); 
+	              ghosts.get(2).setY(p1[13]); 
+	              ghosts.get(2).setDir(p1[14]);
+	              
+	              ghosts.get(3).setX(p1[15]); 
+	              ghosts.get(3).setY(p1[16]); 
+	              ghosts.get(3).setDir(p1[17]);
 				  }
 			}
 	}
-	public void setxyp2()
-	{
-		//if(!receiver.checkListEmpty())
-			{
-				  //int xy[]=receiver.getReceiveData();
-				   p2=receiver.pac2que.read();
-				
-				 //x and y will be set -1,2 if readPointer=writePointer
-				 //so just set pacmon's x,y will use old values
-				 if(p2[0]!=-1 && p2[1]!=-2)
-				 {
-				
-				  pacmon2.setpX(p2[0]);
-				  pacmon2.setpY(p2[1]);
-				  pacmon2.setDir(p2[2]);
-				  
-				 }
-	 
-			}
-	}
-	
-	//for ghost
-	public void setxyGhost(int i)
-	{
-		if(i==0)
-		   g=receiver.ghost1Que.read();
-		else if(i==1)
-		   g=receiver.ghost2Que.read();
-		else if(i==2)
-		   g=receiver.ghost3Que.read();
-		else
-		   g=receiver.ghost4Que.read();
-		
-		 //x and y will be set -1,2 if readPointer=writePointer
-		 //so just set ghost's x,y to old values
-		 if(g[0]!=-1 && g[1]!=-2)
-		 {
-		    ghosts.get(i).setX(g[0]); 
-            ghosts.get(i).setY(g[1]); 
-            ghosts.get(i).setDir(g[2]);
-		 }
-
-	}
+//	public void setxyp2()
+//	{
+//		//if(!receiver.checkListEmpty())
+//			{
+//				  //int xy[]=receiver.getReceiveData();
+//				   p2=receiver.pac2que.read();
+//				
+//				 //x and y will be set -1,2 if readPointer=writePointer
+//				 //so just set pacmon's x,y will use old values
+//				 if(p2[0]!=-1 && p2[1]!=-2)
+//				 {
+//				
+//				  pacmon2.setpX(p2[0]);
+//				  pacmon2.setpY(p2[1]);
+//				  pacmon2.setDir(p2[2]);
+//				  
+//				 }
+//	 
+//			}
+//	}
+//	
+//	//for ghost
+//	public void setxyGhost(int i)
+//	{
+//		if(i==0)
+//		   g=receiver.ghost1Que.read();
+//		else if(i==1)
+//		   g=receiver.ghost2Que.read();
+//		else if(i==2)
+//		   g=receiver.ghost3Que.read();
+//		else
+//		   g=receiver.ghost4Que.read();
+//		
+//		 //x and y will be set -1,2 if readPointer=writePointer
+//		 //so just set ghost's x,y to old values
+//		 if(g[0]!=-1 && g[1]!=-2)
+//		 {
+//		    ghosts.get(i).setX(g[0]); 
+//            ghosts.get(i).setY(g[1]); 
+//            ghosts.get(i).setDir(g[2]);
+//		 }
+//
+//	}
 	
 	public void checkLives()
 	{

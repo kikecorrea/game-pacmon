@@ -28,6 +28,7 @@ public class ServerAutoDiscovery extends Thread {
 
     public void DestroySocket()
     {
+    	isRunning.set(false);
     	serverSocket.close();
     	
     }

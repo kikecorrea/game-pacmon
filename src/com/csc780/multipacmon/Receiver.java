@@ -27,15 +27,15 @@ public class Receiver extends Thread {
 	private InetAddress IPAddress;
 	private byte[] receiveData;
 	
-	public CircularQue pac1que=new CircularQue(4);
-	public CircularQue pac2que=new CircularQue(4);
-	public CircularQue ghost1Que=new CircularQue(4);
-	public CircularQue ghost2Que=new CircularQue(4);
-	public CircularQue ghost3Que=new CircularQue(4);
-	public CircularQue ghost4Que=new CircularQue(4);
+	public CircularQue pac1que=new CircularQue(1);
+//	public CircularQue pac2que=new CircularQue(2);
+//	public CircularQue ghost1Que=new CircularQue(2);
+//	public CircularQue ghost2Que=new CircularQue(2);
+//	public CircularQue ghost3Que=new CircularQue(2);
+//	public CircularQue ghost4Que=new CircularQue(2);
 	
-	public CircularQue2 mazeData1=new CircularQue2(4);
-	public CircularQue2 mazeData2=new CircularQue2(4);
+//	public CircularQue2 mazeData1=new CircularQue2(4);
+//	public CircularQue2 mazeData2=new CircularQue2(4);
 	
 	//store the lives of pacmon
 //	public volatile int pacmonLives[]=new int [2];
@@ -164,12 +164,12 @@ public class Receiver extends Thread {
 			  this.status = temp / 1000;
 			  this.timer = temp %1000;
 			  
-			  pac1que.write(p1x, p1y, p1z);
-			  pac2que.write(p2x, p2y, p2z);
-			  ghost1Que.write(g1x, g1y, g1z);
-			  ghost2Que.write(g2x, g2y, g2z);
-			  ghost3Que.write(g3x, g3y, g3z);
-			  ghost4Que.write(g4x, g4y, g4z);
+			  pac1que.write(p1x, p1y, p1z,p2x, p2y, p2z,g1x, g1y, g1z,g2x, g2y, g2z,g3x, g3y, g3z,g4x, g4y, g4z);
+//			  pac2que.write(p2x, p2y, p2z);
+//			  ghost1Que.write(g1x, g1y, g1z);
+//			  ghost2Que.write(g2x, g2y, g2z);
+//			  ghost3Que.write(g3x, g3y, g3z);
+//			  ghost4Que.write(g4x, g4y, g4z);
 
 			  //for maze data
 				for(int i=0; i<20; i++)

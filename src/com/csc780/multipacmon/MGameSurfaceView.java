@@ -25,7 +25,7 @@ import android.view.SurfaceView;
  */
 public class MGameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS =45;
+	private final static int    MAX_FPS =50;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -305,7 +305,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 			} else {
 				synchronized (surfaceHolder) {
 					
-					mgameEngine.updateDataFromServer();
+					//mgameEngine.updateDataFromServer();
 					
 					canvas.drawRGB(0, 0, 0);
 					drawMaze(canvas); // draw updated maze
@@ -395,7 +395,7 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 					beginTime = System.currentTimeMillis();
 					framesSkipped = 0; // resetting the frames skipped
 
-					mgameEngine.updateDataFromServer();
+					//mgameEngine.updateDataFromServer();
 					canvas.drawRGB(0, 0, 0);
 					
 					//check the gamestate from receiver

@@ -101,6 +101,8 @@ public class ServerStarted extends Activity {
 								} 
 	                			ServerStarted.this.connectedDialog.dismiss();
 	                			
+	                			serverDiscovery.DestroySocket();
+	                			
 	                			//start cmgameactivity
 	                			Intent cmGame = new Intent("com.csc780.clientmultiserver.CMGAMEACTIVITY");
 	                			cmGame.putExtra("ipaddress", ServerStarted.this.dispatchReceiver.firstIPAddress.getHostAddress());
