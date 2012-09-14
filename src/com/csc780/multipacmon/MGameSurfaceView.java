@@ -98,6 +98,8 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 	//variable use for testing change of game state
 	int soundState;
 	
+	private int counterForSprite=0;
+	
 
 	public MGameSurfaceView(Context context, MGameEngine gameEngine, int sWidth, int sHeight) {
 		super(context);
@@ -570,27 +572,19 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas) {
-//		currentFrame = ++currentFrame % 3;
-//		int n;
-//		int direction = pacmon.getDir(); // get current direction of pacmon
-//		
-//		if (direction == UP)	n = 0;
-//		else if (direction == DOWN)		n = 1;
-//		else if (direction == RIGHT)		n = 2;
-//		else 		n = 3;
-//		
-//		mgameEngine.setxyp1();
-//	
-//		int srcY = n * blockSize;
-//		int srcX = currentFrame * blockSize;
-//		int pX = pacmon.getpX();
-//		int pY = pacmon.getpY();
-//
-//		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-//		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-//		canvas.drawBitmap(pac_img, src, dst, null);
 		
+		
+		if(counterForSprite>90)
+			counterForSprite=0;
+		
+		counterForSprite++;
+		
+		if(counterForSprite%6==0)
+		{
 		currentFrame = ++currentFrame % 3;
+		}
+		
+		//currentFrame = ++currentFrame % 3;
 		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
@@ -607,26 +601,18 @@ public class MGameSurfaceView extends SurfaceView implements Runnable {
 		
 	}
 	private void drawPacmon2(Canvas canvas) {
-//		currentFrame = ++currentFrame % 3;
-//		int n;
-//		int direction = pacmon2.getDir(); // get current direction of pacmon
-//		
-//		if (direction == UP)	n = 0;
-//		else if (direction == DOWN)		n = 1;
-//		else if (direction == RIGHT)		n = 2;
-//		else 		n = 3;
-//		
-//		mgameEngine.setxyp2();
-//		
-//		int srcY = n * blockSize;
-//		int srcX = currentFrame * blockSize;
-//		int pX = pacmon2.getpX();
-//		int pY = pacmon2.getpY();
-//		
-//		Rect src = new Rect(srcX, srcY, srcX + blockSize, srcY + blockSize);
-//		Rect dst = new Rect(pX, pY, pX + blockSize , pY + blockSize);
-//		canvas.drawBitmap(pac_img2, src, dst, null);
+
+		if(counterForSprite>90)
+			counterForSprite=0;
+		
+		counterForSprite++;
+		
+		if(counterForSprite%6==0)
+		{
 		currentFrame = ++currentFrame % 3;
+		}
+		
+		//currentFrame = ++currentFrame % 3;
 		
 		int direction = pacmon2.getDir(); // get current direction of pacmon
 		
