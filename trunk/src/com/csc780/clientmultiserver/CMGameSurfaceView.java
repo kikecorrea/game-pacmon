@@ -101,6 +101,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	
 	private int countForSearching=0;
 
+	private int counterForSprite=0;
 
 	
 	public CMGameSurfaceView(Context context, CMGameEngine gameEngine, int sWidth, int sHeight) {
@@ -504,7 +505,19 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas) {
+		
+		if(counterForSprite>90)
+			counterForSprite=0;
+		
+		counterForSprite++;
+		
+		if(counterForSprite%6==0)
+		{
 		currentFrame = ++currentFrame % 3;
+		}
+		
+		
+		//currentFrame = ++currentFrame % 3;
 		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
@@ -521,7 +534,17 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 		
 	}
 	private void drawPacmon2(Canvas canvas) {
+		if(counterForSprite>90)
+			counterForSprite=0;
+		
+		counterForSprite++;
+		
+		if(counterForSprite%6==0)
+		{
 		currentFrame = ++currentFrame % 3;
+		}
+		
+		//currentFrame = ++currentFrame % 3;
 		
 		int direction = pacmon2.getDir(); // get current direction of pacmon
 		

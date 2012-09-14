@@ -18,7 +18,7 @@ import android.view.SurfaceView;
 //deals with rendering the game data
 public class GameSurfaceView extends SurfaceView implements Runnable {
 
-	private final static int    MAX_FPS = 60;
+	private final static int    MAX_FPS = 50;
 	// maximum number of frames to be skipped
 	private final static int    MAX_FRAME_SKIPS = 5;
 	// the frame period
@@ -84,6 +84,8 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	private float screenHeight;
 	private float blockScaleFactor;
 	private float sentenceWidth, drawTextStartingX;
+	
+	private int counterForSprite=0;
 	
 	public GameSurfaceView(Context context, GameEngine gameEngine, int sWidth, int sHeight) {
 		
@@ -407,7 +409,19 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 
 	// draw pacmon 
 	private void drawPacmon(Canvas canvas) {
+		
+		if(counterForSprite>90)
+			counterForSprite=0;
+		
+		counterForSprite++;
+		
+		if(counterForSprite%6==0)
+		{
 		currentFrame = ++currentFrame % 3;
+		}
+		
+		
+		//currentFrame = ++currentFrame % 3;
 		
 		int direction = pacmon.getDir(); // get current direction of pacmon
 		
