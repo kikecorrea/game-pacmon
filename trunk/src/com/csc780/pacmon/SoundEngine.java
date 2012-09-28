@@ -25,12 +25,12 @@ public class SoundEngine {
 		sounds = new SoundPool(5, AudioManager.STREAM_MUSIC, 0);
 
 		soundsMap = new HashMap<Integer, Integer>();
-		soundsMap.put(EATFOOD, sounds.load(context, R.raw.pacman_waka_waka, 1));
-		soundsMap.put(EATGHOST, sounds.load(context, R.raw.pacman_eating_ghost, 1));
-		soundsMap.put(DIE, sounds.load(context, R.raw.pacman_dies, 1));
-		soundsMap.put(READY, sounds.load(context, R.raw.pacman_opening_song,1));
-		soundsMap.put(GAMEOVER, sounds.load(context, R.raw.pacman_opening_song, 1));
-		soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacman_eating_cherry, 1));
+		soundsMap.put(EATFOOD, sounds.load(context, R.raw.pacmon_waka_waka, 1));
+		soundsMap.put(EATGHOST, sounds.load(context, R.raw.pacmon_eating_ghost, 1));
+		soundsMap.put(DIE, sounds.load(context, R.raw.pacmon_dies, 1));
+		soundsMap.put(READY, sounds.load(context, R.raw.pacmon_opening_song,1));
+		soundsMap.put(GAMEOVER, sounds.load(context, R.raw.pacmon_opening_song, 1));
+		soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacmon_eating_cherry, 1));
 		
 		AudioManager mgr = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		

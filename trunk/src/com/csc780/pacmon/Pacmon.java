@@ -1,10 +1,5 @@
 package com.csc780.pacmon;
 
-
-/* Pacman class contains information about pacman
- * 
- * 
- */
 public class Pacmon {
 
 	public static final int UP = 4;

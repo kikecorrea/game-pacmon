@@ -210,20 +210,20 @@ public class MGameActivity extends Activity implements SensorEventListener{
 		yAccel = event.values[1];
 		//float z = event.values[2];
 		
-		if(yAccel < -1.0F && yAccel*yAccel > xAccel*xAccel){ // tilt up
+		if(yAccel < 2.8F){ // tilt up
 			mgameEngine.setInputDir(UP);
 			//gameView.setDir(1);
 		}
-		if(yAccel > 1.8F && yAccel*yAccel > xAccel*xAccel){ // tilt down
+		if(yAccel > 7.5F){ // tilt down
 			mgameEngine.setInputDir(DOWN);
 			//gameView.setDir(2);
 		}
-		if (xAccel < -1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
+		if (xAccel < -1.8F ) { // tilt to
 																	// right
 			mgameEngine.setInputDir(RIGHT);
 			//gameView.setDir(3);
 		}
-		if (xAccel > 1.8F && xAccel * xAccel > yAccel * yAccel) { // tilt to
+		if (xAccel > 1.8F ) { // tilt to
 																	// left
 			mgameEngine.setInputDir(LEFT);
 			//gameView.setDir(4);

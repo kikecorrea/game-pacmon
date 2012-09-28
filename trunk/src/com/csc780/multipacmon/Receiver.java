@@ -27,7 +27,7 @@ public class Receiver extends Thread {
 	private InetAddress IPAddress;
 	private byte[] receiveData;
 	
-	public CircularQue pac1que=new CircularQue(1);
+	public CircularQue pac1que=new CircularQue(2);
 //	public CircularQue pac2que=new CircularQue(2);
 //	public CircularQue ghost1Que=new CircularQue(2);
 //	public CircularQue ghost2Que=new CircularQue(2);
