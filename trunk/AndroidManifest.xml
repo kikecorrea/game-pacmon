@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.csc780.pacmon"
+    package="com.pmon.pacmon"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -10,8 +10,8 @@
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <application
-        android:debuggable="true"
-        android:icon="@drawable/pac_mon_icon"
+        android:debuggable="false"
+        android:icon="@drawable/pacmon_icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <activity
@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:label="GameActivity" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.GAMEACTIVITY" />
+                <action android:name="com.pmon.pacmon.GAMEACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -40,60 +40,60 @@
             android:screenOrientation="portrait"
             android:label="LevelSelectActivity" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.LEVELSELECTACTIVITY" />
+                <action android:name="com.pmon.pacmon.LEVELSELECTACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.csc780.multipacmon.MGameActivity"
+            android:name="com.pmon.multipacmon.MGameActivity"
             android:screenOrientation="portrait"
             android:label="MGameActivity" >
             <intent-filter>
-                <action android:name="com.csc780.multipacmon.MGAMEACTIVITY" />
+                <action android:name="com.pmon.multipacmon.MGAMEACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.csc780.clientmultiserver.CMGameActivity"
+            android:name="com.pmon.clientmultiserver.CMGameActivity"
             android:screenOrientation="portrait"
             android:label="CMGameActivity" >
             <intent-filter>
-                <action android:name="com.csc780.clientmultiserver.CMGAMEACTIVITY" />
+                <action android:name="com.pmon.clientmultiserver.CMGAMEACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.csc780.pacmon.ClientOrServer"
+            android:name="com.pmon.pacmon.ClientOrServer"
             android:screenOrientation="portrait"
             android:label="ClientOrServer" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.CLIENTORSERVER" />
+                <action android:name="com.pmon.pacmon.CLIENTORSERVER" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
           <activity
-            android:name="com.csc780.multipacmon.Searching"
+            android:name="com.pmon.multipacmon.Searching"
             android:screenOrientation="portrait"
             android:label="Searching" >
             <intent-filter>
-                <action android:name="com.csc780.multipacmon.SEARCHING" />
+                <action android:name="com.pmon.multipacmon.SEARCHING" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
           <activity
-            android:name="com.csc780.clientmultiserver.ServerStarted"
+            android:name="com.pmon.clientmultiserver.ServerStarted"
             android:screenOrientation="portrait"
             android:label="ServerStarted" >
             <intent-filter>
-                <action android:name="com.csc780.clientmultiserver.SERVERSTARTED" />
+                <action android:name="com.pmon.clientmultiserver.SERVERSTARTED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -103,7 +103,7 @@
             android:screenOrientation="portrait"
             android:label="AboutActivity" >
             <intent-filter>
-                <action android:name="com.csc780.pacmon.ABOUTACTIVITY" />
+                <action android:name="com.pmon.pacmon.ABOUTACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pac-Mon</string>
+    <string name="app_name">PacMon</string>
 	<string name="singleplayer">SinglePlayer</string>
     <string name="multiplayer">MultiPlayer</string>
     <string name="exit">Exit Game</string>
