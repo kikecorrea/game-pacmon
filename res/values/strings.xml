@@ -13,11 +13,21 @@
     <string name="about_game_text">
     				\n
     				ABOUT PACMON:\n
-    				This game is made by Qui Phu Lu\n
-    				and Hanzen Lim.\n\n
-    				This is a project for mobile \n 
-    				development class in SFSU under\n
-    				the supervision of Prof. Puder\n\n
+    				Pacmon is a game inspired by the\n
+    				classic game pacman. The original\n 
+    				design, concept and names are\n 
+    				copyright of NAMCO.\n
+    				Pacmon is NOT the original pacman\n
+    				game and does not provide a similar\n
+    				gaming experience. The source code\n
+    				are available under MIT license\n
+    				free of charge. You can contact\n
+    				the author to gain source code.\n
+    				Game artwork is copyright of pacmon\n
+    				and Game sounds are taken from\n
+    				freesound.org under the Creative\n
+    				Commons License by user Timbre\n
+    				
     				SUPPORT:\n
     				email us: pacmon.info@gmail.com
     				</string>

@@ -6,13 +6,17 @@
     android:background="@android:color/black" >
 
     <ImageView 
-              android:paddingTop="30px"
+        android:paddingTop="20px"
         android:contentDescription="MenuTitle"
         android:id="@+id/ivPacman"
         android:layout_gravity="center"
         android:layout_width="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
         android:layout_height="wrap_content"        
-        android:src="@drawable/menu_title"
+        android:src="@drawable/menu_title2"
         />
 
     <Button

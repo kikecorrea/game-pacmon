@@ -11,7 +11,8 @@ import android.media.SoundPool;
 // Sound Manager, provide method to play sounds and music
 public class SoundEngine {
 	private static final int  EATFOOD = 1,  EATGHOST = 2, DIE = 3, READY = 4,
-			GAMEOVER = 5, EATCHERRY = 6;
+			GAMEOVER = 5;
+	//private static final int EATCHERRY = 6;
 	
 	private SoundPool sounds;
 	private HashMap<Integer, Integer> soundsMap;
@@ -30,12 +31,12 @@ public class SoundEngine {
 		soundsMap.put(DIE, sounds.load(context, R.raw.pacmon_dies, 1));
 		soundsMap.put(READY, sounds.load(context, R.raw.pacmon_opening_song,1));
 		soundsMap.put(GAMEOVER, sounds.load(context, R.raw.pacmon_opening_song, 1));
-		soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacmon_eating_cherry, 1));
+		//soundsMap.put(EATCHERRY, sounds.load(context, R.raw.pacmon_eating_cherry, 1));
 		
 		AudioManager mgr = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 		
 	    // the music that is played at the beginning
-	    music = MediaPlayer.create(context, R.raw.level_music);
+	    music = MediaPlayer.create(context, R.raw.gameplaymusic);
 	    music.setLooping(true);
 	}
 	
@@ -63,7 +64,7 @@ public class SoundEngine {
 	}
 	
 	public void playEatCherry(){
-		play(EATCHERRY);
+		//play(EATCHERRY);
 	}
 	
 	//when pacmon die
