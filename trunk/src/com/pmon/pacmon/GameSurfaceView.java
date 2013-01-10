@@ -26,7 +26,7 @@ public class GameSurfaceView extends SurfaceView implements Runnable {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, DIE = 4;
 	private final static String textOver = "GAME OVER", textCongrats = "You Won"
-								, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
+								, textNextLevel = "You unlocked next level", textReady = "Ready Go";
 	
 	
 	private SurfaceHolder surfaceHolder;

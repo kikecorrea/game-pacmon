@@ -38,7 +38,7 @@ public class CMGameSurfaceView extends SurfaceView implements Runnable {
 	static final int  RIGHT = 1, LEFT = 2, UP = 4, DOWN = 8;
 	private final static int 	READY = 0,RUNNING = 1, GAMEOVER = 2, WON = 3, SEARCHING=5, DISCONNECTED=6, DIE=7;
 	private final static String textOver = "GAME OVER", textCongrats = "Congratulations"
-			, textNextLevel = "You unlocked next level", textReady = "Ready! Go";
+			, textNextLevel = "You unlocked next level", textReady = "Ready Go";
 	
 	
 	private SurfaceHolder surfaceHolder;
