@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.pmon.pacmon"
+    package="com.pmon.pacgravity"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -29,7 +29,7 @@
             android:screenOrientation="portrait"
             android:label="GameActivity" >
             <intent-filter>
-                <action android:name="com.pmon.pacmon.GAMEACTIVITY" />
+                <action android:name="com.pmon.pacgravity.GAMEACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
@@ -40,70 +40,70 @@
             android:screenOrientation="portrait"
             android:label="LevelSelectActivity" >
             <intent-filter>
-                <action android:name="com.pmon.pacmon.LEVELSELECTACTIVITY" />
+                <action android:name="com.pmon.pacgravity.LEVELSELECTACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.pmon.multipacmon.MGameActivity"
+            android:name="com.pmon.multipacgravity.MGameActivity"
             android:screenOrientation="portrait"
             android:label="MGameActivity" >
             <intent-filter>
-                <action android:name="com.pmon.multipacmon.MGAMEACTIVITY" />
+                <action android:name="com.pmon.multipacgravity.MGAMEACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.pmon.clientmultiserver.CMGameActivity"
+            android:name="com.pmon.clientmultiserverpacgravity.CMGameActivity"
             android:screenOrientation="portrait"
             android:label="CMGameActivity" >
             <intent-filter>
-                <action android:name="com.pmon.clientmultiserver.CMGAMEACTIVITY" />
+                <action android:name="com.pmon.clientmultiserverpacgravity.CMGAMEACTIVITY" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
          <activity
-            android:name="com.pmon.pacmon.ClientOrServer"
+            android:name="com.pmon.pacgravity.ClientOrServer"
             android:screenOrientation="portrait"
             android:label="ClientOrServer" >
             <intent-filter>
-                <action android:name="com.pmon.pacmon.CLIENTORSERVER" />
+                <action android:name="com.pmon.pacgravity.CLIENTORSERVER" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
           <activity
-            android:name="com.pmon.multipacmon.Searching"
+            android:name="com.pmon.multipacgravity.Searching"
             android:screenOrientation="portrait"
             android:label="Searching" >
             <intent-filter>
-                <action android:name="com.pmon.multipacmon.SEARCHING" />
+                <action android:name="com.pmon.multipacgravity.SEARCHING" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
           <activity
-            android:name="com.pmon.clientmultiserver.ServerStarted"
+            android:name="com.pmon.clientmultiserverpacgravity.ServerStarted"
             android:screenOrientation="portrait"
             android:label="ServerStarted" >
             <intent-filter>
-                <action android:name="com.pmon.clientmultiserver.SERVERSTARTED" />
+                <action android:name="com.pmon.clientmultiserverpacgravity.SERVERSTARTED" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         
         <activity
-            android:name=".AboutActivity"
+            android:name="com.pmon.pacgravity.AboutActivity"
             android:screenOrientation="portrait"
             android:label="AboutActivity" >
             <intent-filter>
-                <action android:name="com.pmon.pacmon.ABOUTACTIVITY" />
+                <action android:name="com.pmon.pacgravity.ABOUTACTIVITY" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
